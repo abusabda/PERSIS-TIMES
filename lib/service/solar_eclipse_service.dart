@@ -1157,13 +1157,13 @@ Altitude : ${alt != null ? mf.dddms(alt, optResult: "DDD°MM'SS\"", sdp: 0, posN
 ========================================
 DATA MATAHARI & BULAN SAAT PUNCAK GERHANA
 ========================================
-☀️ MATAHARI
+MATAHARI
 R.A : ${sun?["RA"] != null ? mf.dhhms(sun["RA"], optResult: "HHMMSS", secDecPlaces: 2) : "-"}
 Dec : ${sun?["DEC"] != null ? mf.dddms(sun["DEC"], optResult: "DDD°MM'SS\"", sdp: 0, posNegSign: "+-") : "-"}
 S.D : ${sun?["SD"] != null ? mf.dddms(sun["SD"], optResult: "DDD°MM'SS\"", sdp: 0) : "-"}
 H.P : ${sun?["HP"] != null ? mf.dddms(sun["HP"], optResult: "DDD°MM'SS\"", sdp: 0) : "-"}
 
-🌙 BULAN
+BULAN
 R.A : ${moon?["RA"] != null ? mf.dhhms(moon["RA"], optResult: "HHMMSS", secDecPlaces: 2) : "-"}
 Dec : ${moon?["DEC"] != null ? mf.dddms(moon["DEC"], optResult: "DDD°MM'SS\"", sdp: 0, posNegSign: "+-") : "-"}
 S.D : ${moon?["SD"] != null ? mf.dddms(moon["SD"], optResult: "DDD°MM'SS\"", sdp: 0) : "-"}
@@ -1443,33 +1443,33 @@ H.P : ${moon?["HP"] != null ? mf.dddms(moon["HP"], optResult: "DDD°MM'SS\"", sd
     // Obskurasi (belum beres)
     // ==========================
 
-    final double cBg = (msMx < 0.9972)
-        ? math.acos(
-            (l1pMx * l1pMx + l2pMx * l2pMx - 2 * ddd * ddd) /
-                (l1pMx * l1pMx - l2pMx * l2pMx),
-          )
-        : math.acos(
-            (l1Mx * l1Mx + l2Mx * l2Mx - 2 * ddd * ddd) /
-                (l1Mx * l1Mx - l2Mx * l2Mx),
-          );
+    // final double cBg = (msMx < 0.9972)
+    //     ? math.acos(
+    //         (l1pMx * l1pMx + l2pMx * l2pMx - 2 * ddd * ddd) /
+    //             (l1pMx * l1pMx - l2pMx * l2pMx),
+    //       )
+    //     : math.acos(
+    //         (l1Mx * l1Mx + l2Mx * l2Mx - 2 * ddd * ddd) /
+    //             (l1Mx * l1Mx - l2Mx * l2Mx),
+    //       );
 
-    final double bBg = (msMx < 0.9972)
-        ? math.acos((l1pMx * l2pMx + ddd * ddd) / (ddd * (l1pMx * l2pMx)))
-        : math.acos((l1Mx * l2Mx + ddd * ddd) / (ddd * (l1Mx * l2Mx)));
+    // final double bBg = (msMx < 0.9972)
+    //     ? math.acos((l1pMx * l2pMx + ddd * ddd) / (ddd * (l1pMx * l2pMx)))
+    //     : math.acos((l1Mx * l2Mx + ddd * ddd) / (ddd * (l1Mx * l2Mx)));
 
-    final double aBg = math.pi - (bBg + cBg);
+    // final double aBg = math.pi - (bBg + cBg);
 
-    final double sSm = (msMx < 0.9972)
-        ? (l1pMx - l2pMx) / (l1pMx + l2pMx)
-        : (l1Mx - l2Mx) / (l1Mx + l2Mx);
+    // final double sSm = (msMx < 0.9972)
+    //     ? (l1pMx - l2pMx) / (l1pMx + l2pMx)
+    //     : (l1Mx - l2Mx) / (l1Mx + l2Mx);
 
-    final double spB = (l2Mx < 0)
-        ? 1.0
-        : (l2Mx > 0.0 && l2Mx < 0.0047)
-        ? sSm * sSm
-        : (l2Mx > 0.0047)
-        ? sSm * sSm
-        : ((sSm * sSm) * aBg + sSm - bBg * math.sin(cBg)) / math.pi;
+    // final double spB = (l2Mx < 0)
+    //     ? 1.0
+    //     : (l2Mx > 0.0 && l2Mx < 0.0047)
+    //     ? sSm * sSm
+    //     : (l2Mx > 0.0047)
+    //     ? sSm * sSm
+    //     : ((sSm * sSm) * aBg + sSm - bBg * math.sin(cBg)) / math.pi;
 
     //Waktu Kontak Maksimal
     final double jdEclipse = sBesselian(blnH, thnH, "JDS");
@@ -3093,7 +3093,7 @@ H.P : ${moon?["HP"] != null ? mf.dddms(moon["HP"], optResult: "DDD°MM'SS\"", sd
       "dt": dt,
       "JDMXTD": jdSolarEclipseMxTD,
       "JDMXUT": jdSolarEclipseMxUT,
-      "lbr": wd ?? 0.0,
+      "lbr": wd,
 
       // ===== KONTAK PUNCAK =====
       "MX": {

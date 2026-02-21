@@ -874,7 +874,7 @@ void main() {
   }
 
   // INPUT GERHANA MATAHARI GLOBAL
-  final blnH4 = 5;
+  final blnH4 = 6;
   final thnH4 = 1437;
 
   print("========================================");
