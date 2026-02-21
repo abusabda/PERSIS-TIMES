@@ -343,4 +343,13 @@ class MathFunction {
         return x00;
     }
   }
+
+  double? safeNum(dynamic v) {
+    if (v == null) return null;
+    if (v is num) {
+      if (v.isNaN || v.isInfinite) return null;
+      return v.toDouble();
+    }
+    return null;
+  }
 }
