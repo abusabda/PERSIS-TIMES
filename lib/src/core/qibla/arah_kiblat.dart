@@ -1,8 +1,8 @@
 import 'dart:math' as math;
-import 'package:myhisab/core/dynamical_time.dart';
-import 'package:myhisab/core/julian_day.dart';
-import 'package:myhisab/core/math_utils.dart';
-import 'package:myhisab/core/sun_function.dart';
+import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
+import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import 'package:myhisab/src/core/math/math_utils.dart';
+import 'package:myhisab/src/core/astronomy/sun_function.dart';
 
 class ArahKiblat {
   final julianDay = JulianDay();

@@ -1,24 +1,24 @@
 import 'dart:math' as math;
 import 'julian_day.dart';
-import 'math_utils.dart';
+import '../math/math_utils.dart';
 
 // import semua data R001..R013, R101, R201, R301
-import '../data/moon_data_r001.dart';
-import '../data/moon_data_r002.dart';
-import '../data/moon_data_r003.dart';
-import '../data/moon_data_r004.dart';
-import '../data/moon_data_r005.dart';
-import '../data/moon_data_r006.dart';
-import '../data/moon_data_r007.dart';
-import '../data/moon_data_r008.dart';
-import '../data/moon_data_r009.dart';
-import '../data/moon_data_r010.dart';
-import '../data/moon_data_r011.dart';
-import '../data/moon_data_r012.dart';
-import '../data/moon_data_r013.dart';
-import '../data/moon_data_r101.dart';
-import '../data/moon_data_r201.dart';
-import '../data/moon_data_r301.dart';
+import '../../data/moon_data_r001.dart';
+import '../../data/moon_data_r002.dart';
+import '../../data/moon_data_r003.dart';
+import '../../data/moon_data_r004.dart';
+import '../../data/moon_data_r005.dart';
+import '../../data/moon_data_r006.dart';
+import '../../data/moon_data_r007.dart';
+import '../../data/moon_data_r008.dart';
+import '../../data/moon_data_r009.dart';
+import '../../data/moon_data_r010.dart';
+import '../../data/moon_data_r011.dart';
+import '../../data/moon_data_r012.dart';
+import '../../data/moon_data_r013.dart';
+import '../../data/moon_data_r101.dart';
+import '../../data/moon_data_r201.dart';
+import '../../data/moon_data_r301.dart';
 
 class MoonDistance {
   final r001 = MoonDataR001.elpMpp02MtR0;

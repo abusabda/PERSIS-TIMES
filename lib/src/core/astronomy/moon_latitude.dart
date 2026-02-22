@@ -1,17 +1,17 @@
 import 'dart:math' as math;
-import 'math_utils.dart';
+import '../math/math_utils.dart';
 import 'julian_day.dart';
 
-import '../data/moon_data_b001.dart';
-import '../data/moon_data_b002.dart';
-import '../data/moon_data_b003.dart';
-import '../data/moon_data_b004.dart';
-import '../data/moon_data_b005.dart';
-import '../data/moon_data_b006.dart';
-import '../data/moon_data_b007.dart';
-import '../data/moon_data_b008.dart';
-import '../data/moon_data_b101.dart';
-import '../data/moon_data_b201.dart';
+import '../../data/moon_data_b001.dart';
+import '../../data/moon_data_b002.dart';
+import '../../data/moon_data_b003.dart';
+import '../../data/moon_data_b004.dart';
+import '../../data/moon_data_b005.dart';
+import '../../data/moon_data_b006.dart';
+import '../../data/moon_data_b007.dart';
+import '../../data/moon_data_b008.dart';
+import '../../data/moon_data_b101.dart';
+import '../../data/moon_data_b201.dart';
 
 class MoonLatitude {
   final julianDay = JulianDay();
@@ -30,7 +30,7 @@ class MoonLatitude {
   final mf = MathFunction();
   final jd = JulianDay();
 
-  double moonGeocentricLatitude(double jd, double deltaT) {
+  double moonGeocentricLatitude(double jd, double deltaT, String opt) {
     final jde = jd + deltaT / 86400.0;
 
     // waktu Julian Century
@@ -188,6 +188,15 @@ class MoonLatitude {
 
     final moonLat = b / 3600.0 + abr;
 
-    return moonLat;
+    switch (opt) {
+      case "Appa":
+        return moonLat;
+      case "True":
+        return b / 3600.0;
+      default:
+        return moonLat;
+    }
+
+    //return moonLat;
   }
 }

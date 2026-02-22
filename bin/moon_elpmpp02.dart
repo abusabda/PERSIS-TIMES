@@ -1,10 +1,10 @@
-import 'package:myhisab/core/math_utils.dart';
-import 'package:myhisab/core/julian_day.dart';
-import 'package:myhisab/core/dynamical_time.dart';
-import 'package:myhisab/core/moon_function.dart';
-import 'package:myhisab/core/moon_distance.dart';
-import 'package:myhisab/core/moon_longitude.dart';
-import 'package:myhisab/core/moon_latitude.dart';
+import 'package:myhisab/src/core/math/math_utils.dart';
+import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
+import 'package:myhisab/src/core/astronomy/moon_function.dart';
+import 'package:myhisab/src/core/astronomy/moon_distance.dart';
+import 'package:myhisab/src/core/astronomy/moon_longitude.dart';
+import 'package:myhisab/src/core/astronomy/moon_latitude.dart';
 
 final julianDay = JulianDay();
 final dynamicalTime = DynamicalTime();
@@ -45,7 +45,7 @@ void main() {
     "Moon Apparent Geocentric Longitude               = ${mf.dddms(moonLon.moonGeocentricLongitude(jd, dt, "Appa"))}",
   );
   print(
-    "Moon Geocentric Latitude                         = ${mf.dddms(moonLat.moonGeocentricLatitude(jd, dt))}",
+    "Moon Geocentric Latitude                         = ${mf.dddms(moonLat.moonGeocentricLatitude(jd, dt, "Appa"))}",
   );
 
   print(

@@ -1,6 +1,6 @@
-import 'package:myhisab/core/julian_day.dart';
-import 'package:myhisab/core/math_utils.dart';
-import 'package:myhisab/core/arah_kiblat.dart';
+import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import 'package:myhisab/src/core/math/math_utils.dart';
+import 'package:myhisab/src/core/qibla/arah_kiblat.dart';
 
 class QiblaService {
   String arahQiblat({

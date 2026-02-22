@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'math_utils.dart'; // sesuaikan dengan path file kamu
+import '../math/math_utils.dart'; // sesuaikan dengan path file kamu
 
 class NutationAndObliquity {
   final MathFunction mf = MathFunction();

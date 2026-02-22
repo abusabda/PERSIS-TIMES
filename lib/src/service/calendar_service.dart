@@ -1,23 +1,15 @@
 import 'dart:math' as math;
-import 'package:myhisab/core/dynamical_time.dart';
-import 'package:myhisab/core/julian_day.dart';
-import 'package:myhisab/core/math_utils.dart';
-import 'package:myhisab/core/moon_distance.dart';
-import 'package:myhisab/core/moon_function.dart';
-import 'package:myhisab/core/moon_latitude.dart';
-import 'package:myhisab/core/moon_longitude.dart';
-import 'package:myhisab/core/sun_function.dart';
+import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
+import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import 'package:myhisab/src/core/math/math_utils.dart';
+import 'package:myhisab/src/core/astronomy/moon_distance.dart';
+import 'package:myhisab/src/core/astronomy/moon_function.dart';
+import 'package:myhisab/src/core/astronomy/moon_latitude.dart';
+import 'package:myhisab/src/core/astronomy/moon_longitude.dart';
+import 'package:myhisab/src/core/astronomy/sun_function.dart';
 //import 'package:myhisab/service/moon_service.dart';
 
 //final mf = MathFunction();
-final julianDay = JulianDay();
-final dynamicalTime = DynamicalTime();
-final sn = SunFunction();
-final mf = MathFunction();
-final ml = MoonLongitude();
-final mb = MoonLatitude();
-final md = MoonDistance();
-final mo = MoonFunction();
 
 class Lokasi {
   final double gLat;
@@ -38,6 +30,14 @@ class Lokasi2 {
 final ab = CalendarService();
 
 class CalendarService {
+  final julDay = JulianDay();
+  final dyTme = DynamicalTime();
+  final sn = SunFunction();
+  final mf = MathFunction();
+  final ml = MoonLongitude();
+  final mb = MoonLatitude();
+  final md = MoonDistance();
+  final mo = MoonFunction();
   // Fungsi Hisab Awal Bulan Hijriah Sesuai Lokasi
 
   String hisabAwalBulanHijriahSesuaiLokasi({
@@ -77,14 +77,10 @@ class CalendarService {
     final double jd = sn.jdGhurubSyams(jdNM + tbhHari, gLat, gLon, elev, tmZn);
 
     final double jamGS = double.parse(
-      julianDay.jdkm(
-        sn.jdGhurubSyams(jd, gLat, gLon, elev, tmZn),
-        tmZn,
-        "JAMDES",
-      ),
+      julDay.jdkm(sn.jdGhurubSyams(jd, gLat, gLon, elev, tmZn), tmZn, "JAMDES"),
     );
 
-    double dltT = dynamicalTime.deltaT(jdNM.floorToDouble() + 0.5);
+    double dltT = dyTme.deltaT(jdNM.floorToDouble() + 0.5);
     double jdNM2 = mo.geocentricConjunction(blnH, thnH, dltT, "Ijtima");
     double jdNM3 = mo.topocentricConjunction(
       blnH,
@@ -106,9 +102,9 @@ class CalendarService {
       "Bujur",
     );
 
-    final int tglM = int.parse(julianDay.jdkm(jd, tmZn, "TglM").toString());
-    final int blnM = int.parse(julianDay.jdkm(jd, tmZn, "BlnM").toString());
-    final int thnM = int.parse(julianDay.jdkm(jd, tmZn, "ThnM").toString());
+    final int tglM = int.parse(julDay.jdkm(jd, tmZn, "TglM").toString());
+    final int blnM = int.parse(julDay.jdkm(jd, tmZn, "BlnM").toString());
+    final int thnM = int.parse(julDay.jdkm(jd, tmZn, "ThnM").toString());
 
     var mSet = mo.moonTransitRiseSet(
       tglM,
@@ -127,7 +123,7 @@ class CalendarService {
     if (mSet == 0.0) {
       jdMSet = 0.0;
     } else {
-      jdMSet = julianDay.kmjd(tglM, blnM, thnM, 0.0, 0.0) + (mSet - tmZn) / 24;
+      jdMSet = julDay.kmjd(tglM, blnM, thnM, 0.0, 0.0) + (mSet - tmZn) / 24;
     }
 
     final double bTime = jamGS + 4 / 9.0 * ((jdMSet - jd) * 24);
@@ -295,7 +291,7 @@ class CalendarService {
     );
     sb.writeln("Time Zone                        : $tmZn jam");
     sb.writeln(
-      "Saat perhitungan                 : ${julianDay.jdkm(jd)} | JD: $jd",
+      "Saat perhitungan                 : ${julDay.jdkm(jd)} | JD: $jd",
     );
     sb.writeln(
       "Delta T                          : ${dltT.toStringAsFixed(2)}s",
@@ -305,11 +301,11 @@ class CalendarService {
     );
 
     sb.writeln(
-      "Ijtimak Geosentris               : ${julianDay.jdkm(jdNM2, tmZn)} | jam: ${mf.dhhms(double.parse(julianDay.jdkm(jdNM2, tmZn, "JamDes")), optResult: "HH:MM:SS", secDecPlaces: sdp, posNegSign: "")} $wd | Bujur: ${mf.dddms(jdNM4)}",
+      "Ijtimak Geosentris               : ${julDay.jdkm(jdNM2, tmZn)} | jam: ${mf.dhhms(double.parse(julDay.jdkm(jdNM2, tmZn, "JamDes")), optResult: "HH:MM:SS", secDecPlaces: sdp, posNegSign: "")} $wd | Bujur: ${mf.dddms(jdNM4)}",
     );
 
     sb.writeln(
-      "Ijtimak Toposentris              : ${julianDay.jdkm(jdNM3, tmZn)} | jam: ${mf.dhhms(double.parse(julianDay.jdkm(jdNM3, tmZn, "JamDes")), optResult: "HH:MM:SS", secDecPlaces: sdp, posNegSign: "")} $wd | Bujur: ${mf.dddms(jdNM5)}",
+      "Ijtimak Toposentris              : ${julDay.jdkm(jdNM3, tmZn)} | jam: ${mf.dhhms(double.parse(julDay.jdkm(jdNM3, tmZn, "JamDes")), optResult: "HH:MM:SS", secDecPlaces: sdp, posNegSign: "")} $wd | Bujur: ${mf.dddms(jdNM5)}",
     );
 
     sb.writeln(
@@ -322,13 +318,11 @@ class CalendarService {
 
     sb.writeln("Kriteria                         : $kr1");
     sb.writeln("Status                           : $kr");
-    sb.writeln(
-      "Awal Bulan                       : ${julianDay.jdkm(abq, tmZn)}",
-    );
+    sb.writeln("Awal Bulan                       : ${julDay.jdkm(abq, tmZn)}");
 
     sb.writeln("=============================================================");
     sb.writeln(
-      "Data Matahari ${julianDay.jdkm(jdNM2)} jam: ${mf.dhhms(double.parse(julianDay.jdkm(jd, tmZn, "JamDes")), optResult: "HH:MM:SS", secDecPlaces: sdp, posNegSign: "")} $wd",
+      "Data Matahari ${julDay.jdkm(jdNM2)} jam: ${mf.dhhms(double.parse(julDay.jdkm(jd, tmZn, "JamDes")), optResult: "HH:MM:SS", secDecPlaces: sdp, posNegSign: "")} $wd",
     );
     sb.writeln("=============================================================");
 
@@ -413,7 +407,7 @@ class CalendarService {
 
     sb.writeln("=============================================================");
     sb.writeln(
-      "Data Bulan ${julianDay.jdkm(jdNM2)} jam: ${mf.dhhms(double.parse(julianDay.jdkm(jd, tmZn, "JamDes")), optResult: "HH:MM:SS", secDecPlaces: sdp, posNegSign: "")} $wd",
+      "Data Bulan ${julDay.jdkm(jdNM2)} jam: ${mf.dhhms(double.parse(julDay.jdkm(jd, tmZn, "JamDes")), optResult: "HH:MM:SS", secDecPlaces: sdp, posNegSign: "")} $wd",
     );
     sb.writeln("=============================================================");
     sb.writeln("Julian Day                       : $jd");
@@ -427,7 +421,7 @@ class CalendarService {
       "G.Longitude (Appa)               : ${mf.dddms(ml.moonGeocentricLongitude(jd, dltT, "Appa"))}",
     );
     sb.writeln(
-      "G.Latitude                       : ${mf.dddms(mb.moonGeocentricLatitude(jd, dltT))}",
+      "G.Latitude                       : ${mf.dddms(mb.moonGeocentricLatitude(jd, dltT, "Appa"))}",
     );
     sb.writeln(
       "G.Right Ascension                : ${mf.dddms(mo.moonGeocentricRightAscension(jd, dltT))}",
@@ -599,7 +593,7 @@ class CalendarService {
     final mo = MoonFunction();
 
     final jdNM = mo.geocentricConjunction(blnH, thnH, 0.0, "Ijtimak");
-    final delT = dynamicalTime.deltaT(jdNM);
+    final delT = dyTme.deltaT(jdNM);
     final jdNM2 = mo.geocentricConjunction(blnH, thnH, delT, "Ijtimak");
 
     int irMabims = 2; // Default, akan diganti jika syarat terpenuhi
@@ -637,7 +631,7 @@ class CalendarService {
     double elev = 30;
 
     final jdNM = mo.geocentricConjunction(blnH, thnH, 0.0, "Ijtimak");
-    final delT = dynamicalTime.deltaT(jdNM);
+    final delT = dyTme.deltaT(jdNM);
     final jdNM2 = mo.geocentricConjunction(blnH, thnH, delT, "Ijtimak");
 
     final jdGS = sn.jdGhurubSyams(jdNM2, gLat, gLon, elev, tmZn);
@@ -695,7 +689,7 @@ class CalendarService {
     ];
 
     final jdNM = mo.geocentricConjunction(blnH, thnH, 0.0, "Ijtimak");
-    final dT = dynamicalTime.deltaT(jdNM);
+    final dT = dyTme.deltaT(jdNM);
     final jdNM2 = mo.geocentricConjunction(blnH, thnH, dT, "Ijtimak");
 
     int irTurki = 2;
@@ -708,9 +702,7 @@ class CalendarService {
       final tHlal00 = mo.moonGeocentricAltitude(jdGS, dT, loc.gLon, loc.gLat);
       final elong00 = mo.moonSunGeocentricElongation(jdGS, dT);
       final grb00 =
-          double.tryParse(
-            julianDay.jdkm(jdGS, loc.tmZn, "Jam Des").toString(),
-          ) ??
+          double.tryParse(julDay.jdkm(jdGS, loc.tmZn, "Jam Des").toString()) ??
           0.0;
 
       final jSunSUT0 = grb00 - loc.tmZn;
@@ -747,11 +739,9 @@ class CalendarService {
       final jdFUTC = mf.floor(jdNM2 + 0.5) - 0.5 + awfUTC / 24.0;
 
       final wIjtimak =
-          double.tryParse(julianDay.jdkm(jdNM2, 0, "Jam Des").toString()) ??
-          0.0;
+          double.tryParse(julDay.jdkm(jdNM2, 0, "Jam Des").toString()) ?? 0.0;
       final wFajarNZ =
-          double.tryParse(julianDay.jdkm(jdFUTC, 0, "Jam Des").toString()) ??
-          0.0;
+          double.tryParse(julDay.jdkm(jdFUTC, 0, "Jam Des").toString()) ?? 0.0;
 
       if (wIjtimak < wFajarNZ) {
         irTurki = 1; // Ijtimak sebelum fajar
@@ -781,12 +771,12 @@ class CalendarService {
   ];
 
   String serviceKalenderHijriahMABIMS(int tglM, int blnM, int thnM) {
-    final jd = julianDay.kmjd(tglM, blnM, thnM);
+    final jd = julDay.kmjd(tglM, blnM, thnM);
     final cjdnM = (jd + 0.5).floorToDouble();
     final jd2 = jd.ceilToDouble();
 
     final thnH = int.parse(
-      julianDay
+      julDay
           .cjdnKH(cjdnM.toInt(), hCalE: 2, hCalL: 2, optResult: "THNH")
           .toString(),
     );
@@ -820,7 +810,7 @@ class CalendarService {
       var nomorUrut = 1;
       for (var jdHari = jdStart; jdHari < jdEnd; jdHari++) {
         if (jdHari == jd2.toInt()) {
-          return "${julianDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
+          return "${julDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
         }
         nomorUrut++;
       }
@@ -830,12 +820,12 @@ class CalendarService {
   }
 
   String serviceKalenderHijriahWH(int tglM, int blnM, int thnM) {
-    final jd = julianDay.kmjd(tglM, blnM, thnM);
+    final jd = julDay.kmjd(tglM, blnM, thnM);
     final cjdnM = (jd + 0.5).floorToDouble();
     final jd2 = jd.ceilToDouble();
 
     final thnH = int.parse(
-      julianDay
+      julDay
           .cjdnKH(cjdnM.toInt(), hCalE: 2, hCalL: 2, optResult: "THNH")
           .toString(),
     );
@@ -869,7 +859,7 @@ class CalendarService {
       var nomorUrut = 1;
       for (var jdHari = jdStart; jdHari < jdEnd; jdHari++) {
         if (jdHari == jd2.toInt()) {
-          return "${julianDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
+          return "${julDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
         }
         nomorUrut++;
       }
@@ -879,12 +869,12 @@ class CalendarService {
   }
 
   String serviceKalenderHijriahTURKI(int tglM, int blnM, int thnM) {
-    final jd = julianDay.kmjd(tglM, blnM, thnM);
+    final jd = julDay.kmjd(tglM, blnM, thnM);
     final cjdnM = (jd + 0.5).floorToDouble();
     final jd2 = jd.ceilToDouble();
 
     final thnH = int.parse(
-      julianDay
+      julDay
           .cjdnKH(cjdnM.toInt(), hCalE: 2, hCalL: 2, optResult: "THNH")
           .toString(),
     );
@@ -918,7 +908,7 @@ class CalendarService {
       var nomorUrut = 1;
       for (var jdHari = jdStart; jdHari < jdEnd; jdHari++) {
         if (jdHari == jd2.toInt()) {
-          return "${julianDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
+          return "${julDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
         }
         nomorUrut++;
       }

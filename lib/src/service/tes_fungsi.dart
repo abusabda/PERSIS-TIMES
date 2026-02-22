@@ -1,16 +1,15 @@
-
-
-import 'package:myhisab/core/dynamical_time.dart';
-import 'package:myhisab/core/julian_day.dart';
-import 'package:myhisab/core/math_utils.dart';
-import 'package:myhisab/core/moon_function.dart';
-import 'package:myhisab/core/sun_function.dart';
-//import 'package:myhisab/core/math_utils.dart';
-import 'package:myhisab/service/calendar_service.dart';
-import 'package:myhisab/service/lunar_eclipse_service.dart';
-import 'package:myhisab/service/qibla_service.dart';
-import 'package:myhisab/service/salat_service.dart';
-import 'package:myhisab/service/solar_eclipse_service.dart';
+import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import 'package:myhisab/src/core/math/math_utils.dart';
+import 'package:myhisab/src/core/astronomy/moon_function.dart';
+// import 'package:myhisab/src/core/astronomy/sun_function.dart';
+// import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
+import 'package:myhisab/src/service/salat_service.dart';
+import 'package:myhisab/src/service/qibla_service.dart';
+import 'package:myhisab/src/service/calendar_service.dart';
+import 'package:myhisab/src/service/lunar_eclipse_service.dart';
+import 'package:myhisab/src/service/solar_eclipse_service.dart';
+import 'package:myhisab/src/service/moon_service.dart';
+import 'package:myhisab/src/service/sun_service.dart';
 
 void main() {
   final ss = SalatService();
@@ -21,94 +20,353 @@ void main() {
   final jd = JulianDay();
   final mf = MathFunction();
   final mo = MoonFunction();
-  final sn = SunFunction();
-  final dt = DynamicalTime();
+  // final sn = SunFunction();
+  // final dt = DynamicalTime();
 
-  // ================= INPUT =================
-  int tglM4 = 1;
-  int blnM4 = 4;
-  int thnM4 = 2025;
-  double jamDes = 0.0;
-  double timeZone = 0.0;
-  int sdp = 0;
+  final moonService = MoonService();
+  final sunService = SunService();
 
-  // ================= PROSES =================
-  double jdVal = jd.kmjd(tglM4, blnM4, thnM4, jamDes, timeZone);
-  double deltaT = 0.0;
+  final res2 = sunService.calculate(
+    tglM: 20,
+    blnM: 4,
+    thnM: 2023,
+    jam: 17,
+    menit: 51,
+    detik: 27,
+    gLon: (106 + 33 / 60.0 + 27.8 / 3600.0),
+    gLat: -(7 + 1 / 60.0 + 44.6 / 3600.0),
+    elev: 52.685,
+    tmZn: 7.0,
+    temp: 10.0,
+    pres: 1010.0,
+  );
 
-  print("====================================================");
+  print("======================");
   print("DATA MATAHARI");
-  print("====================================================");
+  print("======================");
 
-  print("Julian Day                 : ${mf.roundTo(jdVal, place: 4)}");
+  print("JD                   : ${res2.jd}");
+  print("DeltaT               : ${res2.deltaT}");
+
+  print("");
+  print("======================");
+  print("GEOCENTRIC");
+  print("======================");
+
   print(
-    "Delta T                    : ${mf.roundTo(dt.deltaT(jdVal), place: 2)}",
+    "Longitude True       : ${mf.dddms(res2.geoLongitudeTrue, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Apparent Longitude         : ${mf.dddms(sn.sunGeocentricLongitude(jdVal, deltaT, "Appa"), optResult: "DDDMMSS", sdp: sdp)}",
+    "Longitude Apparent   : ${mf.dddms(res2.geoLongitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Apparent Latitude          : ${mf.dddms(sn.sunGeocentricLatitude(jdVal, deltaT), optResult: "SS", sdp: 2)}",
+    "Latitude True        : ${mf.dddms(res2.geoLatitudeTrue, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Apparent Right Ascension   : ${mf.dddms(sn.sunGeocentricRightAscension(jdVal, deltaT), optResult: "", sdp: sdp)}",
-  );
-  print(
-    "Apparent Declination       : ${mf.dddms(sn.sunGeocentricDeclination(jdVal, deltaT), optResult: "", sdp: sdp)}",
-  );
-  print(
-    "Horizontal Parallax        : ${mf.dddms(sn.sunEquatorialHorizontalParallax(jdVal, deltaT), optResult: "SS", sdp: 2)}",
-  );
-  print(
-    "Semidiameter               : ${mf.dddms(sn.sunGeocentricSemidiameter(jdVal, deltaT), optResult: "MMSS", sdp: 2)}",
-  );
-  print(
-    "Equation of Time           : ${mf.dhhms(sn.equationOfTime(jdVal, deltaT), optResult: "MMSS", secDecPlaces: sdp, posNegSign: "+-")}",
-  );
-  print(
-    "Distance                   : ${mf.roundTo(sn.sunGeocentricDistance(jdVal, deltaT, "AU"), place: 8)}",
-  );
-  print(
-    "GHA                        : ${mf.dddms(sn.sunGeocentricGreenwichHourAngle(jdVal, deltaT), optResult: "", sdp: sdp)}",
+    "Latitude Apparent    : ${mf.dddms(res2.geoLatitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print(" ");
-  print("====================================================");
+  print("");
+  print("Distance KM          : ${res2.geoDistanceKm}");
+  print("Distance AU          : ${res2.geoDistanceAu}");
+  print("Distance ER          : ${res2.geoDistanceEr}");
+
+  print("");
+  print(
+    "Right Ascension      : ${mf.dddms(res2.geoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Declination          : ${mf.dddms(res2.geoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Greenwich HA         : ${mf.dhhms(res2.geoGreenwichHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+  print(
+    "Local HA             : ${mf.dhhms(res2.geoLocalHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+
+  print("");
+  print(
+    "Azimuth              : ${mf.dddms(res2.geoAzimuthApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude             : ${mf.dddms(res2.geoAltitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Horizontal Parallax  : ${mf.dddms(res2.geoHorizontalParallax, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Semidiameter         : ${mf.dddms(res2.geoSemidiameter, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("======================");
+  print("TOPOCENTRIC (APPARENT)");
+  print("======================");
+  print("");
+
+  print(
+    "Longitude            : ${mf.dddms(res2.topoLongitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude             : ${mf.dddms(res2.topoLatitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Right Ascension      : ${mf.dddms(res2.topoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Declination          : ${mf.dddms(res2.topoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Greenwich HA         : ${mf.dhhms(res2.topoGreenwichHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+  print(
+    "Local HA             : ${mf.dhhms(res2.topoLocalHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+
+  print("");
+  print(
+    "Semidiameter         : ${mf.dddms(res2.topoSemidiameterApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Azimuth              : ${mf.dddms(res2.topoAzimuthApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("----------------------");
+  print("Airless Altitude");
+  print("----------------------");
+  print(
+    "Upper  : ${mf.dddms(res2.topoAltitudeUpperAirless, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Center : ${mf.dddms(res2.topoAltitudeCenterAirless, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Lower  : ${mf.dddms(res2.topoAltitudeLowerAirless, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("----------------------");
+  print("Apparent Altitude");
+  print("----------------------");
+  print(
+    "Upper  : ${mf.dddms(res2.topoAltitudeUpperApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Center : ${mf.dddms(res2.topoAltitudeCenterApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Lower  : ${mf.dddms(res2.topoAltitudeLowerApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("----------------------");
+  print("Observed Altitude");
+  print("----------------------");
+  print(
+    "Upper  : ${mf.dddms(res2.topoAltitudeUpperObserved, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Center : ${mf.dddms(res2.topoAltitudeCenterObserved, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Lower  : ${mf.dddms(res2.topoAltitudeLowerObserved, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+
+  print("======================");
   print("DATA BULAN");
-  print("====================================================");
+  print("======================");
 
-  print("Julian Day                 : ${mf.roundTo(jdVal, place: 4)}");
-  print(
-    "Delta T                    : ${mf.roundTo(dt.deltaT(jdVal), place: 2)}",
-  );
-  print(
-    "Apparent Longitude         : ${mf.dddms(ml.moonGeocentricLongitude(jdVal, deltaT, "Appa"), optResult: "", sdp: sdp)}",
-  );
-  print(
-    "Apparent Latitude          : ${mf.dddms(mb.moonGeocentricLatitude(jdVal, deltaT), optResult: "", sdp: 0)}",
-  );
-  print(
-    "Apparent Right Ascension   : ${mf.dddms(mo.moonGeocentricRightAscension(jdVal, deltaT), optResult: "", sdp: sdp)}",
-  );
-  print(
-    "Apparent Declination       : ${mf.dddms(mo.moonGeocentricDeclination(jdVal, deltaT), optResult: "", sdp: sdp)}",
-  );
-  print(
-    "Horizontal Parallax        : ${mf.dddms(mo.moonEquatorialHorizontalParallax(jdVal, deltaT), optResult: "", sdp: 0)}",
-  );
-  print(
-    "Semidiameter               : ${mf.dddms(mo.moonGeocentricSemidiameter(jdVal, deltaT), optResult: "MMSS", sdp: 2)}",
-  );
-  print(
-    "Angle Bright Limb          : ${mf.dddms(mo.moonGeocentricBrightLimbAngle(jdVal, deltaT), optResult: "", sdp: sdp)}",
-  );
-  print(
-    "Fraction Illumination      : ${mf.roundTo(mo.moonGeocentricDiskIlluminatedFraction(jdVal, deltaT) / 100.0, place: 10)}",
-  );
-  print(
-    "GHA                        : ${mf.dddms(mo.moonGeocentricGreenwichHourAngle(jdVal, deltaT), optResult: "", sdp: sdp)}",
+  final res = moonService.calculate(
+    tglM: 20,
+    blnM: 4,
+    thnM: 2023,
+    jam: 17,
+    menit: 51,
+    detik: 27,
+    gLon: (106 + 33 / 60.0 + 27.8 / 3600.0),
+    gLat: -(7 + 1 / 60.0 + 44.6 / 3600.0),
+    elev: 52.685,
+    tmZn: 7.0,
+    temp: 10.0,
+    pres: 1010.0,
   );
 
+  print("JD                   : ${res.jd}");
+  print("DeltaT               : ${res.deltaT}");
+
+  print("");
+  print("======================");
+  print("GEOCENTRIC");
+  print("======================");
+
+  print(
+    "Longitude True       : ${mf.dddms(res.geoLongitudeTrue, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Longitude Apparent   : ${mf.dddms(res.geoLongitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude True        : ${mf.dddms(res.geoLatitudeTrue, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude Apparent    : ${mf.dddms(res.geoLatitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("Distance KM          : ${res.geoDistanceKm}");
+  print("Distance AU          : ${res.geoDistanceAu}");
+  print("Distance ER          : ${res.geoDistanceEr}");
+
+  print("");
+  print(
+    "Right Ascension      : ${mf.dddms(res.geoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Declination          : ${mf.dddms(res.geoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Greenwich HA         : ${mf.dhhms(res.geoGreenwichHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+  print(
+    "Local HA             : ${mf.dhhms(res.geoLocalHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+
+  print("");
+  print(
+    "Azimuth              : ${mf.dddms(res.geoAzimuthApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude             : ${mf.dddms(res.geoAltitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Horizontal Parallax  : ${mf.dddms(res.geoHorizontalParallax, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Semidiameter         : ${mf.dddms(res.geoSemidiameter, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Phase Angle          : ${mf.dddms(res.geoPhaseAngle, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print("Illuminated Fraction : ${res.geoIlluminatedFraction}");
+  print(
+    "Bright Limb Angle    : ${mf.dddms(res.geoBrightLimbAngle, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Sun Elongation       : ${mf.dddms(res.geoSunElongation, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("======================");
+  print("TOPOCENTRIC (APPARENT)");
+  print("======================");
+  print("");
+
+  print(
+    "Longitude            : ${mf.dddms(res.topoLongitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude             : ${mf.dddms(res.topoLatitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Right Ascension      : ${mf.dddms(res.topoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Declination          : ${mf.dddms(res.topoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Greenwich HA         : ${mf.dhhms(res.topoGreenwichHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+  print(
+    "Local HA             : ${mf.dhhms(res.topoLocalHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+
+  print("");
+  print(
+    "Semidiameter         : ${mf.dddms(res.topoSemidiameterApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Phase Angle          : ${mf.dddms(res.topoPhaseAngleApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print("Illuminated Fraction : ${res.topoIlluminatedFractionApparent}");
+  print(
+    "Bright Limb Angle    : ${mf.dddms(res.topoBrightLimbAngleApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Azimuth              : ${mf.dddms(res.topoAzimuthApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("----------------------");
+  print("Airless Altitude");
+  print("----------------------");
+  print(
+    "Upper  : ${mf.dddms(res.topoAltitudeUpperAirless, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Center : ${mf.dddms(res.topoAltitudeCenterAirless, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Lower  : ${mf.dddms(res.topoAltitudeLowerAirless, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("----------------------");
+  print("Apparent Altitude");
+  print("----------------------");
+  print(
+    "Upper  : ${mf.dddms(res.topoAltitudeUpperApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Center : ${mf.dddms(res.topoAltitudeCenterApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Lower  : ${mf.dddms(res.topoAltitudeLowerApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("----------------------");
+  print("Observed Altitude");
+  print("----------------------");
+  print(
+    "Upper  : ${mf.dddms(res.topoAltitudeUpperObserved, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Center : ${mf.dddms(res.topoAltitudeCenterObserved, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Lower  : ${mf.dddms(res.topoAltitudeLowerObserved, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(
+    "Topocentric Sun Elongation : ${mf.dddms(res.topoSunElongationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("========================================");
   print("       WAKTU SALAT HARIAN");
   print("========================================");
 
@@ -231,8 +489,8 @@ void main() {
   ];
 
   //input Bulan dan Tahun Hijri
-  final blnH = 11;
-  final thnH = 1439;
+  final blnH = 10;
+  final thnH = 1444;
 
   final abqSesuaiLokasi = ab.hisabAwalBulanHijriahSesuaiLokasi(
     nmLokasi: "Pelabuhan Ratu",
@@ -264,9 +522,9 @@ void main() {
 
   //input tanggal, bulan, tahun Masehi
 
-  final tglM = 18;
-  final blnM = 2;
-  final thnM = 2026;
+  final tglM = 22;
+  final blnM = 4;
+  final thnM = 2023;
 
   final abqMabimsNow = cs.serviceKalenderHijriahMABIMS(tglM, blnM, thnM);
   print("MABIMS                          : $abqMabimsNow");
@@ -876,7 +1134,7 @@ void main() {
   }
 
   // INPUT GERHANA MATAHARI GLOBAL
-  final blnH4 = 6;
+  final blnH4 = 5;
   final thnH4 = 1437;
 
   print("========================================");
@@ -897,16 +1155,25 @@ void main() {
     print("Lebar Gerhana      : ${resSEG["lbr"]}");
 
     print("");
-    print("Kontak P1 : ${se.formatKontakGerhana(resSEG["P1"])}");
-    print("Kontak P2 : ${se.formatKontakGerhana(resSEG["P2"])}");
-    print("Kontak U1 : ${se.formatKontakGerhana(resSEG["U1"])}");
-    print("Kontak U2 : ${se.formatKontakGerhana(resSEG["U2"])}");
-    print("Kontak C1 : ${se.formatKontakGerhana(resSEG["C1"])}");
-    print("Puncak MX : ${se.formatKontakGerhana(resSEG["MX"])}");
-    print("Kontak C2 : ${se.formatKontakGerhana(resSEG["C2"])}");
-    print("Kontak U3 : ${se.formatKontakGerhana(resSEG["U3"])}");
-    print("Kontak U4 : ${se.formatKontakGerhana(resSEG["U4"])}");
-    print("Kontak P3 : ${se.formatKontakGerhana(resSEG["P3"])}");
-    print("Kontak P4 : ${se.formatKontakGerhana(resSEG["P4"])}");
+
+    final kontakList = [
+      "P1",
+      "P2",
+      "U1",
+      "U2",
+      "C1",
+      "MX",
+      "C2",
+      "U3",
+      "U4",
+      "P3",
+      "P4",
+    ];
+
+    for (var k in kontakList) {
+      print("Kontak $k");
+      print(se.formatKontakGerhana(resSEG[k]));
+      print("");
+    }
   }
 }

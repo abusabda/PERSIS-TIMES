@@ -8,7 +8,7 @@ import 'moon_distance.dart';
 import 'nutation.dart';
 import 'julian_day.dart';
 import 'dynamical_time.dart';
-import 'math_utils.dart';
+import '../math/math_utils.dart';
 import 'sun_function.dart';
 
 class MoonFunction {
@@ -24,7 +24,7 @@ class MoonFunction {
   /// Moon Geocentric Right Ascension
   double moonGeocentricRightAscension(double jd, double deltaT) {
     final lmbd = ml.moonGeocentricLongitude(jd, deltaT, "Appa");
-    final beta = mb.moonGeocentricLatitude(jd, deltaT);
+    final beta = mb.moonGeocentricLatitude(jd, deltaT, "Appa");
     final epsln = nt.trueObliquityOfEcliptic(jd, deltaT);
 
     final alpha = mf.mod(
@@ -43,7 +43,7 @@ class MoonFunction {
   /// Moon Geocentric Declination
   double moonGeocentricDeclination(double jd, double deltaT) {
     final lmbd = ml.moonGeocentricLongitude(jd, deltaT, "Appa");
-    final beta = mb.moonGeocentricLatitude(jd, deltaT);
+    final beta = mb.moonGeocentricLatitude(jd, deltaT, "Appa");
     final epsln = nt.trueObliquityOfEcliptic(jd, deltaT);
 
     final delta = mf.deg(
@@ -166,7 +166,7 @@ class MoonFunction {
         rMoon - rSun * math.cos(mf.rad(d)),
       ),
     );
-    final k = ((1 + math.cos(mf.rad(i))) / 2) * 100;
+    final k = ((1 + math.cos(mf.rad(i))) / 2);
     return k;
   }
 
@@ -199,7 +199,7 @@ class MoonFunction {
     double elev,
   ) {
     final lambda = ml.moonGeocentricLongitude(jd, deltaT, "Appa");
-    final beta = mb.moonGeocentricLatitude(jd, deltaT);
+    final beta = mb.moonGeocentricLatitude(jd, deltaT, "Appa");
     final thta = sn.localApparentSiderialTime(jd, deltaT, gLon);
     final x = sn.termX(gLat, elev);
     final phi = moonEquatorialHorizontalParallax(jd, deltaT);
@@ -279,7 +279,7 @@ class MoonFunction {
     double elev,
   ) {
     final lmbd = ml.moonGeocentricLongitude(jd, deltaT, "Appa");
-    final beta = mb.moonGeocentricLatitude(jd, deltaT);
+    final beta = mb.moonGeocentricLatitude(jd, deltaT, "Appa");
     final phi = moonEquatorialHorizontalParallax(jd, deltaT);
     final thta = sn.localApparentSiderialTime(jd, deltaT, gLon);
     final eps = nt.trueObliquityOfEcliptic(jd, deltaT);
@@ -311,7 +311,7 @@ class MoonFunction {
     double elev,
   ) {
     final lmbdP = moonTopocentricLongitude(jd, deltaT, gLon, gLat, elev);
-    final beta = mb.moonGeocentricLatitude(jd, deltaT);
+    final beta = mb.moonGeocentricLatitude(jd, deltaT, "Appa");
     final phi = moonEquatorialHorizontalParallax(jd, deltaT);
     final thta = sn.localApparentSiderialTime(jd, deltaT, gLon);
     final eps = nt.trueObliquityOfEcliptic(jd, deltaT);
@@ -533,14 +533,17 @@ class MoonFunction {
   }
 
   //Keterangan:
-  //htc  = Airless topocentric altitude of The Moon’s Center Limb
-  //htac = Apparent topocentric altitude of The Moon’s Center Limb
-  //htoc = Observed altitude of The Moon’s Center Limb
+
   //htu  = Airles topocentric altitude of The Moon’s Upper Limb
-  //htau = Apparent topocentric altitude of The Moon’s Upper Limb
-  //htou = Observed altitude of The Moon’s Upper Limb
+  //htc  = Airless topocentric altitude of The Moon’s Center Limb
   //htl  = Airles topocentric altitude of The Moon’s Lower Limb
+
   //htal = Apparent topocentric altitude of The Moon’s Lower Limb
+  //htac = Apparent topocentric altitude of The Moon’s Center Limb
+  //htau = Apparent topocentric altitude of The Moon’s Upper Limb
+
+  //htou = Observed altitude of The Moon’s Upper Limb
+  //htoc = Observed altitude of The Moon’s Center Limb
   //htol = Observed altitude of The Moon’s Lower Limb
 
   double moonSunTopocentricElongation(

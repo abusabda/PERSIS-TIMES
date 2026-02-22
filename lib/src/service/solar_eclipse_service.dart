@@ -1,10 +1,10 @@
 import 'dart:math' as math;
-import 'package:myhisab/core/dynamical_time.dart';
-import 'package:myhisab/core/julian_day.dart';
-import 'package:myhisab/core/math_utils.dart';
-import 'package:myhisab/core/moon_distance.dart';
-import 'package:myhisab/core/moon_function.dart';
-import 'package:myhisab/core/sun_function.dart';
+import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
+import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import 'package:myhisab/src/core/math/math_utils.dart';
+import 'package:myhisab/src/core/astronomy/moon_distance.dart';
+import 'package:myhisab/src/core/astronomy/moon_function.dart';
+import 'package:myhisab/src/core/astronomy/sun_function.dart';
 
 final julianDay = JulianDay();
 final dynamicalTime = DynamicalTime();
@@ -3293,7 +3293,7 @@ H.P : ${moon?["HP"] != null ? mf.dddms(moon["HP"], optResult: "DDD°MM'SS\"", sd
             as double;
 
     return """
-${julianDay.jdkm(jdTD)}
+Tanggal  : ${julianDay.jdkm(jdTD)}
 Jam TD   : ${mf.dhhms(double.parse(julianDay.jdkm(jdTD, 0, "Jam Des")), optResult: "HH:MM:SS", secDecPlaces: 1)}
 Jam UT   : ${mf.dhhms(double.parse(julianDay.jdkm(jdUT, 0, "Jam Des")), optResult: "HH:MM:SS", secDecPlaces: 1)}
 Bujur    : ${mf.dddms(lmd, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}

@@ -1,8 +1,8 @@
 import 'dart:math';
-import 'julian_day.dart';
-import 'math_utils.dart';
-import 'dynamical_time.dart';
-import 'sun_function.dart';
+import '../astronomy/julian_day.dart';
+import '../math/math_utils.dart';
+import '../astronomy/dynamical_time.dart';
+import '../astronomy/sun_function.dart';
 
 class WaktuSalat {
   final julianDay = JulianDay();

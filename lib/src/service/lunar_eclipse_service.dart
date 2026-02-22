@@ -1,18 +1,18 @@
 import 'dart:math' as math;
-import 'package:myhisab/core/dynamical_time.dart';
-import 'package:myhisab/core/julian_day.dart';
-import 'package:myhisab/core/math_utils.dart';
-import 'package:myhisab/core/moon_function.dart';
-import 'package:myhisab/core/sun_function.dart';
-
-final julianDay = JulianDay();
-final dynamicalTime = DynamicalTime();
-
-final sn = SunFunction();
-final mf = MathFunction();
-final mo = MoonFunction();
+import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
+import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import 'package:myhisab/src/core/math/math_utils.dart';
+import 'package:myhisab/src/core/astronomy/moon_function.dart';
+import 'package:myhisab/src/core/astronomy/sun_function.dart';
 
 class LunarEclipseService {
+  final julDay = JulianDay();
+  final dyTme = DynamicalTime();
+
+  final sn = SunFunction();
+  final mf = MathFunction();
+  final mo = MoonFunction();
+
   double lBesselian(int blnH, int thnH, String optResult) {
     final jdEclipse1 = mo.jdeEclipseModified(blnH, thnH, 2);
     if (jdEclipse1 <= 0) return double.nan;
@@ -26,7 +26,7 @@ class LunarEclipseService {
       24.0,
     );
 
-    final dT = dynamicalTime.deltaT(jdEclipse2);
+    final dT = dyTme.deltaT(jdEclipse2);
 
     // ---------------- Data Matahari ----------------
     final aRsM2 = sn.sunGeocentricRightAscension(jdEclipse2 - 2 / 24, 0);

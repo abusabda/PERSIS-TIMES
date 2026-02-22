@@ -1,28 +1,28 @@
 import 'dart:math' as math;
-import 'math_utils.dart';
+import '../math/math_utils.dart';
 import 'julian_day.dart';
 import 'dynamical_time.dart';
 import 'nutation.dart';
 
-import '../data/sun_data_l00.dart';
-import '../data/sun_data_l01.dart';
-import '../data/sun_data_l02.dart';
-import '../data/sun_data_l03.dart';
-import '../data/sun_data_l04.dart';
-import '../data/sun_data_l05.dart';
+import '../../data/sun_data_l00.dart';
+import '../../data/sun_data_l01.dart';
+import '../../data/sun_data_l02.dart';
+import '../../data/sun_data_l03.dart';
+import '../../data/sun_data_l04.dart';
+import '../../data/sun_data_l05.dart';
 
-import '../data/sun_data_b00.dart';
-import '../data/sun_data_b01.dart';
-import '../data/sun_data_b02.dart';
-import '../data/sun_data_b03.dart';
-import '../data/sun_data_b04.dart';
+import '../../data/sun_data_b00.dart';
+import '../../data/sun_data_b01.dart';
+import '../../data/sun_data_b02.dart';
+import '../../data/sun_data_b03.dart';
+import '../../data/sun_data_b04.dart';
 
-import '../data/sun_data_r00.dart';
-import '../data/sun_data_r01.dart';
-import '../data/sun_data_r02.dart';
-import '../data/sun_data_r03.dart';
-import '../data/sun_data_r04.dart';
-import '../data/sun_data_r05.dart';
+import '../../data/sun_data_r00.dart';
+import '../../data/sun_data_r01.dart';
+import '../../data/sun_data_r02.dart';
+import '../../data/sun_data_r03.dart';
+import '../../data/sun_data_r04.dart';
+import '../../data/sun_data_r05.dart';
 
 class SunFunction {
   final l00 = SunDataL00.vsop87MtL0;
