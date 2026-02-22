@@ -4,16 +4,16 @@ import 'package:myhisab/src/core/astronomy/moon_function.dart';
 // import 'package:myhisab/src/core/astronomy/sun_function.dart';
 // import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
 import 'package:myhisab/src/service/salat_service.dart';
-import 'package:myhisab/src/service/qibla_service.dart';
 import 'package:myhisab/src/service/calendar_service.dart';
 import 'package:myhisab/src/service/lunar_eclipse_service.dart';
 import 'package:myhisab/src/service/solar_eclipse_service.dart';
 import 'package:myhisab/src/service/moon_service.dart';
 import 'package:myhisab/src/service/sun_service.dart';
+import 'package:myhisab/src/service/qibla_service.dart';
 
 void main() {
   final ss = SalatService();
-  final qs = QiblaService();
+  //final qs = QiblaService();
   final cs = CalendarService();
   final le = LunarEclipseService();
   final se = SolarEclipseService();
@@ -48,7 +48,6 @@ void main() {
   print("JD                   : ${res2.jd}");
   print("DeltaT               : ${res2.deltaT}");
 
-  print("");
   print("======================");
   print("GEOCENTRIC");
   print("======================");
@@ -367,6 +366,50 @@ void main() {
   );
 
   print("========================================");
+  print("       ARAH KIBLAT");
+  print("========================================");
+
+  final qiblaService = QiblaService();
+
+  final res3 = qiblaService.getQibla(
+    tglM: 23,
+    blnM: 2,
+    thnM: 2026,
+    gLon: 107.6576575,
+    gLat: -6.9754746,
+    tmZn: 7,
+  );
+
+  print(
+    "Arah Spherical         : ${mf.dddms(res3.arahSpherical, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Arah Ellipsoid         : ${mf.dddms(res3.arahEllipsoid, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Arah Vincenty          : ${mf.dddms(res3.arahVincenty, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("Jarak Spherical        : ${res3.jarakSphericalKm} KM");
+  print("Jarak Ellipsoid        : ${res3.jarakEllipsoidKm} KM");
+  print("Jarak Vincenty         : ${res3.jarakVincentyKm} KM");
+
+  print(
+    "Bayangan kiblat 1      : ${mf.dhhms(res3.bayangan1, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+  print(
+    "Bayangan kiblat2       : ${mf.dhhms(res3.bayangan2, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
+  );
+
+  print("Rashdul Qiblat 1       : ${res3.rashdul1}");
+  print("Rashdul Qiblat 2       : ${res3.rashdul2}");
+
+  print("Antipoda Qiblat 1      : ${res3.antipoda1}");
+  print("Antipoda Qiblat 2      : ${res3.antipoda2}");
+
+  print("");
+
+  print("========================================");
   print("       WAKTU SALAT HARIAN");
   print("========================================");
 
@@ -403,70 +446,6 @@ void main() {
   );
 
   print(waktuSalatBulanan);
-  print("");
-
-  print("========================================");
-  print("             ARAH KIBLAT");
-  print("========================================");
-
-  final arahKiblat = qs.arahQiblat(
-    tglM: 1,
-    blnM: 1,
-    thnM: 2025,
-    gLon: 107 + 37 / 60.0,
-    gLat: -(7 + 5 / 60.0),
-    tmZn: 7,
-    sdp: 2,
-  );
-
-  print(arahKiblat);
-  print("");
-
-  print("========================================");
-  print("         WAKTU KIBLAT BULANAN");
-  print("========================================");
-
-  final waktuKiblatBulanan = qs.waktuKiblatBulanan(
-    tglM1: 1,
-    blnM1: 1,
-    thnM1: 2025,
-    tglM2: 31,
-    blnM2: 1,
-    thnM2: 2025,
-    gLon: 107 + 37 / 60.0,
-    gLat: -(7 + 5 / 60.0),
-    elev: 0,
-    tmZn: 7,
-  );
-
-  print(waktuKiblatBulanan);
-  print("");
-
-  print("========================================");
-  print("        RASHDUL KIBLAT TAHUNAN");
-  print("========================================");
-
-  final rashdulQiblatTahunan = qs.rashdulQiblatTahunan(
-    thnM1: 2025,
-    thnM2: 2026,
-    tmZn: 7,
-  );
-
-  print(rashdulQiblatTahunan);
-
-  print("");
-
-  print("========================================");
-  print("        ANTIPODA KIBLAT TAHUNAN");
-  print("========================================");
-
-  final antipodaQiblatTahunan = qs.antipodaQiblatTahunan(
-    thnM1: 2025,
-    thnM2: 2026,
-    tmZn: 7,
-  );
-
-  print(antipodaQiblatTahunan);
   print("");
 
   print("========================================");

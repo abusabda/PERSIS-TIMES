@@ -1,70 +1,65 @@
 import 'package:myhisab/src/core/astronomy/julian_day.dart';
-import 'package:myhisab/src/core/math/math_utils.dart';
 import 'package:myhisab/src/core/qibla/arah_kiblat.dart';
+import 'package:myhisab/src/model/qibla_result.dart';
+import 'package:myhisab/src/model/qibla_daily_result.dart';
+import 'package:myhisab/src/model/qibla_yearly_result.dart';
 
 class QiblaService {
-  String arahQiblat({
+  final ArahKiblat _aq = ArahKiblat();
+  final JulianDay _jd = JulianDay();
+
+  // =========================================================
+  // MAIN QIBLA
+  // =========================================================
+
+  QiblaResult getQibla({
     required int tglM,
     required int blnM,
     required int thnM,
     required double gLon,
     required double gLat,
     required double tmZn,
-    required int sdp,
   }) {
-    final mf = MathFunction();
-    final aq = ArahKiblat();
+    return QiblaResult(
+      arahSpherical: _aq.arahQiblatSpherical(gLon, gLat),
+      arahEllipsoid: _aq.arahQiblaWithEllipsoidCorrection(gLon, gLat),
+      arahVincenty: _aq.arahQiblaVincenty(gLon, gLat, 'PtoQ'),
+      jarakSphericalKm: _aq.jarakQiblatSpherical(gLon, gLat),
+      jarakEllipsoidKm: _aq.jarakQiblatEllipsoid(gLon, gLat),
+      jarakVincentyKm: _aq.arahQiblaVincenty(gLon, gLat, 'Dist') / 1000.0,
 
-    final sb = StringBuffer();
-
-    sb.writeln(
-      "Arah Kiblat Spherical      : ${mf.dddms(aq.arahQiblatSpherical(gLon, gLat), optResult: "DDMMSS", sdp: sdp, posNegSign: "")}",
+      bayangan1: _aq.bayanganQiblatHarian(
+        gLon,
+        gLat,
+        tglM,
+        blnM,
+        thnM,
+        tmZn,
+        "spherical",
+        1,
+      ),
+      bayangan2: _aq.bayanganQiblatHarian(
+        gLon,
+        gLat,
+        tglM,
+        blnM,
+        thnM,
+        tmZn,
+        "spherical",
+        2,
+      ),
+      rashdul1: _aq.rashdulQiblat(thnM, tmZn, 1),
+      rashdul2: _aq.rashdulQiblat(thnM, tmZn, 2),
+      antipoda1: _aq.antipodaKabah(thnM, tmZn, 1),
+      antipoda2: _aq.antipodaKabah(thnM, tmZn, 2),
     );
-    sb.writeln(
-      "Arah Kiblat Ellipsoid      : ${mf.dddms(aq.arahQiblaWithEllipsoidCorrection(gLon, gLat), optResult: "DDMMSS", sdp: sdp, posNegSign: "")}",
-    );
-    sb.writeln(
-      "Arah Kiblat Vincenty       : ${mf.dddms(aq.arahQiblaVincenty(gLon, gLat, 'PtoQ'), optResult: "DDMMSS", sdp: sdp, posNegSign: "")}",
-    );
-
-    sb.writeln(
-      "Jarak Kiblat Spherical     : ${aq.jarakQiblatSpherical(gLon, gLat).toStringAsFixed(3)} KM",
-    );
-    sb.writeln(
-      "Jarak Kiblat Ellipsoid     : ${aq.jarakQiblatEllipsoid(gLon, gLat).toStringAsFixed(3)} KM",
-    );
-    sb.writeln(
-      "Jarak Kiblat Vincenty      : ${(aq.arahQiblaVincenty(gLon, gLat, 'Dist') / 1000.0).toStringAsFixed(3)} KM",
-    );
-
-    sb.writeln(
-      "Bayangan Kiblat 1          : ${mf.dhhms(aq.bayanganQiblatHarian(gLon, gLat, tglM, blnM, thnM, tmZn, "spherical", 1), optResult: 'HH:MM:SS', secDecPlaces: 0, posNegSign: "")}",
-    );
-
-    sb.writeln(
-      "Bayangan Kiblat 2          : ${mf.dhhms(aq.bayanganQiblatHarian(gLon, gLat, tglM, blnM, thnM, tmZn, "spherical", 2), optResult: 'HH:MM:SS', secDecPlaces: 0, posNegSign: "")}",
-    );
-
-    sb.writeln(
-      "Rashdul Qiblat 1           : ${aq.rashdulQiblat(thnM, tmZn, 1)}",
-    );
-
-    sb.writeln(
-      "Rashdul Qiblat 2           : ${aq.rashdulQiblat(thnM, tmZn, 2)}",
-    );
-
-    sb.writeln(
-      "Antipoda Kabah 1           : ${aq.antipodaKabah(thnM, tmZn, 1)}",
-    );
-
-    sb.writeln(
-      "Antipoda Kabah 2           : ${aq.antipodaKabah(thnM, tmZn, 2)}",
-    );
-
-    return sb.toString();
   }
 
-  String waktuKiblatBulanan({
+  // =========================================================
+  // DAILY SHADOW
+  // =========================================================
+
+  QiblaDailyResult getDailyShadow({
     required int tglM1,
     required int blnM1,
     required int thnM1,
@@ -73,85 +68,99 @@ class QiblaService {
     required int thnM2,
     required double gLon,
     required double gLat,
-    required double elev,
     required double tmZn,
   }) {
-    final aq = ArahKiblat();
-    final mf = MathFunction();
-    final julianDay = JulianDay();
-    final sb = StringBuffer();
+    final jd1 = _jd.kmjd(tglM1, blnM1, thnM1, 0, 0);
+    final jd2 = _jd.kmjd(tglM2, blnM2, thnM2, 0, 0);
 
-    // Hitung JD awal & akhir
-    final jd1 = julianDay.kmjd(tglM1, blnM1, thnM1, 0, 0);
-    final jd2 = julianDay.kmjd(tglM2, blnM2, thnM2, 0, 0);
     final diff = (jd2 - jd1) + 1;
     var jdh = jd1 - 1;
+
+    final List<QiblaDailyShadow> result = [];
 
     for (int i = 1; i <= diff.toInt(); i++) {
       jdh += 1;
 
-      final tglM = int.parse(julianDay.jdkm(jdh, tmZn, "TglM").toString());
-      final blnM = int.parse(julianDay.jdkm(jdh, tmZn, "BlnM").toString());
-      final thnM = int.parse(julianDay.jdkm(jdh, tmZn, "ThnM").toString());
-      final tglFull = julianDay.jdkm(jdh, tmZn);
+      final tglM = int.parse(_jd.jdkm(jdh, tmZn, "TglM").toString());
+      final blnM = int.parse(_jd.jdkm(jdh, tmZn, "BlnM").toString());
+      final thnM = int.parse(_jd.jdkm(jdh, tmZn, "ThnM").toString());
+      final tglFull = _jd.jdkm(jdh, tmZn);
 
-      sb.writeln(
-        "$tglFull Bayangan Kiblat 1          : ${mf.dhhms(aq.bayanganQiblatHarian(gLon, gLat, tglM, blnM, thnM, tmZn, "spherical", 1), optResult: 'HH:MM:SS', secDecPlaces: 0, posNegSign: "")}",
+      result.add(
+        QiblaDailyShadow(
+          tanggal: tglFull,
+          bayangan1: _aq.bayanganQiblatHarian(
+            gLon,
+            gLat,
+            tglM,
+            blnM,
+            thnM,
+            tmZn,
+            "spherical",
+            1,
+          ),
+          bayangan2: _aq.bayanganQiblatHarian(
+            gLon,
+            gLat,
+            tglM,
+            blnM,
+            thnM,
+            tmZn,
+            "spherical",
+            2,
+          ),
+        ),
       );
-
-      sb.writeln(
-        "$tglFull Bayangan Kiblat 2          : ${mf.dhhms(aq.bayanganQiblatHarian(gLon, gLat, tglM, blnM, thnM, tmZn, "spherical", 2), optResult: 'HH:MM:SS', secDecPlaces: 0, posNegSign: "")}",
-      );
-
-      sb.writeln(""); // spasi antar hari
     }
 
-    return sb.toString();
+    return QiblaDailyResult(data: result);
   }
 
-  String rashdulQiblatTahunan({
+  // =========================================================
+  // RASHDUL QIBLAT TAHUNAN
+  // =========================================================
+
+  QiblaYearlyResult getRashdulTahunan({
     required int thnM1,
     required int thnM2,
     required double tmZn,
   }) {
-    final aq = ArahKiblat();
-    final sb = StringBuffer();
+    final List<QiblaYearlyEvent> result = [];
 
-    var intv = thnM2 - thnM1;
-    var thnM = thnM1 - 1;
-
-    for (int i = 0; i <= intv; i++) {
-      thnM = thnM + 1;
-      sb.writeln(
-        "Rashdul Qiblat 1           : ${aq.rashdulQiblat(thnM, tmZn, 1)}",
-      );
-      sb.writeln(
-        "Rashdul Qiblat 2           : ${aq.rashdulQiblat(thnM, tmZn, 2)}",
+    for (int thn = thnM1; thn <= thnM2; thn++) {
+      result.add(
+        QiblaYearlyEvent(
+          tahun: thn,
+          event1: _aq.rashdulQiblat(thn, tmZn, 1),
+          event2: _aq.rashdulQiblat(thn, tmZn, 2),
+        ),
       );
     }
-    return sb.toString();
+
+    return QiblaYearlyResult(data: result);
   }
 
-  String antipodaQiblatTahunan({
+  // =========================================================
+  // ANTIPODA TAHUNAN
+  // =========================================================
+
+  QiblaYearlyResult getAntipodaTahunan({
     required int thnM1,
     required int thnM2,
     required double tmZn,
   }) {
-    final aq = ArahKiblat();
-    final sb = StringBuffer();
+    final List<QiblaYearlyEvent> result = [];
 
-    var intv = thnM2 - thnM1;
-    var thnM = thnM1 - 1;
-
-    for (int i = 0; i <= intv; i++) {
-      thnM = thnM + 1;
-      sb.writeln(
-        "Antipoda Qiblat 1          : ${aq.antipodaKabah(thnM, tmZn, 1)}",
-      );
-      sb.writeln(
-        "Antipoda Qiblat 2          : ${aq.antipodaKabah(thnM, tmZn, 2)}",
+    for (int thn = thnM1; thn <= thnM2; thn++) {
+      result.add(
+        QiblaYearlyEvent(
+          tahun: thn,
+          event1: _aq.antipodaKabah(thn, tmZn, 1),
+          event2: _aq.antipodaKabah(thn, tmZn, 2),
+        ),
       );
     }
-    return sb.toString();
+
+    return QiblaYearlyResult(data: result);
   }
 }
