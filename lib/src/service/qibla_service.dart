@@ -1,16 +1,10 @@
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
 import 'package:myhisab/src/core/qibla/arah_kiblat.dart';
 import 'package:myhisab/src/model/qibla_result.dart';
-import 'package:myhisab/src/model/qibla_daily_result.dart';
-import 'package:myhisab/src/model/qibla_yearly_result.dart';
+import 'package:myhisab/src/core/astronomy/julian_day.dart';
 
 class QiblaService {
   final ArahKiblat _aq = ArahKiblat();
   final JulianDay _jd = JulianDay();
-
-  // =========================================================
-  // MAIN QIBLA
-  // =========================================================
 
   QiblaResult getQibla({
     required int tglM,
@@ -27,7 +21,6 @@ class QiblaService {
       jarakSphericalKm: _aq.jarakQiblatSpherical(gLon, gLat),
       jarakEllipsoidKm: _aq.jarakQiblatEllipsoid(gLon, gLat),
       jarakVincentyKm: _aq.arahQiblaVincenty(gLon, gLat, 'Dist') / 1000.0,
-
       bayangan1: _aq.bayanganQiblatHarian(
         gLon,
         gLat,
@@ -55,112 +48,143 @@ class QiblaService {
     );
   }
 
-  // =========================================================
-  // DAILY SHADOW
-  // =========================================================
+  // List<Map<String, dynamic>> getQiblaRange({
+  //   required int tglAwal,
+  //   required int blnAwal,
+  //   required int thnAwal,
+  //   required int tglAkhir,
+  //   required int blnAkhir,
+  //   required int thnAkhir,
+  //   required double gLon,
+  //   required double gLat,
+  //   required double tmZn,
+  // }) {
+  //   final List<Map<String, dynamic>> results = [];
 
-  QiblaDailyResult getDailyShadow({
-    required int tglM1,
-    required int blnM1,
-    required int thnM1,
-    required int tglM2,
-    required int blnM2,
-    required int thnM2,
+  //   DateTime start = DateTime(thnAwal, blnAwal, tglAwal);
+  //   DateTime end = DateTime(thnAkhir, blnAkhir, tglAkhir);
+
+  //   for (
+  //     DateTime date = start;
+  //     !date.isAfter(end);
+  //     date = date.add(const Duration(days: 1))
+  //   ) {
+  //     final res = getQibla(
+  //       tglM: date.day,
+  //       blnM: date.month,
+  //       thnM: date.year,
+  //       gLon: gLon,
+  //       gLat: gLat,
+  //       tmZn: tmZn,
+  //     );
+
+  //     results.add({
+  //       "tanggal": date,
+  //       "bayangan1": res.bayangan1,
+  //       "bayangan2": res.bayangan2,
+  //     });
+  //   }
+
+  //   return results;
+  // }
+
+  List<Map<String, dynamic>> getQiblaRange({
+    required int tglAwal,
+    required int blnAwal,
+    required int thnAwal,
+    required int tglAkhir,
+    required int blnAkhir,
+    required int thnAkhir,
     required double gLon,
     required double gLat,
     required double tmZn,
+    String azQiblat = "spherical",
   }) {
-    final jd1 = _jd.kmjd(tglM1, blnM1, thnM1, 0, 0);
-    final jd2 = _jd.kmjd(tglM2, blnM2, thnM2, 0, 0);
+    final List<Map<String, dynamic>> results = [];
 
-    final diff = (jd2 - jd1) + 1;
-    var jdh = jd1 - 1;
+    final jdStart = _jd.kmjd(tglAwal, blnAwal, thnAwal, 12.0, tmZn);
+    final jdEnd = _jd.kmjd(tglAkhir, blnAkhir, thnAkhir, 12.0, tmZn);
 
-    final List<QiblaDailyShadow> result = [];
+    for (double jd = jdStart; jd <= jdEnd; jd += 1.0) {
+      final int tgl = int.parse(_jd.jdkm(jd, tmZn, "TGL"));
+      final int bln = int.parse(_jd.jdkm(jd, tmZn, "BLN"));
+      final int thn = int.parse(_jd.jdkm(jd, tmZn, "THN"));
 
-    for (int i = 1; i <= diff.toInt(); i++) {
-      jdh += 1;
+      // final String hari = _jd.jdkm(jd, tmZn, "HARI");
+      // final String bulanNama = _jd.jdkm(jd, tmZn, "BULAN");
 
-      final tglM = int.parse(_jd.jdkm(jdh, tmZn, "TglM").toString());
-      final blnM = int.parse(_jd.jdkm(jdh, tmZn, "BlnM").toString());
-      final thnM = int.parse(_jd.jdkm(jdh, tmZn, "ThnM").toString());
-      final tglFull = _jd.jdkm(jdh, tmZn);
-
-      result.add(
-        QiblaDailyShadow(
-          tanggal: tglFull,
-          bayangan1: _aq.bayanganQiblatHarian(
-            gLon,
-            gLat,
-            tglM,
-            blnM,
-            thnM,
-            tmZn,
-            "spherical",
-            1,
-          ),
-          bayangan2: _aq.bayanganQiblatHarian(
-            gLon,
-            gLat,
-            tglM,
-            blnM,
-            thnM,
-            tmZn,
-            "spherical",
-            2,
-          ),
-        ),
+      final bayangan1 = _aq.bayanganQiblatHarian(
+        gLon,
+        gLat,
+        tgl,
+        bln,
+        thn,
+        tmZn,
+        azQiblat,
+        1,
       );
+
+      final bayangan2 = _aq.bayanganQiblatHarian(
+        gLon,
+        gLat,
+        tgl,
+        bln,
+        thn,
+        tmZn,
+        azQiblat,
+        2,
+      );
+
+      results.add({
+        "jd": jd,
+        // "hari": hari,
+        // "tanggal": tgl,
+        // "bulan": bln,
+        // "bulanNama": bulanNama,
+        // "tahun": thn,
+        "bayangan1": bayangan1,
+        "bayangan2": bayangan2,
+      });
     }
 
-    return QiblaDailyResult(data: result);
+    return results;
   }
 
-  // =========================================================
-  // RASHDUL QIBLAT TAHUNAN
-  // =========================================================
-
-  QiblaYearlyResult getRashdulTahunan({
-    required int thnM1,
-    required int thnM2,
+  List<Map<String, dynamic>> getRashdulRange({
+    required int tahunAwal,
+    required int tahunAkhir,
     required double tmZn,
   }) {
-    final List<QiblaYearlyEvent> result = [];
+    final List<Map<String, dynamic>> results = [];
 
-    for (int thn = thnM1; thn <= thnM2; thn++) {
-      result.add(
-        QiblaYearlyEvent(
-          tahun: thn,
-          event1: _aq.rashdulQiblat(thn, tmZn, 1),
-          event2: _aq.rashdulQiblat(thn, tmZn, 2),
-        ),
-      );
+    for (int tahun = tahunAwal; tahun <= tahunAkhir; tahun++) {
+      final rashdul1 = _aq.rashdulQiblat(tahun, tmZn, 1);
+      final rashdul2 = _aq.rashdulQiblat(tahun, tmZn, 2);
+
+      results.add({"tahun": tahun, "rashdul1": rashdul1, "rashdul2": rashdul2});
     }
 
-    return QiblaYearlyResult(data: result);
+    return results;
   }
 
-  // =========================================================
-  // ANTIPODA TAHUNAN
-  // =========================================================
-
-  QiblaYearlyResult getAntipodaTahunan({
-    required int thnM1,
-    required int thnM2,
+  List<Map<String, dynamic>> getAntipodaRange({
+    required int tahunAwal,
+    required int tahunAkhir,
     required double tmZn,
   }) {
-    final List<QiblaYearlyEvent> result = [];
+    final List<Map<String, dynamic>> results = [];
 
-    for (int thn = thnM1; thn <= thnM2; thn++) {
-      result.add(
-        QiblaYearlyEvent(
-          tahun: thn,
-          event1: _aq.antipodaKabah(thn, tmZn, 1),
-          event2: _aq.antipodaKabah(thn, tmZn, 2),
-        ),
-      );
+    for (int tahun = tahunAwal; tahun <= tahunAkhir; tahun++) {
+      final antipoda1 = _aq.antipodaKabah(tahun, tmZn, 1);
+      final antipoda2 = _aq.antipodaKabah(tahun, tmZn, 2);
+
+      results.add({
+        "tahun": tahun,
+        "antipoda1": antipoda1,
+        "antipoda2": antipoda2,
+      });
     }
 
-    return QiblaYearlyResult(data: result);
+    return results;
   }
 }

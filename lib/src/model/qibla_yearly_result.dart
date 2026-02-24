@@ -1,7 +1,9 @@
+import 'qibla_event_result.dart';
+
 class QiblaYearlyEvent {
   final int tahun;
-  final String event1;
-  final String event2;
+  final QiblaEventResult event1;
+  final QiblaEventResult event2;
 
   QiblaYearlyEvent({
     required this.tahun,

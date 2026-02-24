@@ -1,3 +1,5 @@
+import 'qibla_event_result.dart';
+
 class QiblaResult {
   final double arahSpherical;
   final double arahEllipsoid;
@@ -10,11 +12,11 @@ class QiblaResult {
   final double bayangan1;
   final double bayangan2;
 
-  final String rashdul1;
-  final String rashdul2;
+  final QiblaEventResult rashdul1;
+  final QiblaEventResult rashdul2;
 
-  final String antipoda1;
-  final String antipoda2;
+  final QiblaEventResult antipoda1;
+  final QiblaEventResult antipoda2;
 
   QiblaResult({
     required this.arahSpherical,

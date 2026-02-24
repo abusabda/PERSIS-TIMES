@@ -1,8 +1,8 @@
 import 'package:myhisab/src/core/astronomy/julian_day.dart';
 import 'package:myhisab/src/core/math/math_utils.dart';
 import 'package:myhisab/src/core/astronomy/moon_function.dart';
-// import 'package:myhisab/src/core/astronomy/sun_function.dart';
-// import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
+import 'package:myhisab/src/model/salat_status.dart';
+import 'package:myhisab/src/model/salat_value.dart';
 import 'package:myhisab/src/service/salat_service.dart';
 import 'package:myhisab/src/service/calendar_service.dart';
 import 'package:myhisab/src/service/lunar_eclipse_service.dart';
@@ -12,19 +12,18 @@ import 'package:myhisab/src/service/sun_service.dart';
 import 'package:myhisab/src/service/qibla_service.dart';
 
 void main() {
-  final ss = SalatService();
-  //final qs = QiblaService();
   final cs = CalendarService();
   final le = LunarEclipseService();
   final se = SolarEclipseService();
   final jd = JulianDay();
   final mf = MathFunction();
   final mo = MoonFunction();
-  // final sn = SunFunction();
-  // final dt = DynamicalTime();
-
   final moonService = MoonService();
   final sunService = SunService();
+
+  print("======================");
+  print("DATA MATAHARI");
+  print("======================");
 
   final res2 = sunService.calculate(
     tglM: 20,
@@ -40,10 +39,6 @@ void main() {
     temp: 10.0,
     pres: 1010.0,
   );
-
-  print("======================");
-  print("DATA MATAHARI");
-  print("======================");
 
   print("JD                   : ${res2.jd}");
   print("DeltaT               : ${res2.deltaT}");
@@ -65,12 +60,10 @@ void main() {
     "Latitude Apparent    : ${mf.dddms(res2.geoLatitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print("Distance KM          : ${res2.geoDistanceKm}");
   print("Distance AU          : ${res2.geoDistanceAu}");
   print("Distance ER          : ${res2.geoDistanceEr}");
 
-  print("");
   print(
     "Right Ascension      : ${mf.dddms(res2.geoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -78,7 +71,6 @@ void main() {
     "Declination          : ${mf.dddms(res2.geoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
     "Greenwich HA         : ${mf.dhhms(res2.geoGreenwichHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
   );
@@ -86,7 +78,6 @@ void main() {
     "Local HA             : ${mf.dhhms(res2.geoLocalHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
   );
 
-  print("");
   print(
     "Azimuth              : ${mf.dddms(res2.geoAzimuthApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -94,7 +85,6 @@ void main() {
     "Altitude             : ${mf.dddms(res2.geoAltitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
     "Horizontal Parallax  : ${mf.dddms(res2.geoHorizontalParallax, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -106,7 +96,6 @@ void main() {
   print("======================");
   print("TOPOCENTRIC (APPARENT)");
   print("======================");
-  print("");
 
   print(
     "Longitude            : ${mf.dddms(res2.topoLongitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
@@ -121,7 +110,6 @@ void main() {
     "Declination          : ${mf.dddms(res2.topoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
     "Greenwich HA         : ${mf.dhhms(res2.topoGreenwichHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
   );
@@ -129,12 +117,10 @@ void main() {
     "Local HA             : ${mf.dhhms(res2.topoLocalHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
   );
 
-  print("");
   print(
     "Semidiameter         : ${mf.dddms(res2.topoSemidiameterApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
     "Azimuth              : ${mf.dddms(res2.topoAzimuthApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -205,7 +191,6 @@ void main() {
   print("JD                   : ${res.jd}");
   print("DeltaT               : ${res.deltaT}");
 
-  print("");
   print("======================");
   print("GEOCENTRIC");
   print("======================");
@@ -223,12 +208,10 @@ void main() {
     "Latitude Apparent    : ${mf.dddms(res.geoLatitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print("Distance KM          : ${res.geoDistanceKm}");
   print("Distance AU          : ${res.geoDistanceAu}");
   print("Distance ER          : ${res.geoDistanceEr}");
 
-  print("");
   print(
     "Right Ascension      : ${mf.dddms(res.geoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -236,7 +219,6 @@ void main() {
     "Declination          : ${mf.dddms(res.geoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
     "Greenwich HA         : ${mf.dhhms(res.geoGreenwichHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
   );
@@ -244,7 +226,6 @@ void main() {
     "Local HA             : ${mf.dhhms(res.geoLocalHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
   );
 
-  print("");
   print(
     "Azimuth              : ${mf.dddms(res.geoAzimuthApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -252,7 +233,6 @@ void main() {
     "Altitude             : ${mf.dddms(res.geoAltitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
     "Horizontal Parallax  : ${mf.dddms(res.geoHorizontalParallax, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -260,7 +240,6 @@ void main() {
     "Semidiameter         : ${mf.dddms(res.geoSemidiameter, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
     "Phase Angle          : ${mf.dddms(res.geoPhaseAngle, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -269,16 +248,14 @@ void main() {
     "Bright Limb Angle    : ${mf.dddms(res.geoBrightLimbAngle, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
-    "Sun Elongation       : ${mf.dddms(res.geoSunElongation, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Sun-Moon Elongation  : ${mf.dddms(res.geoSunElongation, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print("");
   print("======================");
   print("TOPOCENTRIC (APPARENT)");
   print("======================");
-  print("");
 
   print(
     "Longitude            : ${mf.dddms(res.topoLongitudeApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
@@ -293,7 +270,6 @@ void main() {
     "Declination          : ${mf.dddms(res.topoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
     "Greenwich HA         : ${mf.dhhms(res.topoGreenwichHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
   );
@@ -301,7 +277,6 @@ void main() {
     "Local HA             : ${mf.dhhms(res.topoLocalHourAngleApparent / 15, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
   );
 
-  print("");
   print(
     "Semidiameter         : ${mf.dddms(res.topoSemidiameterApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -313,7 +288,6 @@ void main() {
     "Bright Limb Angle    : ${mf.dddms(res.topoBrightLimbAngleApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print("");
   print(
     "Azimuth              : ${mf.dddms(res.topoAzimuthApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
@@ -362,8 +336,99 @@ void main() {
 
   print("");
   print(
-    "Topocentric Sun Elongation : ${mf.dddms(res.topoSunElongationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Sun-Moon Elongation : ${mf.dddms(res.topoSunElongationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
+
+  print("");
+
+  print("========================================");
+  print("       WAKTU SALAT HARIAN");
+  print("========================================");
+
+  final ss = SalatService();
+
+  final result4 = ss.waktuSalatHarian(
+    tglM: 24,
+    blnM: 2,
+    thnM: 2026,
+    gLon: (107 + 36 / 60),
+    gLat: -(7 + 5 / 60),
+    elev: 0,
+    tmZn: 7,
+    ihty: 2,
+  );
+
+  void printSalat(String nama, SalatValue value) {
+    if (value.isNormal) {
+      print(
+        "${nama.padRight(12)} : ${mf.dhhm(value.time!, optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+      );
+    } else {
+      print("${nama.padRight(12)} : ${value.status.label}");
+    }
+  }
+
+  printSalat("Subuh", result4.subuh);
+  printSalat("Syuruq", result4.syuruk);
+  printSalat("Duha", result4.duha);
+  printSalat("Zuhur", result4.zuhur);
+  printSalat("Asar", result4.asar);
+  printSalat("Magrib", result4.magrib);
+  printSalat("Isya", result4.isya);
+  printSalat("Nisfu Lail", result4.nisfuLail);
+
+  print("");
+
+  //Waktu salat untuk rentang tanggal
+  print("========================================");
+  print("       WAKTU SALAT BULANAN");
+  print("========================================");
+
+  final jadwal = ss.getSalatRange(
+    tglAwal: 24,
+    blnAwal: 2,
+    thnAwal: 2026,
+    tglAkhir: 3,
+    blnAkhir: 3,
+    thnAkhir: 2026,
+    gLon: 107.6,
+    gLat: -7.08,
+    elev: 0,
+    tmZn: 7,
+    ihty: 2,
+  );
+
+  for (final item in jadwal) {
+    // ignore: unnecessary_string_interpolations
+    print("${jd.jdkm(item["jd"], 0, "")}");
+
+    print(
+      "Subuh       : ${mf.dhhm(item["subuh"], optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "Syuruk      : ${mf.dhhm(item["syuruk"], optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "Duha        : ${mf.dhhm(item["duha"], optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "Zuhur       : ${mf.dhhm(item["zuhur"], optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "Asar        : ${mf.dhhm(item["asar"], optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "Magrib      : ${mf.dhhm(item["magrib"], optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "Isya        : ${mf.dhhm(item["isya"], optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "Nisfu Lail  : ${mf.dhhm(item["nisfuLail"], optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+    );
+
+    print("----------------------------------");
+  }
 
   print("========================================");
   print("       ARAH KIBLAT");
@@ -374,78 +439,193 @@ void main() {
   final res3 = qiblaService.getQibla(
     tglM: 23,
     blnM: 2,
-    thnM: 2026,
+    thnM: 2030,
+    gLon: 107.6576575,
+    gLat: -6.9754746,
+    tmZn: 7.0,
+  );
+
+  print(
+    "Arah Spherical   : ${mf.dddms(res3.arahSpherical, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Arah Ellipsoid   : ${mf.dddms(res3.arahEllipsoid, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Arah Vincenty    : ${mf.dddms(res3.arahVincenty, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("Jarak Spherical  : ${res3.jarakSphericalKm} KM");
+  print("Jarak Ellipsoid  : ${res3.jarakEllipsoidKm} KM");
+  print("Jarak Vincenty   : ${res3.jarakVincentyKm} KM");
+
+  print(
+    "BQ1              : ${mf.dhhms(res3.bayangan1, optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0)}",
+  );
+  print(
+    "BQ2              : ${mf.dhhms(res3.bayangan2, optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0)}",
+  );
+
+  print("");
+  print("=== RASHDUL QIBLAT ===");
+  print("Rashdul Qiblat pertama");
+  print("Tgl        : ${jd.jdkm(res3.rashdul1.jd, 0, "")}");
+  print(
+    "Jam        : ${mf.dhhm(res3.rashdul1.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
+  );
+  print(
+    "Tinggi     : ${mf.dddms(res3.rashdul1.tinggi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+  );
+  print(
+    "Deklinasi  : ${mf.dddms(res3.rashdul1.deklinasi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("Rashdul Qibllat kedua");
+  print("tgl        : ${jd.jdkm(res3.rashdul2.jd, 0, "")}");
+  print(
+    "Jam        : ${mf.dhhm(res3.rashdul2.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
+  );
+  print(
+    "Tinggi     : ${mf.dddms(res3.rashdul2.tinggi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+  );
+  print(
+    "Deklinasi  : ${mf.dddms(res3.rashdul2.deklinasi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("=== ANTIPODA QIBLAT ===");
+  print("Antipoda Qiblat Pertama");
+  print("Tgl       : ${jd.jdkm(res3.antipoda1.jd, 0, "")}");
+  print(
+    "Jam       : ${mf.dhhm(res3.antipoda1.jamDes, optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+  );
+  print(
+    "Tinggi    : ${mf.dddms(res3.antipoda1.tinggi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+  );
+  print(
+    "Deklinasi : ${mf.dddms(res3.antipoda1.deklinasi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+  );
+
+  print("");
+  print("Antipoda Qiblat Kedua");
+  print("Tgl       : ${jd.jdkm(res3.antipoda2.jd, 0, "")}");
+  print(
+    "Jam       : ${mf.dhhm(res3.antipoda2.jamDes, optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+  );
+  print(
+    "Tinggi    : ${mf.dddms(res3.antipoda2.tinggi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+  );
+  print(
+    "Deklinasi : ${mf.dddms(res3.antipoda2.deklinasi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+  );
+
+  print("");
+
+  //Bayangan kiblat harian untuk rentang tanggal
+
+  print("=== BAYANGAN KIBLAT HARIAN ===");
+  final hasil = qiblaService.getQiblaRange(
+    tglAwal: 20,
+    blnAwal: 2,
+    thnAwal: 2026,
+    tglAkhir: 25,
+    blnAkhir: 2,
+    thnAkhir: 2026,
     gLon: 107.6576575,
     gLat: -6.9754746,
     tmZn: 7,
   );
 
-  print(
-    "Arah Spherical         : ${mf.dddms(res3.arahSpherical, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
-  );
-  print(
-    "Arah Ellipsoid         : ${mf.dddms(res3.arahEllipsoid, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
-  );
-  print(
-    "Arah Vincenty          : ${mf.dddms(res3.arahVincenty, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
-  );
+  for (var data in hasil) {
+    print("TGL : ${jd.jdkm(data["jd"], 0, "")}");
+    print(
+      "BQ1 : ${mf.dhhms(data["bayangan1"], optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0)}",
+    );
+    print(
+      "BQ2 : ${mf.dhhms(data["bayangan2"], optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0)}",
+    );
+    print("------------------------");
+  }
 
-  print("Jarak Spherical        : ${res3.jarakSphericalKm} KM");
-  print("Jarak Ellipsoid        : ${res3.jarakEllipsoidKm} KM");
-  print("Jarak Vincenty         : ${res3.jarakVincentyKm} KM");
-
-  print(
-    "Bayangan kiblat 1      : ${mf.dhhms(res3.bayangan1, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
-  );
-  print(
-    "Bayangan kiblat2       : ${mf.dhhms(res3.bayangan2, optResult: "HHMMSS", posNegSign: "", secDecPlaces: 2)}",
-  );
-
-  print("Rashdul Qiblat 1       : ${res3.rashdul1}");
-  print("Rashdul Qiblat 2       : ${res3.rashdul2}");
-
-  print("Antipoda Qiblat 1      : ${res3.antipoda1}");
-  print("Antipoda Qiblat 2      : ${res3.antipoda2}");
-
-  print("");
-
-  print("========================================");
-  print("       WAKTU SALAT HARIAN");
-  print("========================================");
-
-  final waktuSalatHarian = ss.waktuSalatHarian(
-    tglM: 1,
-    blnM: 1,
-    thnM: 2025,
-    gLon: (107 + 36 / 60),
-    gLat: -(7 + 5 / 60),
-    elev: 0,
+  // Rashdul Qiblat untuk rentang tahun
+  print("=== RASHDUL QIBLAT ===");
+  final hasil2 = qiblaService.getRashdulRange(
+    tahunAwal: 2026,
+    tahunAkhir: 2030,
     tmZn: 7,
-    ihty: 2,
   );
 
-  print(waktuSalatHarian);
-  print("");
+  for (var item in hasil2) {
+    print("========== Tahun ${item["tahun"]} ==========");
 
-  print("========================================");
-  print("       WAKTU SALAT BULANAN");
-  print("========================================");
+    final r1 = item["rashdul1"];
+    final r2 = item["rashdul2"];
 
-  final waktuSalatBulanan = ss.waktuSalatBulanan(
-    tglM1: 1,
-    blnM1: 1,
-    thnM1: 2025,
-    tglM2: 31,
-    blnM2: 1,
-    thnM2: 2025,
-    gLon: 107 + 37 / 60.0,
-    gLat: -(7 + 5 / 60.0),
-    elev: 0,
+    print("RQ 1 Tgl       : ${jd.jdkm(r1.jd, 0, "")}");
+    print(
+      "RQ 1 Jam       : ${mf.dhhm(r1.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "RQ 1 Tinggi    : ${mf.dddms(r1.tinggi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+    );
+    print(
+      "RQ 1 Deklinasi : ${mf.dddms(r1.deklinasi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+    );
+    print("");
+
+    print("RQ 2 Tgl       : ${jd.jdkm(r2.jd, 0, "")}");
+    print(
+      "RQ 2 Jam       : ${mf.dhhm(r2.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "RQ 2 Tinggi    : ${mf.dddms(r2.tinggi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+    );
+    print(
+      "RQ 2 Deklinasi : ${mf.dddms(r2.deklinasi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+    );
+    print("\n");
+  }
+
+  // Rashdul Qiblat untuk rentang tahun
+  print("=== ANTIPODA QIBLAT ===");
+  final hasil3 = qiblaService.getAntipodaRange(
+    tahunAwal: 2026,
+    tahunAkhir: 2030,
     tmZn: 7,
-    ihty: 2,
   );
 
-  print(waktuSalatBulanan);
+  for (var item in hasil3) {
+    print("========== Tahun ${item["tahun"]} ==========");
+
+    final r1 = item["antipoda1"];
+    final r2 = item["antipoda2"];
+
+    print("AQ 1 Tgl       : ${jd.jdkm(r1.jd, 0, "")}");
+    print(
+      "AQ 1 Jam       : ${mf.dhhm(r1.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "AQ 1 Tinggi    : ${mf.dddms(r1.tinggi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+    );
+    print(
+      "AQ 1 Deklinasi : ${mf.dddms(r1.deklinasi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+    );
+    print("");
+
+    print("AQ 2 Tgl       : ${jd.jdkm(r2.jd, 0, "")}");
+    print(
+      "AQ 2 Jam       : ${mf.dhhm(r2.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
+    );
+    print(
+      "AQ 2 Tinggi    : ${mf.dddms(r2.tinggi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+    );
+    print(
+      "AQ 2 Deklinasi : ${mf.dddms(r2.deklinasi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
+    );
+    print("\n");
+  }
+
   print("");
 
   print("========================================");
