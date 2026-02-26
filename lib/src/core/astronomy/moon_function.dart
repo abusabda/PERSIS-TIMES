@@ -470,49 +470,54 @@ class MoonFunction {
     final dip = 1.75 / 60 * math.sqrt(elev);
     final sdc = moonTopocentricSemidiameter(jd, deltaT, gLon, gLat, elev);
 
-    final rhtc = sn.atmosphericRefractionFromAirlessAltitude(htc, pres, temp);
-    final htac = htc + rhtc;
-    final htoc = htac + dip;
-
     final htu = htc + sdc;
-    final rhtu = sn.atmosphericRefractionFromAirlessAltitude(htu, pres, temp);
-    final htau = htu + rhtu;
-    final htou = htau + dip;
-
     final htl = htc - sdc;
+
+    final rhtu = sn.atmosphericRefractionFromAirlessAltitude(htu, pres, temp);
+    final rhtc = sn.atmosphericRefractionFromAirlessAltitude(htc, pres, temp);
     final rhtl = sn.atmosphericRefractionFromAirlessAltitude(htl, pres, temp);
+
+    final htau = htu + rhtu;
+    final htac = htc + rhtc;
     final htal = htl + rhtl;
+
+    final htoc = htac + dip;
+    final htou = htau + dip;
     final htol = htal + dip;
 
     double ht;
     switch (opt) {
-      case "htc":
-        ht = htc;
-        break;
-      case "htac":
-        ht = htac;
-        break;
-      case "htoc":
-        ht = htoc;
-        break;
+      //Airless Altitude
       case "htu":
         ht = htu;
         break;
-      case "htau":
-        ht = htau;
-        break;
-      case "htou":
-        ht = htou;
+      case "htc":
+        ht = htc;
         break;
       case "htl":
         ht = htl;
         break;
+      //Apparent Altitude
+      case "htau":
+        ht = htau;
+        break;
+      case "htac":
+        ht = htac;
+        break;
       case "htal":
         ht = htal;
+        break;
+      //Observered Altitude
+      case "htou":
+        ht = htou;
+        break;
+      case "htoc":
+        ht = htoc;
         break;
       case "htol":
         ht = htol;
         break;
+      //Refraksi
       case "Rhtc":
         ht = rhtc;
         break;
@@ -522,6 +527,7 @@ class MoonFunction {
       case "Rhtl":
         ht = rhtl;
         break;
+      //Dip
       case "Dip":
         ht = dip;
         break;

@@ -10,6 +10,7 @@ import 'package:myhisab/src/service/solar_eclipse_service.dart';
 import 'package:myhisab/src/service/moon_service.dart';
 import 'package:myhisab/src/service/sun_service.dart';
 import 'package:myhisab/src/service/qibla_service.dart';
+import 'package:myhisab/src/service/hisab_awal_bulan_service.dart';
 
 void main() {
   final cs = CalendarService();
@@ -439,10 +440,11 @@ void main() {
   final res3 = qiblaService.getQibla(
     tglM: 23,
     blnM: 2,
-    thnM: 2030,
+    thnM: 2026,
     gLon: 107.6576575,
     gLat: -6.9754746,
     tmZn: 7.0,
+    azQiblat: "spherical", // "spherical", "ellipsoid", atau "vincenty"
   );
 
   print(
@@ -535,6 +537,7 @@ void main() {
     gLon: 107.6576575,
     gLat: -6.9754746,
     tmZn: 7,
+    azQiblat: "spherical", // "spherical", "ellipsoid", atau "vincenty"
   );
 
   for (var data in hasil) {
@@ -626,11 +629,261 @@ void main() {
     print("\n");
   }
 
+  print("========================================");
+  print("        HISAB AWAL BULAN HIJRIAH");
+  print("========================================");
+  final String loc = "Pelabuhan Ratu";
+  final int blnH = 10;
+  final int thnH = 1447;
+  final double gLon = (106 + 33 / 60 + 27.8 / 3600);
+  final double gLat = -(7 + 1 / 60 + 44.6 / 3600);
+  final double tmZn = 7;
+  final double elev = 52.685;
+  final double pres = 1010;
+  final double temp = 10;
+  final int tbhHari = 0;
+  final int optKriteria = 1; // 1. imkan rukyat 2. Wujudul Hilal
+
+  final service = HisabAwalBulanService();
+
+  final rs = service.hitung(
+    blnH: blnH,
+    thnH: thnH,
+    gLon: gLon,
+    gLat: gLat,
+    tmZn: tmZn,
+    elev: elev,
+    pres: pres,
+    temp: temp,
+    tbhHari: tbhHari,
+    optKriteria: optKriteria,
+  );
+
+  print("Lokasi                     : $loc");
+  print(
+    "Bujur                      : ${mf.dddms(gLon, optResult: "BBBT", sdp: 0, posNegSign: "+-")}",
+  );
+  print(
+    "Lintang                    : ${mf.dddms(gLat, optResult: "LULS", sdp: 0, posNegSign: "+-")}",
+  );
+  print("Time Zone                  : $tmZn");
+  print("Elevasi                    : $elev");
+  print("");
+  print(
+    "Ijtimak Geosentris         : "
+    "${jd.jdkm(rs.geojdIjtimak, tmZn, "")} | "
+    "${mf.dhhms(double.parse(jd.jdkm(rs.geojdIjtimak, tmZn, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+  );
+  print(
+    "Ijtimak Toposentris        : "
+    "${jd.jdkm(rs.topojdIjtimak, tmZn, "")} | "
+    "${mf.dhhms(double.parse(jd.jdkm(rs.topojdIjtimak, tmZn, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+  );
+  print(
+    "Ghurub Matahari            : ${mf.dhhms(double.parse(jd.jdkm(rs.sunsetJD, tmZn, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+  );
+  print(
+    "Ghurub Bulan               : "
+    "${rs.moonsetJD == null ? "Tidak terbenam" : mf.dhhms(double.parse(jd.jdkm(rs.moonsetJD!, tmZn, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+  );
+  print(
+    "Imkan Rukyat MABIMS        : ${rs.imkanMabimsStatus == 1 ? "Visible" : "Not Visible"}",
+  );
+  print(
+    "Imkan Rukyat Turki         : ${rs.imkanTurkiStatus == 1 ? "Visible" : "Not Visible"}",
+  );
+  print(
+    "wujudul Hilal              : ${rs.wujudHilalStatus == 1 ? "Wujud" : "Tidak Wujud"}",
+  );
+  //print("JD Awal Bulan              : ${jd.jdkm(rs.hilal.awalBulanJD)}");
+
+  print(".......Data Matahari Geosentris.......");
+  print(
+    "Longitude (True)           : ${mf.dddms(rs.sunGeo.longitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude (True)            : ${mf.dddms(rs.sunGeo.latitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Longitude (Apparent)       : ${mf.dddms(rs.sunGeo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude (Apparent)        : ${mf.dddms(rs.sunGeo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Asensiorekta               : ${mf.dddms(rs.sunGeo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Deklinasi                  : ${mf.dddms(rs.sunGeo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Greenwich Hour Angle       : ${mf.dddms(rs.sunGeo.greenwichHourAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Local Hour Angle           : ${mf.dddms(rs.sunGeo.localHourAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Azimuth                    : ${mf.dddms(rs.sunGeo.azimuth, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude                   : ${mf.dddms(rs.sunGeo.altitude, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(".......Data Matahari Toposentris.......");
+  print(
+    "Longitude (Apparent)       : ${mf.dddms(rs.sunTopo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude (Apparent)        : ${mf.dddms(rs.sunTopo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Asensiorekta               : ${mf.dddms(rs.sunTopo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Deklinasi                  : ${mf.dddms(rs.sunTopo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Greenwich Hour Angle       : ${mf.dddms(rs.sunTopo.greenwichHourAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Local Hour Angle           : ${mf.dddms(rs.sunTopo.localHourAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Azimuth                    : ${mf.dddms(rs.sunTopo.azimuth, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Altitude Airless Upper     : ${mf.dddms(rs.sunTopo.altitudeAirlessUpper, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Airless Center    : ${mf.dddms(rs.sunTopo.altitudeAirlessCenter, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Airless Lower     : ${mf.dddms(rs.sunTopo.altitudeAirlessLower, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Altitude Apparent Upper    : ${mf.dddms(rs.sunTopo.altitudeApparentUpper, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Apparent Center   : ${mf.dddms(rs.sunTopo.altitudeApparentCenter, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Apparent Lower    : ${mf.dddms(rs.sunTopo.altitudeApparentLower, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Altitude Observered Upper  : ${mf.dddms(rs.sunTopo.altitudeObserveredUpper, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Observered Center : ${mf.dddms(rs.sunTopo.altitudeObserveredCenter, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Observered Lower  : ${mf.dddms(rs.sunTopo.altitudeObserveredLower, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(".......Data Bulan Geosentris.......");
+  print(
+    "Longitude (True)           : ${mf.dddms(rs.moonGeo.longitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude (True)            : ${mf.dddms(rs.moonGeo.latitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Longitude (Apparent)       : ${mf.dddms(rs.moonGeo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude (Apparent)        : ${mf.dddms(rs.moonGeo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Asensiorekta               : ${mf.dddms(rs.moonGeo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Deklinasi                  : ${mf.dddms(rs.moonGeo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Greenwich Hour Angle       : ${mf.dddms(rs.moonGeo.greenwichHourAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Local Hour Angle           : ${mf.dddms(rs.moonGeo.localHourAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Azimuth                    : ${mf.dddms(rs.moonGeo.azimuth, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude                   : ${mf.dddms(rs.moonGeo.altitude, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(".......Data Bulan Toposentris.......");
+  print(
+    "Longitude (Apparent)       : ${mf.dddms(rs.moonTopo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Latitude (Apparent)        : ${mf.dddms(rs.moonTopo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Asensiorekta               : ${mf.dddms(rs.moonTopo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Deklinasi                  : ${mf.dddms(rs.moonTopo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Greenwich Hour Angle       : ${mf.dddms(rs.moonTopo.greenwichHourAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Local Hour Angle           : ${mf.dddms(rs.moonTopo.localHourAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Azimuth                    : ${mf.dddms(rs.moonTopo.azimuth, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Altitude Airless Upper     : ${mf.dddms(rs.moonTopo.altitudeAirlessUpper, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Airless Center    : ${mf.dddms(rs.moonTopo.altitudeAirlessCenter, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Airless Lower     : ${mf.dddms(rs.moonTopo.altitudeAirlessLower, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Altitude Apparent Upper    : ${mf.dddms(rs.moonTopo.altitudeApparentUpper, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Apparent Center   : ${mf.dddms(rs.moonTopo.altitudeApparentCenter, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Apparent Lower    : ${mf.dddms(rs.moonTopo.altitudeApparentLower, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Altitude Observered Upper  : ${mf.dddms(rs.moonTopo.altitudeObservedUpper, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Observered Center : ${mf.dddms(rs.moonTopo.altitudeObservedCenter, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Altitude Observered Lower  : ${mf.dddms(rs.moonTopo.altitudeObservedLower, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
   print("");
 
-  print("========================================");
-  print("        HISAB AWAL BULN HIJRIAH");
-  print("========================================");
+  // print("========================================");
+  // print("        HISAB AWAL BULN HIJRIAH");
+  // print("========================================");
 
   final namaBulanHijriah = [
     "Al-Muharram",
@@ -647,37 +900,37 @@ void main() {
     "Zulhijjah",
   ];
 
-  //input Bulan dan Tahun Hijri
-  final blnH = 10;
-  final thnH = 1444;
+  // //input Bulan dan Tahun Hijri
+  // final blnH = 10;
+  // final thnH = 1447;
 
-  final abqSesuaiLokasi = ab.hisabAwalBulanHijriahSesuaiLokasi(
-    nmLokasi: "Pelabuhan Ratu",
-    blnH: blnH,
-    thnH: thnH,
-    gLon: (106 + 33 / 60 + 27.8 / 3600),
-    gLat: -(7 + 1 / 60 + 44.6 / 3600),
-    elev: 52.685,
-    tmZn: 7,
-    pres: 1010,
-    temp: 10,
-    sdp: 2,
-    tbhHari: 0,
-    optKriteria: 1,
-  );
+  // final abqSesuaiLokasi = ab.hisabAwalBulanHijriahSesuaiLokasi(
+  //   nmLokasi: "Pelabuhan Ratu",
+  //   blnH: blnH,
+  //   thnH: thnH,
+  //   gLon: (106 + 33 / 60 + 27.8 / 3600),
+  //   gLat: -(7 + 1 / 60 + 44.6 / 3600),
+  //   elev: 52.685,
+  //   tmZn: 7,
+  //   pres: 1010,
+  //   temp: 10,
+  //   sdp: 2,
+  //   tbhHari: 0,
+  //   optKriteria: 2,
+  // );
 
-  print(abqSesuaiLokasi); // tampilkan semua output sekaligus
+  // print(abqSesuaiLokasi); // tampilkan semua output sekaligus
 
   final namaBlnH = namaBulanHijriah[blnH - 1];
 
   final jdAbqMabims = cs.abqMabims(blnH, thnH);
-  print("1 $namaBlnH $thnH H (MABIMS)      : ${jd.jdkm(jdAbqMabims)}");
+  print("1 $namaBlnH $thnH H (MABIMS)       : ${jd.jdkm(jdAbqMabims)}");
 
   final jdAbqWH = cs.abqWujudulHilal(blnH, thnH);
-  print("1 $namaBlnH $thnH H (Wujud Hilal) : ${jd.jdkm(jdAbqWH)}");
+  print("1 $namaBlnH $thnH H (Wujud Hilal)  : ${jd.jdkm(jdAbqWH)}");
 
   final jdAbqTurki = cs.abqTurki(blnH, thnH);
-  print("1 $namaBlnH $thnH H (TURKI/KHGT)  : ${jd.jdkm(jdAbqTurki)}");
+  print("1 $namaBlnH $thnH H (TURKI/KHGT)   : ${jd.jdkm(jdAbqTurki)}");
 
   //input tanggal, bulan, tahun Masehi
 

@@ -708,32 +708,63 @@ class SunFunction {
   ) {
     double dec = sunTopocentricDeclination(jd, deltaT, gLon, gLat, elev);
     double lha = sunTopocentricLocalHourAngel(jd, deltaT, gLon, gLat, elev);
-    double h = sunGeocentricAltitude(jd, deltaT, gLon, gLat);
-
-    double rfr = atmosphericRefractionFromAirlessAltitude(h, pres, temp);
     double dip = 1.75 / 60 * math.sqrt(elev);
+    double sdm = sunTopocentricSemidiameter(jd, deltaT, gLon, gLat, elev);
 
-    double ht = mf.deg(
+    //double h = sunGeocentricAltitude(jd, deltaT, gLon, gLat);
+
+    //Airless Altitude
+    double htc = mf.deg(
       math.asin(
         math.sin(mf.rad(gLat)) * math.sin(mf.rad(dec)) +
             math.cos(mf.rad(gLat)) *
                 math.cos(mf.rad(dec)) *
                 math.cos(mf.rad(lha)),
       ),
-    ); // Airless Topo Altitude
+    ); //center
 
-    double hta = ht + rfr; // Apparent Topo Altitude
-    double hto = hta + dip; // Observed Topo Altitude
+    double htu = htc + sdm; //upper
+    double htl = htc - sdm; //Lower
+
+    //Refraksi Upper,Center dan Lower
+    double rhtu = atmosphericRefractionFromAirlessAltitude(htu, pres, temp);
+    double rhtc = atmosphericRefractionFromAirlessAltitude(htc, pres, temp);
+    double rhtl = atmosphericRefractionFromAirlessAltitude(htc, pres, temp);
+
+    //Apparent Altitude
+    double htau = htu + rhtu;
+    double htac = htc + rhtc;
+    double htal = htl + rhtl;
+
+    //observered Altitude
+
+    double htou = htau + dip;
+    double htoc = htac + dip;
+    double htol = htal + dip;
 
     switch (opt) {
-      case "ht":
-        return ht;
-      case "hta":
-        return hta;
-      case "hto":
-        return hto;
+      case "htu":
+        return htu;
+      case "htc":
+        return htc;
+      case "htl":
+        return htl;
+
+      case "htau":
+        return htau;
+      case "htac":
+        return htac;
+      case "htal":
+        return htal;
+
+      case "htou":
+        return htou;
+      case "htoc":
+        return htoc;
+      case "htol":
+        return htol;
       default:
-        return ht;
+        return htc;
     }
   }
 

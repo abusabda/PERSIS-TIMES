@@ -13,6 +13,7 @@ class QiblaService {
     required double gLon,
     required double gLat,
     required double tmZn,
+    String azQiblat = "spherical",
   }) {
     return QiblaResult(
       arahSpherical: _aq.arahQiblatSpherical(gLon, gLat),
@@ -21,6 +22,7 @@ class QiblaService {
       jarakSphericalKm: _aq.jarakQiblatSpherical(gLon, gLat),
       jarakEllipsoidKm: _aq.jarakQiblatEllipsoid(gLon, gLat),
       jarakVincentyKm: _aq.arahQiblaVincenty(gLon, gLat, 'Dist') / 1000.0,
+
       bayangan1: _aq.bayanganQiblatHarian(
         gLon,
         gLat,
@@ -28,9 +30,10 @@ class QiblaService {
         blnM,
         thnM,
         tmZn,
-        "spherical",
+        azQiblat,
         1,
       ),
+
       bayangan2: _aq.bayanganQiblatHarian(
         gLon,
         gLat,
@@ -38,55 +41,16 @@ class QiblaService {
         blnM,
         thnM,
         tmZn,
-        "spherical",
+        azQiblat,
         2,
       ),
+
       rashdul1: _aq.rashdulQiblat(thnM, tmZn, 1),
       rashdul2: _aq.rashdulQiblat(thnM, tmZn, 2),
       antipoda1: _aq.antipodaKabah(thnM, tmZn, 1),
       antipoda2: _aq.antipodaKabah(thnM, tmZn, 2),
     );
   }
-
-  // List<Map<String, dynamic>> getQiblaRange({
-  //   required int tglAwal,
-  //   required int blnAwal,
-  //   required int thnAwal,
-  //   required int tglAkhir,
-  //   required int blnAkhir,
-  //   required int thnAkhir,
-  //   required double gLon,
-  //   required double gLat,
-  //   required double tmZn,
-  // }) {
-  //   final List<Map<String, dynamic>> results = [];
-
-  //   DateTime start = DateTime(thnAwal, blnAwal, tglAwal);
-  //   DateTime end = DateTime(thnAkhir, blnAkhir, tglAkhir);
-
-  //   for (
-  //     DateTime date = start;
-  //     !date.isAfter(end);
-  //     date = date.add(const Duration(days: 1))
-  //   ) {
-  //     final res = getQibla(
-  //       tglM: date.day,
-  //       blnM: date.month,
-  //       thnM: date.year,
-  //       gLon: gLon,
-  //       gLat: gLat,
-  //       tmZn: tmZn,
-  //     );
-
-  //     results.add({
-  //       "tanggal": date,
-  //       "bayangan1": res.bayangan1,
-  //       "bayangan2": res.bayangan2,
-  //     });
-  //   }
-
-  //   return results;
-  // }
 
   List<Map<String, dynamic>> getQiblaRange({
     required int tglAwal,
