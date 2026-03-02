@@ -8,12 +8,12 @@ import 'package:myhisab/src/core/astronomy/moon_distance.dart';
 import 'package:myhisab/src/core/astronomy/sun_function.dart';
 import 'package:myhisab/src/core/astronomy/julian_day.dart';
 
-import 'package:myhisab/src/model/sun_data_geo.dart';
-import 'package:myhisab/src/model/sun_data_topo.dart';
-import 'package:myhisab/src/model/moon_data_geo.dart';
-import 'package:myhisab/src/model/moon_data_topo.dart';
-import 'package:myhisab/src/model/hilal_data.dart';
-import '../model/hisab_awal_bulan_result.dart';
+import 'package:myhisab/src/model/sun/sun_data_geo.dart';
+import 'package:myhisab/src/model/sun/sun_data_topo.dart';
+import 'package:myhisab/src/model/moon/moon_data_geo.dart';
+import 'package:myhisab/src/model/moon/moon_data_topo.dart';
+import 'package:myhisab/src/model/awal_bulan/hilal_data.dart';
+import '../model/awal_bulan/hisab_awal_bulan_result.dart';
 
 class HisabAwalBulanService {
   HisabAwalBulanResult hitung({
@@ -149,6 +149,15 @@ class HisabAwalBulanService {
       sunsetJD,
       deltaT,
       "ER",
+    );
+
+    final double greenwichApparentSiderealTime = sn
+        .greenwichApparentSiderialTime(sunsetJD, deltaT);
+
+    final double localApparentSiderealTime = sn.localApparentSiderialTime(
+      sunsetJD,
+      deltaT,
+      gLon,
     );
 
     final double sunGeocentricGreenwichHourAngle = sn
@@ -404,6 +413,7 @@ class HisabAwalBulanService {
     );
     final double moonGeocentricDiskIlluminatedFraction = mo
         .moonGeocentricDiskIlluminatedFraction(sunsetJD, deltaT);
+
     final double moonGeocentricBrightLimbAngle = mo
         .moonGeocentricBrightLimbAngle(sunsetJD, deltaT);
 
@@ -658,6 +668,9 @@ class HisabAwalBulanService {
         rightAscension: sunGeocentricRightAscension,
         declination: sunGeocentricDeclination,
 
+        greenwichApparentSiderealTime: greenwichApparentSiderealTime,
+        localApparentSiderealTime: localApparentSiderealTime,
+
         greenwichHourAngle: sunGeocentricGreenwichHourAngle,
         localHourAngle: sunGeocentricLocalHourAngle,
 
@@ -690,13 +703,13 @@ class HisabAwalBulanService {
         altitudeAirlessCenter: sunTopocentricAltitudeAirlessCenter,
         altitudeAirlessLower: sunTopocentricAltitudeAirlessLower,
 
-        altitudeApparentUpper: sunTopocentricAltitudeAirlessUpper,
-        altitudeApparentCenter: sunTopocentricAltitudeAirlessCenter,
-        altitudeApparentLower: sunTopocentricAltitudeAirlessLower,
+        altitudeApparentUpper: sunTopocentricAltitudeApparentsUpper,
+        altitudeApparentCenter: sunTopocentricAltitudeApparentCenter,
+        altitudeApparentLower: sunTopocentricAltitudeApparentLower,
 
-        altitudeObserveredUpper: sunTopocentricAltitudeAirlessUpper,
-        altitudeObserveredCenter: sunTopocentricAltitudeAirlessCenter,
-        altitudeObserveredLower: sunTopocentricAltitudeAirlessLower,
+        altitudeObserveredUpper: sunTopocentricAltitudeObserveredUpper,
+        altitudeObserveredCenter: sunTopocentricAltitudeObserveredCenter,
+        altitudeObserveredLower: sunTopocentricAltitudeObserveredLower,
       ),
 
       // =====================
@@ -716,7 +729,7 @@ class HisabAwalBulanService {
         distanceER: moonGeocentricDistanceER,
 
         greenwichHourAngle: moonGeocentricGreenwichHourAngle,
-        localHourAngle: moonTopocentricLocalHourAngle,
+        localHourAngle: moonGeocentricLocalHourAngle,
         horizontalParallax: moonEquatorialHorizontalParallax,
         semidiameter: moonGeocentricSemidiameter,
 
@@ -738,10 +751,10 @@ class HisabAwalBulanService {
         rightAscension: moonTopocentricRightAscension,
         declination: moonTopocentricDeclination,
 
-        greenwichHourAngle: moonGeocentricGreenwichHourAngle,
+        greenwichHourAngle: moonTopocentricGreenwichHourAngle,
         localHourAngle: moonTopocentricLocalHourAngle,
         horizontalParallax: moonEquatorialHorizontalParallax,
-        semidiameter: moonGeocentricSemidiameter,
+        semidiameter: moonTopocentricSemidiameter,
 
         azimuth: moonTopocentricAzimuth,
 

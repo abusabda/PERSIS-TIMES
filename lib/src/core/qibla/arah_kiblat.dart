@@ -3,7 +3,7 @@ import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
 import 'package:myhisab/src/core/astronomy/julian_day.dart';
 import 'package:myhisab/src/core/math/math_utils.dart';
 import 'package:myhisab/src/core/astronomy/sun_function.dart';
-import 'package:myhisab/src/model/qibla_event_result.dart';
+import 'package:myhisab/src/model/qibla/qibla_event_result.dart';
 
 class ArahKiblat {
   final julianDay = JulianDay();

@@ -7,6 +7,9 @@ class SunDataGeo {
   final double rightAscension;
   final double declination;
 
+  final double greenwichApparentSiderealTime;
+  final double localApparentSiderealTime;
+
   final double greenwichHourAngle;
   final double localHourAngle;
 
@@ -28,6 +31,9 @@ class SunDataGeo {
 
     required this.rightAscension,
     required this.declination,
+
+    required this.greenwichApparentSiderealTime,
+    required this.localApparentSiderealTime,
 
     required this.greenwichHourAngle,
     required this.localHourAngle,

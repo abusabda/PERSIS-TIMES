@@ -1,5 +1,5 @@
 import 'package:myhisab/src/core/qibla/arah_kiblat.dart';
-import 'package:myhisab/src/model/qibla_result.dart';
+import 'package:myhisab/src/model/qibla/qibla_result.dart';
 import 'package:myhisab/src/core/astronomy/julian_day.dart';
 
 class QiblaService {

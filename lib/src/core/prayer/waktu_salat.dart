@@ -4,8 +4,8 @@ import '../math/math_utils.dart';
 import '../astronomy/dynamical_time.dart';
 import '../astronomy/sun_function.dart';
 
-import 'package:myhisab/src/model/salat_status.dart';
-import 'package:myhisab/src/model/salat_value.dart';
+import 'package:myhisab/src/model/salat/salat_status.dart';
+import 'package:myhisab/src/model/salat/salat_value.dart';
 
 class WaktuSalat {
   final julianDay = JulianDay();

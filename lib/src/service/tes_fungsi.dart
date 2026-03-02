@@ -1,8 +1,8 @@
 import 'package:myhisab/src/core/astronomy/julian_day.dart';
 import 'package:myhisab/src/core/math/math_utils.dart';
 import 'package:myhisab/src/core/astronomy/moon_function.dart';
-import 'package:myhisab/src/model/salat_status.dart';
-import 'package:myhisab/src/model/salat_value.dart';
+import 'package:myhisab/src/model/salat/salat_status.dart';
+import 'package:myhisab/src/model/salat/salat_value.dart';
 import 'package:myhisab/src/service/salat_service.dart';
 import 'package:myhisab/src/service/calendar_service.dart';
 import 'package:myhisab/src/service/lunar_eclipse_service.dart';
@@ -11,6 +11,8 @@ import 'package:myhisab/src/service/moon_service.dart';
 import 'package:myhisab/src/service/sun_service.dart';
 import 'package:myhisab/src/service/qibla_service.dart';
 import 'package:myhisab/src/service/hisab_awal_bulan_service.dart';
+import '../model/solar_eclipse/solar_eclipse_local_result.dart';
+import '../model/solar_eclipse/solar_eclipse_global_result.dart';
 
 void main() {
   final cs = CalendarService();
@@ -470,7 +472,7 @@ void main() {
 
   print("");
   print("=== RASHDUL QIBLAT ===");
-  print("Rashdul Qiblat pertama");
+  print("Rashdul Qiblat Pertama");
   print("Tgl        : ${jd.jdkm(res3.rashdul1.jd, 0, "")}");
   print(
     "Jam        : ${mf.dhhm(res3.rashdul1.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
@@ -483,7 +485,7 @@ void main() {
   );
 
   print("");
-  print("Rashdul Qibllat kedua");
+  print("Rashdul Qibllat Kedua");
   print("tgl        : ${jd.jdkm(res3.rashdul2.jd, 0, "")}");
   print(
     "Jam        : ${mf.dhhm(res3.rashdul2.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
@@ -697,25 +699,33 @@ void main() {
   );
   //print("JD Awal Bulan              : ${jd.jdkm(rs.hilal.awalBulanJD)}");
 
+  print("");
   print(".......Data Matahari Geosentris.......");
   print(
-    "Longitude (True)           : ${mf.dddms(rs.sunGeo.longitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "True Longitude             : ${mf.dddms(rs.sunGeo.longitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Latitude (True)            : ${mf.dddms(rs.sunGeo.latitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "True Latitude              : ${mf.dddms(rs.sunGeo.latitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Longitude (Apparent)       : ${mf.dddms(rs.sunGeo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Longitude         : ${mf.dddms(rs.sunGeo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Latitude (Apparent)        : ${mf.dddms(rs.sunGeo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Latitude          : ${mf.dddms(rs.sunGeo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
-    "Asensiorekta               : ${mf.dddms(rs.sunGeo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Right Ascensioan  : ${mf.dddms(rs.sunGeo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Deklinasi                  : ${mf.dddms(rs.sunGeo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Declination       : ${mf.dddms(rs.sunGeo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Greenwich Sideral Time     : ${mf.dddms(rs.sunGeo.greenwichApparentSiderealTime, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Local Sidereal Time        : ${mf.dddms(rs.sunGeo.localApparentSiderealTime, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
@@ -732,19 +742,20 @@ void main() {
     "Altitude                   : ${mf.dddms(rs.sunGeo.altitude, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
+  print("");
   print(".......Data Matahari Toposentris.......");
   print(
-    "Longitude (Apparent)       : ${mf.dddms(rs.sunTopo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Longitude         : ${mf.dddms(rs.sunTopo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Latitude (Apparent)        : ${mf.dddms(rs.sunTopo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Latitude          : ${mf.dddms(rs.sunTopo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
-    "Asensiorekta               : ${mf.dddms(rs.sunTopo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Right Ascension   : ${mf.dddms(rs.sunTopo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Deklinasi                  : ${mf.dddms(rs.sunTopo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Declination       : ${mf.dddms(rs.sunTopo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
@@ -788,25 +799,26 @@ void main() {
     "Altitude Observered Lower  : ${mf.dddms(rs.sunTopo.altitudeObserveredLower, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
+  print("");
   print(".......Data Bulan Geosentris.......");
   print(
-    "Longitude (True)           : ${mf.dddms(rs.moonGeo.longitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "True Longitude             : ${mf.dddms(rs.moonGeo.longitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Latitude (True)            : ${mf.dddms(rs.moonGeo.latitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "True Latitude              : ${mf.dddms(rs.moonGeo.latitudeTrue, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Longitude (Apparent)       : ${mf.dddms(rs.moonGeo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Longitude         : ${mf.dddms(rs.moonGeo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Latitude (Apparent)        : ${mf.dddms(rs.moonGeo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Latitude          : ${mf.dddms(rs.moonGeo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
-    "Asensiorekta               : ${mf.dddms(rs.moonGeo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Right Ascension   : ${mf.dddms(rs.moonGeo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Deklinasi                  : ${mf.dddms(rs.moonGeo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Apparent Declination       : ${mf.dddms(rs.moonGeo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
@@ -823,19 +835,42 @@ void main() {
     "Altitude                   : ${mf.dddms(rs.moonGeo.altitude, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print(".......Data Bulan Toposentris.......");
   print(
-    "Longitude (Apparent)       : ${mf.dddms(rs.moonTopo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
-  );
-  print(
-    "Latitude (Apparent)        : ${mf.dddms(rs.moonTopo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Illumination Fraction      : ${mf.dddms(rs.moonGeo.diskIlluminationFraction, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
-    "Asensiorekta               : ${mf.dddms(rs.moonTopo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Phase Angle                : ${mf.dddms(rs.moonGeo.phaseAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Bright Limb Angle          : ${mf.dddms(rs.moonGeo.brightLimbAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Moon-Sun Elongation        : ${mf.dddms(rs.hilal.elongationGeo, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Deklinasi                  : ${mf.dddms(rs.moonTopo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Crescent Width             : ${mf.dddms(rs.hilal.crescentWidthGeo, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Relative Altitude          : ${mf.dddms(rs.hilal.relativeAltitudeGeo, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(".......Data Bulan Toposentris.......");
+  print(
+    "Apparent Longitude         : ${mf.dddms(rs.moonTopo.longitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Apparent Latitude          : ${mf.dddms(rs.moonTopo.latitudeApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Apparent Right Ascension   : ${mf.dddms(rs.moonTopo.rightAscension, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Apparent Declination       : ${mf.dddms(rs.moonTopo.declination, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
@@ -879,6 +914,35 @@ void main() {
     "Altitude Observered Lower  : ${mf.dddms(rs.moonTopo.altitudeObservedLower, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
+  print(
+    "Illumination Fraction      : ${mf.dddms(rs.moonTopo.diskIlluminationFraction, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Phase Angle                : ${mf.dddms(rs.moonTopo.phaseAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Bright Limb Angle          : ${mf.dddms(rs.moonTopo.brightLimbAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print(
+    "Moon-Sun Elongation        : ${mf.dddms(rs.hilal.elongationTopo, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Crescent Width             : ${mf.dddms(rs.hilal.crescentWidthTopo, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+  print(
+    "Relative Altitude          : ${mf.dddms(rs.hilal.relativeAltitudeTopo, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
+  );
+
+  print("");
+  print(".......Data-data lainnya.......");
+  print("Range-q Odeh               : ${rs.hilal.qOdeh}");
+  print(
+    "Best Time                  : ${mf.dhhms(double.parse(jd.jdkm(rs.hilal.bestTime, tmZn, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+  );
+
   print("");
 
   // print("========================================");
@@ -919,7 +983,9 @@ void main() {
   //   optKriteria: 2,
   // );
 
-  // print(abqSesuaiLokasi); // tampilkan semua output sekaligus
+  //Konversi Hijri ke Masehi
+
+  print(".......KESIMPULAN.......");
 
   final namaBlnH = namaBulanHijriah[blnH - 1];
 
@@ -932,11 +998,13 @@ void main() {
   final jdAbqTurki = cs.abqTurki(blnH, thnH);
   print("1 $namaBlnH $thnH H (TURKI/KHGT)   : ${jd.jdkm(jdAbqTurki)}");
 
-  //input tanggal, bulan, tahun Masehi
+  print("");
 
-  final tglM = 22;
-  final blnM = 4;
-  final thnM = 2023;
+  //Konversi Masehi ke Hijri Hakiki
+
+  final tglM = 21;
+  final blnM = 3;
+  final thnM = 2026;
 
   final abqMabimsNow = cs.serviceKalenderHijriahMABIMS(tglM, blnM, thnM);
   print("MABIMS                          : $abqMabimsNow");
@@ -1385,7 +1453,7 @@ void main() {
   final blnH3 = 5;
   final thnH3 = 1437;
   final gLon3 = (108 + 17 / 60.0 + 50 / 3600.0);
-  final gLat3 = -(2 + 51 / 60.0 + 25 / 3600.0);
+  final gLat3 = -(6 + 51 / 60.0 + 25 / 3600.0);
   final elev3 = 2.0;
   final pres3 = 1010.0;
   final temp3 = 10.0;
@@ -1406,143 +1474,115 @@ void main() {
     tmZn: tmZn3,
   );
 
-  print("");
-
   print("========================================");
   print("     DATA GERHANA MATAHARI LOKAL");
   print("========================================");
+  print("");
 
-  // 🔴 CEK ADA ATAU TIDAK
-  if (resSEL["ADA"] == false) {
-    print(resSEL["KET"]);
+  if (resSEL == null || !resSEL.ada) {
+    print("Tidak ada gerhana di lokasi ini.");
   } else {
-    print("Elemen Besselian:");
+    final b = resSEL.besselian;
 
-    final elem = resSEL["ELEMEN"];
+    print("========================================");
+    print("ELEMEN BESSELIAN");
+    print("========================================");
 
-    final elements = [
-      "DT",
-      "T0",
+    void printList(String label, List<double>? list) {
+      if (list == null || list.isEmpty) return;
 
-      "x0",
-      "x1",
-      "x2",
-      "x3",
-      "x4",
-      "y0",
-      "y1",
-      "y2",
-      "y3",
-      "y4",
-      "d0",
-      "d1",
-      "d2",
-      "d3",
-      "d4",
-      "mu0",
-      "mu1",
-      "mu2",
-      "mu3",
-      "mu4",
-      "l10",
-      "l11",
-      "l12",
-      "l13",
-      "l14",
-      "l20",
-      "l21",
-      "l22",
-      "l23",
-      "l24",
-      "tanf1",
-      "tanf2",
-    ];
-
-    for (var e in elements) {
-      double? val;
-
-      // ================= AMBIL NILAI =================
-      if (e.startsWith("x")) {
-        val = elem["x"][int.parse(e.substring(1))];
-      } else if (e.startsWith("y")) {
-        val = elem["y"][int.parse(e.substring(1))];
-      } else if (e.startsWith("d")) {
-        val = elem["d"][int.parse(e.substring(1))];
-      } else if (e.startsWith("mu")) {
-        val = elem["mu"][int.parse(e.substring(2))];
-      } else if (e.startsWith("l1")) {
-        val = elem["l1"][int.parse(e.substring(2))];
-      } else if (e.startsWith("l2")) {
-        val = elem["l2"][int.parse(e.substring(2))];
-      } else if (e == "tanf1") {
-        val = elem["tanf1"];
-      } else if (e == "tanf2") {
-        val = elem["tanf2"];
-      } else if (e == "DT") {
-        val = resSEL["DT"];
-      } else if (e == "T0") {
-        val = resSEL["T0"];
+      for (int i = 0; i < list.length; i++) {
+        print("  $label$i : ${list[i]}");
       }
-
-      String valStr;
-
-      if (val == null || val.isNaN) {
-        valStr = "-";
-      } else {
-        if (e == "T0") {
-          valStr = val.toStringAsFixed(0);
-        } else if (e == "DT") {
-          valStr = val.toStringAsFixed(2);
-        } else {
-          valStr = val.toStringAsFixed(7);
-        }
-
-        if (val > 0) valStr = " $valStr";
-      }
-
-      print("${e.padRight(6)} : $valStr");
+      print("");
     }
 
+    // tampilkan jde, deltaT, t0 (hanya jika tidak null)
+    if (b.jde != null) print("JDE     : ${b.jde}");
+    if (b.deltaT != null) print("Delta T : ${b.deltaT}");
+    if (b.t0 != null) print("T0      : ${b.t0}");
     print("");
 
-    // ================= DATA UTAMA =================
-    print("Jenis Gerhana      : ${resSEL["JSE"]}");
-    print("Magnitude Gerhana  : ${resSEL["MAG"]}");
-    print("Obskurasi          : ${resSEL["OBS"]}");
-    print("Durasi Gerhana     : ${resSEL["DURG"]}");
-    print("Durasi Total       : ${resSEL["DURT"]}");
+    printList("x", b.x);
+    printList("y", b.y);
+    printList("d", b.d);
+    printList("mu", b.mu);
+    printList("l1", b.l1);
+    printList("l2", b.l2);
 
+    if (b.tanf1 != null) print("tanf1 : ${b.tanf1}");
+    if (b.tanf2 != null) print("tanf2 : ${b.tanf2}");
     print("");
 
-    print("========================================");
+    print("----------------------------------");
+
+    if (resSEL.jenis != null) {
+      print("Jenis Gerhana  : ${resSEL.jenis}");
+    }
+    if (resSEL.magnitude != null) {
+      print("Magnitude      : ${resSEL.magnitude}");
+    }
+    if (resSEL.obscuration != null) {
+      print("Obskurasi      : ${resSEL.obscuration}");
+    }
+    if (resSEL.durasiGerhana != null) {
+      print("Durasi Umbra   : ${resSEL.durasiGerhana}");
+    }
+    if (resSEL.durasiTotalitas != null) {
+      print("Durasi Total   : ${resSEL.durasiTotalitas}");
+    }
+    print("");
+
+    // helper kontak lokal
+    void printContact(String label, EclipseContact? c) {
+      if (c == null) return;
+
+      if (c.jd == null && c.azimuth == null && c.altitude == null) {
+        return;
+      }
+
+      print(label);
+
+      if (c.jd != null) print("  JD   : ${c.jd}");
+      if (c.azimuth != null) print("  Azm  : ${c.azimuth}");
+      if (c.altitude != null) print("  Alt  : ${c.altitude}");
+
+      print("");
+    }
+
     print("KONTAK GERHANA");
+    print("----------------------------------------");
+
+    printContact("U1 (Kontak Awal Umbra)", resSEL.u1);
+    printContact("U2 (Totalitas Mulai)", resSEL.u2);
+    printContact("MX (Puncak Gerhana)", resSEL.mx);
+    printContact("U3 (Totalitas Akhir)", resSEL.u3);
+    printContact("U4 (Kontak Akhir Umbra)", resSEL.u4);
+
+    print("========================================");
+    print("DATA MATAHARI & BULAN SAAT PUNCAK");
     print("========================================");
 
-    final contact = resSEL["CONTACT"];
+    final eph = resSEL.ephemerisMaximum;
 
-    print("Kontak U1");
-    print(se.formatKontakGerhanaLokal(contact["U1"], tmZn3));
-    print("");
+    if (eph != null) {
+      if (eph.sun != null) {
+        if (eph.sun!.ra != null) print("MATAHARI");
+        if (eph.sun!.ra != null) print("  RA  : ${eph.sun!.ra}");
+        if (eph.sun!.dec != null) print("  DEC : ${eph.sun!.dec}");
+        if (eph.sun!.sd != null) print("  SD  : ${eph.sun!.sd}");
+        if (eph.sun!.hp != null) print("  HP  : ${eph.sun!.hp}");
+        print("");
+      }
 
-    print("Kontak U2");
-    print(se.formatKontakGerhanaLokal(contact["U2"], tmZn3));
-    print("");
-
-    print("Puncak Gerhana (MX)");
-    print(se.formatKontakGerhanaLokal(contact["MX"], tmZn3));
-    print("");
-
-    print("Kontak U3");
-    print(se.formatKontakGerhanaLokal(contact["U3"], tmZn3));
-    print("");
-
-    print("Kontak U4");
-    print(se.formatKontakGerhanaLokal(contact["U4"], tmZn3));
-    print("");
-
-    //DATA EPHEMERIS MATAHARI SAAT PUNCAK GERHANA
-
-    print(se.formatEphemerisMX(contact["MX"]));
+      if (eph.moon != null) {
+        if (eph.moon!.ra != null) print("BULAN");
+        if (eph.moon!.ra != null) print("  RA  : ${eph.moon!.ra}");
+        if (eph.moon!.dec != null) print("  DEC : ${eph.moon!.dec}");
+        if (eph.moon!.sd != null) print("  SD  : ${eph.moon!.sd}");
+        if (eph.moon!.hp != null) print("  HP  : ${eph.moon!.hp}");
+      }
+    }
   }
 
   // INPUT GERHANA MATAHARI GLOBAL
@@ -1552,40 +1592,168 @@ void main() {
   print("========================================");
   print("     DATA GERHANA MATAHARI GLOBAL");
   print("========================================");
-  print("Bulan Hijriah : $blnH4");
-  print("Tahun Hijriah : $thnH4");
   print("");
 
   final resSEG = se.solarEclipseGlobal(blnH: blnH4, thnH: thnH4);
 
-  if (resSEG["ADA"] == false) {
-    print(resSEG["KET"]);
-  } else {
-    print("Jenis Gerhana      : ${resSEG["JSE"]}");
-    print("Magnitude Gerhana  : ${resSEG["MAG"]}");
-    print("Durasi Gerhana     : ${resSEG["DUR"]}");
-    print("Lebar Gerhana      : ${resSEG["lbr"]}");
+  print("Bulan Hijriah : $blnH4");
+  print("Tahun Hijriah : $thnH4");
+  print("");
 
+  if (resSEG == null || !resSEG.ada) {
+    print("Tidak ada gerhana");
+  } else {
+    final bs = resSEG.besselian;
+
+    print("========================================");
+    print("ELEMEN BESSELIAN");
+    print("========================================");
+
+    void printList2(String label, List<double>? list) {
+      if (list == null) {
+        print("$label : -");
+        return;
+      }
+
+      for (int i = 0; i < list.length; i++) {
+        print("  $label$i : ${list[i]}");
+      }
+    }
+
+    // tampilkan jde, deltaT, t0
+    print("JDE     : ${bs.jde}");
+    print("Delta T : ${bs.deltaT}");
+    print("T0      : ${bs.t0}");
     print("");
 
-    final kontakList = [
-      "P1",
-      "P2",
-      "U1",
-      "U2",
-      "C1",
-      "MX",
-      "C2",
-      "U3",
-      "U4",
-      "P3",
-      "P4",
-    ];
+    printList2("x", bs.x);
+    print("");
+    printList2("y", bs.y);
+    print("");
+    printList2("d", bs.d);
+    print("");
+    printList2("mu", bs.mu);
+    print("");
+    printList2("l1", bs.l1);
+    print("");
+    printList2("l2", bs.l2);
+    print("");
 
-    for (var k in kontakList) {
-      print("Kontak $k");
-      print(se.formatKontakGerhana(resSEG[k]));
+    print("tanf1 : ${bs.tanf1}");
+    print("tanf2 : ${bs.tanf2}");
+    print("");
+
+    print("----------------------------------");
+
+    if (resSEG.jenis != null) {
+      print("Jenis Gerhana    : ${resSEG.jenis}");
+    }
+    if (resSEG.magnitude != null) {
+      print("Magnitude        : ${resSEG.magnitude}");
+    }
+    if (resSEG.lebar != null) {
+      print("Lebar            : ${resSEG.lebar}");
+    }
+    if (resSEG.durasiGerhana != null) {
+      print("Durasi Gerhana   : ${resSEG.durasiGerhana}");
+    }
+    if (resSEG.durasiTotalitas != null) {
+      print("Durasi Totalitas : ${resSEG.durasiTotalitas}");
+    }
+    print("");
+
+    // helper untuk kontak gerhana
+    void printContactGlobal(String label, EclipseContactGlobal? c) {
+      if (c == null) return;
+
+      if (c.jd == null &&
+          c.jd2 == null &&
+          c.longitude == null &&
+          c.latitude == null &&
+          c.azimuth == null &&
+          c.altitude == null) {
+        return;
+      }
+
+      print(label);
+
+      if (c.jd != null) print("  JDTD : ${c.jd}");
+      if (c.jd2 != null) print("  JDUT : ${c.jd2}");
+      if (c.longitude != null) print("  lon  : ${c.longitude}");
+      if (c.latitude != null) print("  lat  : ${c.latitude}");
+      if (c.azimuth != null) print("  Azm  : ${c.azimuth}");
+      if (c.altitude != null) print("  Alt  : ${c.altitude}");
+
       print("");
     }
+
+    print("KONTAK GERHANA");
+    print("----------------------------------------");
+
+    printContactGlobal("P1 (Kontak Awal Umbra)", resSEG.p1);
+    printContactGlobal("U1 (Kontak Awal Umbra)", resSEG.u1);
+    printContactGlobal("C1 (Kontak Awal Umbra)", resSEG.c1);
+    printContactGlobal("U2 (Totalitas Mulai)", resSEG.u2);
+    printContactGlobal("P2 (Kontak Awal Umbra)", resSEG.p2);
+    printContactGlobal("MX (Puncak Gerhana)", resSEG.mx);
+    printContactGlobal("P3 (Kontak Awal Umbra)", resSEG.p3);
+    printContactGlobal("U3 (Totalitas Akhir)", resSEG.u3);
+    printContactGlobal("C2 (Kontak Awal Umbra)", resSEG.c2);
+    printContactGlobal("U4 (Kontak Akhir Umbra)", resSEG.u4);
+    printContactGlobal("P4 (Kontak Awal Umbra)", resSEG.p4);
+
+    print("========================================");
+    print("DATA MATAHARI & BULAN SAAT PUNCAK");
+    print("========================================");
+
+    final eph2 = resSEG.ephemerisMaximum;
+
+    if (eph2 != null) {
+      print("MATAHARI");
+      print("  RA  : ${eph2.sun?.ra}");
+      print("  DEC : ${eph2.sun?.dec}");
+      print("  SD  : ${eph2.sun?.sd}");
+      print("  HP  : ${eph2.sun?.hp}");
+      print("");
+
+      print("BULAN");
+      print("  RA  : ${eph2.moon?.ra}");
+      print("  DEC : ${eph2.moon?.dec}");
+      print("  SD  : ${eph2.moon?.sd}");
+      print("  HP  : ${eph2.moon?.hp}");
+    }
   }
+
+  // final resSEG = se.solarEclipseGlobal(blnH: blnH4, thnH: thnH4);
+
+  // if (resSEG["ADA"] == false) {
+  //   print(resSEG["KET"]);
+  // } else {
+  //   print("Jenis Gerhana      : ${resSEG["JSE"]}");
+  //   print("Magnitude Gerhana  : ${resSEG["MAG"]}");
+  //   print("Durasi Gerhana     : ${resSEG["DUR"]}");
+  //   print("Lebar Gerhana      : ${resSEG["lbr"]}");
+
+  //   print("");
+
+  //   final kontakList = [
+  //     "P1",
+  //     "P2",
+  //     "U1",
+  //     "U2",
+  //     "C1",
+  //     "MX",
+  //     "C2",
+  //     "U3",
+  //     "U4",
+  //     "P3",
+  //     "P4",
+  //   ];
+
+  //   for (var k in kontakList) {
+  //     print("Kontak $k");
+  //     print(se.formatKontakGerhana(resSEG[k]));
+  //     print("");
+  //   }
+  // }
 }

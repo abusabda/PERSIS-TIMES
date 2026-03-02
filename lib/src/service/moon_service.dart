@@ -4,7 +4,7 @@ import 'package:myhisab/src/core/astronomy/moon_function.dart';
 import 'package:myhisab/src/core/astronomy/moon_longitude.dart';
 import 'package:myhisab/src/core/astronomy/moon_latitude.dart';
 import 'package:myhisab/src/core/astronomy/moon_distance.dart';
-import 'package:myhisab/src/model/moon_result.dart';
+import 'package:myhisab/src/model/moon/moon_result.dart';
 
 class MoonService {
   final JulianDay _julianDay = JulianDay();
