@@ -8,7 +8,11 @@ import 'package:myhisab/src/core/astronomy/sun_function.dart';
 import 'package:myhisab/src/model/solar_eclipse/solar_besselian_result.dart';
 import '../model/solar_eclipse/solar_eclipse_local_result.dart';
 import '../model/solar_eclipse/solar_eclipse_global_result.dart';
+import '../model/solar_eclipse/solar_eclipse_global_range_result.dart';
+import '../model/solar_eclipse/solar_eclipse_local_range_result.dart';
 import 'package:myhisab/src/core/math/safe_math.dart';
+
+enum TimeScale { jdTD, jdUT }
 
 class SolarEclipseService {
   final julianDay = JulianDay();
@@ -342,11 +346,11 @@ class SolarEclipseService {
       ],
 
       mu: [
-        mf.interp5(mum2, mum1, mu00, mup1, mup2, 0),
-        mf.interp5(mum2, mum1, mu00, mup1, mup2, 1),
-        mf.interp5(mum2, mum1, mu00, mup1, mup2, 2),
-        mf.interp5(mum2, mum1, mu00, mup1, mup2, 3),
-        mf.interp5(mum2, mum1, mu00, mup1, mup2, 4),
+        mf.interp5Angle(mum2, mum1, mu00, mup1, mup2, 0),
+        mf.interp5Angle(mum2, mum1, mu00, mup1, mup2, 1),
+        mf.interp5Angle(mum2, mum1, mu00, mup1, mup2, 2),
+        mf.interp5Angle(mum2, mum1, mu00, mup1, mup2, 3),
+        mf.interp5Angle(mum2, mum1, mu00, mup1, mup2, 4),
       ],
 
       l1: [
@@ -1182,11 +1186,6 @@ class SolarEclipseService {
     final double l1pMx = l1Mx - bBig * tanf1;
     final double l2pMx = l2Mx - bBig * tanf2;
 
-    final bool central = msMx < l1pMx.abs();
-    final bool adaUmbra = msMx < l2pMx.abs();
-    final bool isTotal = adaUmbra && l2pMx < 0.0;
-    final bool isAnnular = adaUmbra && l2pMx > 0.0;
-
     final double pp = mf.rad(mu[1]);
 
     final double aa = ypMx - pp * xMx * math.sin(mf.rad(dMx));
@@ -1256,39 +1255,8 @@ class SolarEclipseService {
     final double wd = mf.abs(SafeMath.safeDiv(12756 * l2pMx, kk));
 
     // ==========================
-    // Obskurasi (belum beres)
+    // Obskurasi (belum)
     // ==========================
-
-    // final double cBg = (msMx < 0.9972)
-    //     ? math.acos(
-    //         (l1pMx * l1pMx + l2pMx * l2pMx - 2 * ddd * ddd) /
-    //             (l1pMx * l1pMx - l2pMx * l2pMx),
-    //       )
-    //     : math.acos(
-    //         (l1Mx * l1Mx + l2Mx * l2Mx - 2 * ddd * ddd) /
-    //             (l1Mx * l1Mx - l2Mx * l2Mx),
-    //       );
-
-    // final double bBg = (msMx < 0.9972)
-    //     ? math.acos((l1pMx * l2pMx + ddd * ddd) / (ddd * (l1pMx * l2pMx)))
-    //     : math.acos((l1Mx * l2Mx + ddd * ddd) / (ddd * (l1Mx * l2Mx)));
-
-    // final double aBg = math.pi - (bBg + cBg);
-
-    // final double sSm = (msMx < 0.9972)
-    //     ? (l1pMx - l2pMx) / (l1pMx + l2pMx)
-    //     : (l1Mx - l2Mx) / (l1Mx + l2Mx);
-
-    // final double spB = (l2Mx < 0)
-    //     ? 1.0
-    //     : (l2Mx > 0.0 && l2Mx < 0.0047)
-    //     ? sSm * sSm
-    //     : (l2Mx > 0.0047)
-    //     ? sSm * sSm
-    //     : ((sSm * sSm) * aBg + sSm - bBg * math.sin(cBg)) / math.pi;
-
-    //Waktu Kontak Maksimal
-    //final double jdEclipse = sBesselian(blnH, thnH, "JDS");
 
     final double jdSolarEclipseMxTD = mf.floor(jde2 - 0.5) + 0.5 + mXTD / 24.0;
 
@@ -1307,359 +1275,392 @@ class SolarEclipseService {
     final sdM = mo.moonGeocentricSemidiameter(jdSolarEclipseMxTD, 0);
     final hpM = mo.moonEquatorialHorizontalParallax(jdSolarEclipseMxTD, 0);
 
-    //Penumbral First External Contact (P1)
+    final bool central = msMx < 0.9972;
 
-    double xP1 = 0.0;
-    double yP1 = 0.0;
-    double dP1 = 0.0;
-    double muP1 = 0.0;
-    double xpP1 = 0.0;
-    double ypP1 = 0.0;
-    double l1P1 = 0.0;
-    double omP1 = 0.0;
-    double msP1 = 0.0;
-    double y1P1 = 0.0;
-    double m1P1 = 0.0;
-    double roP1 = 0.0;
-    double n2P1 = 0.0;
-    double nsP1 = 0.0;
-    double psP1 = 0.0;
-
-    double tuP1 = 0.0;
-    double tP1 = 0.0;
-
-    tP1 += tuP1;
-
-    for (int i = 1; i <= 5; i++) {
-      xP1 =
-          x[0] +
-          x[1] * tP1 +
-          x[2] * tP1 * tP1 +
-          x[3] * tP1 * tP1 * tP1 +
-          x[4] * tP1 * tP1 * tP1 * tP1;
-
-      yP1 =
-          y[0] +
-          y[1] * tP1 +
-          y[2] * tP1 * tP1 +
-          y[3] * tP1 * tP1 * tP1 +
-          y[4] * tP1 * tP1 * tP1 * tP1;
-
-      dP1 =
-          d[0] +
-          d[1] * tP1 +
-          d[2] * tP1 * tP1 +
-          d[3] * tP1 * tP1 * tP1 +
-          d[4] * tP1 * tP1 * tP1 * tP1;
-
-      muP1 =
-          mu[0] +
-          mu[1] * tP1 +
-          mu[2] * tP1 * tP1 +
-          mu[3] * tP1 * tP1 * tP1 +
-          mu[4] * tP1 * tP1 * tP1 * tP1;
-
-      xpP1 =
-          x[1] +
-          2 * x[2] * tP1 +
-          3 * x[3] * tP1 * tP1 +
-          4 * x[4] * tP1 * tP1 * tP1;
-
-      ypP1 =
-          y[1] +
-          2 * y[2] * tP1 +
-          3 * y[3] * tP1 * tP1 +
-          4 * y[4] * tP1 * tP1 * tP1;
-
-      l1P1 =
-          l1[0] +
-          l1[1] * tP1 +
-          l1[2] * tP1 * tP1 +
-          l1[3] * tP1 * tP1 * tP1 +
-          l1[4] * tP1 * tP1 * tP1 * tP1;
-
-      omP1 = SafeMath.safeDiv(
-        1.0,
-        SafeMath.sqrt(1 - e2 * math.cos(mf.rad(dP1)) * math.cos(mf.rad(dP1))),
-      );
-
-      msP1 = SafeMath.sqrt(xP1 * xP1 + yP1 * yP1);
-
-      y1P1 = yP1 * omP1;
-      m1P1 = SafeMath.sqrt(xP1 * xP1 + y1P1 * y1P1);
-      roP1 = SafeMath.safeDiv(msP1, m1P1);
-
-      n2P1 = xpP1 * xpP1 + ypP1 * ypP1;
-      nsP1 = SafeMath.sqrt(n2P1);
-
-      psP1 = SafeMath.asin(
-        SafeMath.safeDiv((xP1 * ypP1 - xpP1 * yP1), (nsP1 * (l1P1 + roP1))),
-      );
-
-      tuP1 =
-          SafeMath.safeDiv((l1P1 + roP1), nsP1) * -math.cos(psP1) -
-          SafeMath.safeDiv((xP1 * xpP1 + yP1 * ypP1), (nsP1 * nsP1));
-
-      tP1 = tP1 + tuP1;
-    }
-
-    double p1TD = mf.mod(t0 + tP1, 24.0);
-    double p1UT = mf.mod(p1TD - dt / 3600.0, 24.0);
-
-    // Koordinat saat kontak P1
-    double d1P1 = mf.deg(
-      math.atan(
-        SafeMath.safeDiv(math.sin(mf.rad(dP1)), (math.cos(mf.rad(dP1)) * ba)),
-      ),
-    );
-
-    double rhP1 = SafeMath.sqrt(
-      math.sin(mf.rad(dP1)) * math.sin(mf.rad(dP1)) +
-          (math.cos(mf.rad(dP1)) * ba) * (math.cos(mf.rad(dP1)) * ba),
-    );
-
-    double yIP1 = SafeMath.safeDiv(yP1, rhP1);
-    double mIP1 = SafeMath.sqrt(xP1 * xP1 + yIP1 * yIP1);
-
-    double x1P1 = SafeMath.safeDiv(xP1, mIP1);
-    double y2P1 = SafeMath.safeDiv(yIP1, mIP1);
-
-    double pi1P1 = mf.deg(SafeMath.asin(y2P1 * math.cos(mf.rad(d1P1))));
-
-    double piP1 = mf.deg(math.atan(ab * math.tan(mf.rad(pi1P1))));
-
-    double x2P1 = -y2P1 * math.sin(mf.rad(dP1));
-
-    double haP1 = mf.mod(mf.deg(math.atan2(x1P1, x2P1)), 360.0);
-
-    double caP1 = haP1 - muP1 + (0.004178 * dt);
-
-    double ldP1;
-
-    if (caP1 > 180) {
-      ldP1 = caP1 - 360;
-    } else if (caP1 < -180) {
-      ldP1 = caP1 + 360;
-    } else {
-      ldP1 = caP1;
-    }
-
-    // Azimuth dan Altitude
-    double altP1 = mf.deg(
-      SafeMath.asin(
-        math.sin(mf.rad(piP1)) * math.sin(mf.rad(dP1)) +
-            math.cos(mf.rad(piP1)) *
-                math.cos(mf.rad(dP1)) *
-                math.cos(mf.rad(haP1)),
-      ),
-    );
-
-    double azmP1 = mf.mod(
-      mf.deg(
-            math.atan2(
-              math.sin(mf.rad(haP1)),
-              math.cos(mf.rad(haP1)) * math.sin(mf.rad(piP1)) -
-                  math.tan(mf.rad(dP1)) * math.cos(mf.rad(piP1)),
-            ),
-          ) +
-          180,
-      360.0,
-    );
-
-    //Waktu Kontak P1
-
-    final double jdSolarEclipseP1TD = mf.floor(jde2 - 0.5) + 0.5 + p1TD / 24.0;
-
-    final double jdSolarEclipseP1UT = mf.floor(jde2 - 0.5) + 0.5 + p1UT / 24.0;
-
-    // Penumbral Last External Contact (P4)
-
-    double xP4 = 0.0;
-    double yP4 = 0.0;
-    double dP4 = 0.0;
-    double muP4 = 0.0;
-    double xpP4 = 0.0;
-    double ypP4 = 0.0;
-    double l1P4 = 0.0;
-    double omP4 = 0.0;
-    double msP4 = 0.0;
-    double y1P4 = 0.0;
-    double m1P4 = 0.0;
-    double roP4 = 0.0;
-    double n2P4 = 0.0;
-    double nsP4 = 0.0;
-    double psP4 = 0.0;
-
-    double tuP4 = 0.0;
-    double tP4 = 0.0;
-
-    tP4 += tuP4;
-
-    for (int i = 1; i <= 5; i++) {
-      xP4 =
-          x[0] +
-          x[1] * tP4 +
-          x[2] * tP4 * tP4 +
-          x[3] * tP4 * tP4 * tP4 +
-          x[4] * tP4 * tP4 * tP4 * tP4;
-
-      yP4 =
-          y[0] +
-          y[1] * tP4 +
-          y[2] * tP4 * tP4 +
-          y[3] * tP4 * tP4 * tP4 +
-          y[4] * tP4 * tP4 * tP4 * tP4;
-
-      dP4 =
-          d[0] +
-          d[1] * tP4 +
-          d[2] * tP4 * tP4 +
-          d[3] * tP4 * tP4 * tP4 +
-          d[4] * tP4 * tP4 * tP4 * tP4;
-
-      muP4 =
-          mu[0] +
-          mu[1] * tP4 +
-          mu[2] * tP4 * tP4 +
-          mu[3] * tP4 * tP4 * tP4 +
-          mu[4] * tP4 * tP4 * tP4 * tP4;
-
-      xpP4 =
-          x[1] +
-          2 * x[2] * tP4 +
-          3 * x[3] * tP4 * tP4 +
-          4 * x[4] * tP4 * tP4 * tP4;
-
-      ypP4 =
-          y[1] +
-          2 * y[2] * tP4 +
-          3 * y[3] * tP4 * tP4 +
-          4 * y[4] * tP4 * tP4 * tP4;
-
-      l1P4 =
-          l1[0] +
-          l1[1] * tP4 +
-          l1[2] * tP4 * tP4 +
-          l1[3] * tP4 * tP4 * tP4 +
-          l1[4] * tP4 * tP4 * tP4 * tP4;
-
-      omP4 = SafeMath.safeDiv(
-        1.0,
-        SafeMath.sqrt(1.0 - e2 * math.cos(mf.rad(dP4)) * math.cos(mf.rad(dP4))),
-      );
-
-      msP4 = SafeMath.sqrt(xP4 * xP4 + yP4 * yP4);
-
-      y1P4 = yP4 * omP4;
-
-      m1P4 = SafeMath.sqrt(xP4 * xP4 + y1P4 * y1P4);
-
-      roP4 = SafeMath.safeDiv(msP4, m1P4);
-
-      n2P4 = xpP4 * xpP4 + ypP4 * ypP4;
-
-      nsP4 = SafeMath.sqrt(n2P4);
-
-      psP4 = SafeMath.asin(
-        SafeMath.safeDiv((xP4 * ypP4 - xpP4 * yP4), (nsP4 * (l1P4 + roP4))),
-      );
-
-      tuP4 =
-          SafeMath.safeDiv((l1P4 + roP4), nsP4) * math.cos(psP4) -
-          SafeMath.safeDiv((xP4 * xpP4 + yP4 * ypP4), (nsP4 * nsP4));
-
-      tP4 = tP4 + tuP4;
-    }
-
-    double p4TD = mf.mod(t0 + tP4, 24.0);
-    double p4UT = mf.mod(p4TD - dt / 3600.0, 24.0);
-
-    // Koordinat saat kontak P4
-
-    double d1P4 = mf.deg(
-      math.atan(
-        SafeMath.safeDiv(math.sin(mf.rad(dP4)), (math.cos(mf.rad(dP4)) * ba)),
-      ),
-    );
-
-    double rhP4 = SafeMath.sqrt(
-      math.sin(mf.rad(dP4)) * math.sin(mf.rad(dP4)) +
-          (math.cos(mf.rad(dP4)) * ba) * (math.cos(mf.rad(dP4)) * ba),
-    );
-
-    double yIP4 = SafeMath.safeDiv(yP4, rhP4);
-
-    double mIP4 = SafeMath.sqrt(xP4 * xP4 + yIP4 * yIP4);
-
-    double x1P4 = SafeMath.safeDiv(xP4, mIP4);
-    double y2P4 = SafeMath.safeDiv(yIP4, mIP4);
-
-    double pi1P4 = mf.deg(SafeMath.asin(y2P4 * math.cos(mf.rad(d1P4))));
-
-    double piP4 = mf.deg(math.atan(ab * math.tan(mf.rad(pi1P4))));
-
-    double x2P4 = -y2P4 * math.sin(mf.rad(dP4));
-
-    double haP4 = mf.mod(mf.deg(math.atan2(x1P4, x2P4)), 360.0);
-
-    double caP4 = haP4 - muP4 + (0.004178 * dt);
-
-    double ldP4;
-
-    if (caP4 > 180.0) {
-      ldP4 = caP4 - 360.0;
-    } else if (caP4 < -180.0) {
-      ldP4 = caP4 + 360.0;
-    } else {
-      ldP4 = caP4;
-    }
-
-    // Azimuth dan Altitude saat kontak P4
-
-    double altP4 = mf.deg(
-      SafeMath.asin(
-        math.sin(mf.rad(piP4)) * math.sin(mf.rad(dP4)) +
-            math.cos(mf.rad(piP4)) *
-                math.cos(mf.rad(dP4)) *
-                math.cos(mf.rad(haP4)),
-      ),
-    );
-
-    double azmP4 = mf.mod(
-      mf.deg(
-            math.atan2(
-              math.sin(mf.rad(haP4)),
-              math.cos(mf.rad(haP4)) * math.sin(mf.rad(piP4)) -
-                  math.tan(mf.rad(dP4)) * math.cos(mf.rad(piP4)),
-            ),
-          ) +
-          180.0,
-      360.0,
-    );
-
-    //Waktu Kontak P4
-
-    final double jdSolarEclipseP4TD = mf.floor(jde2 - 0.5) + 0.5 + p4TD / 24.0;
-
-    final double jdSolarEclipseP4UT = mf.floor(jde2 - 0.5) + 0.5 + p4UT / 24.0;
-
-    //BUNGKUS P1 DAN P2
-
+    // hitung semua P
+    double? jdSolarEclipseP1TD;
     double? jdSolarEclipseP2TD;
-    double? jdSolarEclipseP2UT;
-    double? ldP2;
-    double? piP2;
-    double? altP2;
-    double? azmP2;
-
     double? jdSolarEclipseP3TD;
+    double? jdSolarEclipseP4TD;
+
+    double? jdSolarEclipseP1UT;
+    double? jdSolarEclipseP2UT;
     double? jdSolarEclipseP3UT;
-    double? ldP3;
-    double? piP3;
-    double? altP3;
-    double? azmP3;
+    double? jdSolarEclipseP4UT;
+
+    double? ldP1, ldP2, ldP3, ldP4;
+    double? piP1, piP2, piP3, piP4;
+    double? altP1, altP2, altP3, altP4;
+    double? azmP1, azmP2, azmP3, azmP4;
+
+    // hitung semua U
+    double? jdSolarEclipseU1TD;
+    double? jdSolarEclipseU2TD;
+    double? jdSolarEclipseU3TD;
+    double? jdSolarEclipseU4TD;
+
+    double? jdSolarEclipseU1UT;
+    double? jdSolarEclipseU2UT;
+    double? jdSolarEclipseU3UT;
+    double? jdSolarEclipseU4UT;
+
+    double? altU1, altU2, altU3, altU4;
+    double? azmU1, azmU2, azmU3, azmU4;
+
+    double? piU1, piU2, piU3, piU4;
+    double? ldU1, ldU2, ldU3, ldU4;
+
+    // hitung semua C
+    double? jdSolarEclipseC1TD;
+    double? jdSolarEclipseC2TD;
+    double? jdSolarEclipseC1UT;
+    double? jdSolarEclipseC2UT;
+
+    double? altC1, altC2;
+    double? azmC1, azmC2;
+
+    double? piC1, piC2;
+    double? ldC1, ldC2;
 
     if (central) {
+      //KONTAK P1 & P4
+      //Penumbral First External Contact (P1)
+
+      double xP1 = 0.0;
+      double yP1 = 0.0;
+      double dP1 = 0.0;
+      double muP1 = 0.0;
+      double xpP1 = 0.0;
+      double ypP1 = 0.0;
+      double l1P1 = 0.0;
+      double omP1 = 0.0;
+      double msP1 = 0.0;
+      double y1P1 = 0.0;
+      double m1P1 = 0.0;
+      double roP1 = 0.0;
+      double n2P1 = 0.0;
+      double nsP1 = 0.0;
+      double psP1 = 0.0;
+
+      double tuP1 = 0.0;
+      double tP1 = 0.0;
+
+      tP1 += tuP1;
+
+      for (int i = 1; i <= 5; i++) {
+        xP1 =
+            x[0] +
+            x[1] * tP1 +
+            x[2] * tP1 * tP1 +
+            x[3] * tP1 * tP1 * tP1 +
+            x[4] * tP1 * tP1 * tP1 * tP1;
+
+        yP1 =
+            y[0] +
+            y[1] * tP1 +
+            y[2] * tP1 * tP1 +
+            y[3] * tP1 * tP1 * tP1 +
+            y[4] * tP1 * tP1 * tP1 * tP1;
+
+        dP1 =
+            d[0] +
+            d[1] * tP1 +
+            d[2] * tP1 * tP1 +
+            d[3] * tP1 * tP1 * tP1 +
+            d[4] * tP1 * tP1 * tP1 * tP1;
+
+        muP1 =
+            mu[0] +
+            mu[1] * tP1 +
+            mu[2] * tP1 * tP1 +
+            mu[3] * tP1 * tP1 * tP1 +
+            mu[4] * tP1 * tP1 * tP1 * tP1;
+
+        xpP1 =
+            x[1] +
+            2 * x[2] * tP1 +
+            3 * x[3] * tP1 * tP1 +
+            4 * x[4] * tP1 * tP1 * tP1;
+
+        ypP1 =
+            y[1] +
+            2 * y[2] * tP1 +
+            3 * y[3] * tP1 * tP1 +
+            4 * y[4] * tP1 * tP1 * tP1;
+
+        l1P1 =
+            l1[0] +
+            l1[1] * tP1 +
+            l1[2] * tP1 * tP1 +
+            l1[3] * tP1 * tP1 * tP1 +
+            l1[4] * tP1 * tP1 * tP1 * tP1;
+
+        omP1 = SafeMath.safeDiv(
+          1.0,
+          SafeMath.sqrt(1 - e2 * math.cos(mf.rad(dP1)) * math.cos(mf.rad(dP1))),
+        );
+
+        msP1 = SafeMath.sqrt(xP1 * xP1 + yP1 * yP1);
+
+        y1P1 = yP1 * omP1;
+        m1P1 = SafeMath.sqrt(xP1 * xP1 + y1P1 * y1P1);
+        roP1 = SafeMath.safeDiv(msP1, m1P1);
+
+        n2P1 = xpP1 * xpP1 + ypP1 * ypP1;
+        nsP1 = SafeMath.sqrt(n2P1);
+
+        psP1 = SafeMath.asin(
+          SafeMath.safeDiv((xP1 * ypP1 - xpP1 * yP1), (nsP1 * (l1P1 + roP1))),
+        );
+
+        tuP1 =
+            SafeMath.safeDiv((l1P1 + roP1), nsP1) * -math.cos(psP1) -
+            SafeMath.safeDiv((xP1 * xpP1 + yP1 * ypP1), (nsP1 * nsP1));
+
+        tP1 = tP1 + tuP1;
+      }
+
+      double p1TD = mf.mod(t0 + tP1, 24.0);
+      double p1UT = mf.mod(p1TD - dt / 3600.0, 24.0);
+
+      // Koordinat saat kontak P1
+      double d1P1 = mf.deg(
+        math.atan(
+          SafeMath.safeDiv(math.sin(mf.rad(dP1)), (math.cos(mf.rad(dP1)) * ba)),
+        ),
+      );
+
+      double rhP1 = SafeMath.sqrt(
+        math.sin(mf.rad(dP1)) * math.sin(mf.rad(dP1)) +
+            (math.cos(mf.rad(dP1)) * ba) * (math.cos(mf.rad(dP1)) * ba),
+      );
+
+      double yIP1 = SafeMath.safeDiv(yP1, rhP1);
+      double mIP1 = SafeMath.sqrt(xP1 * xP1 + yIP1 * yIP1);
+
+      double x1P1 = SafeMath.safeDiv(xP1, mIP1);
+      double y2P1 = SafeMath.safeDiv(yIP1, mIP1);
+
+      double pi1P1 = mf.deg(SafeMath.asin(y2P1 * math.cos(mf.rad(d1P1))));
+
+      piP1 = mf.deg(math.atan(ab * math.tan(mf.rad(pi1P1))));
+
+      double x2P1 = -y2P1 * math.sin(mf.rad(dP1));
+
+      double haP1 = mf.mod(mf.deg(math.atan2(x1P1, x2P1)), 360.0);
+
+      double caP1 = haP1 - muP1 + (0.004178 * dt);
+
+      ldP1;
+
+      if (caP1 > 180) {
+        ldP1 = caP1 - 360;
+      } else if (caP1 < -180) {
+        ldP1 = caP1 + 360;
+      } else {
+        ldP1 = caP1;
+      }
+
+      // Azimuth dan Altitude
+      altP1 = mf.deg(
+        SafeMath.asin(
+          math.sin(mf.rad(piP1)) * math.sin(mf.rad(dP1)) +
+              math.cos(mf.rad(piP1)) *
+                  math.cos(mf.rad(dP1)) *
+                  math.cos(mf.rad(haP1)),
+        ),
+      );
+
+      azmP1 = mf.mod(
+        mf.deg(
+              math.atan2(
+                math.sin(mf.rad(haP1)),
+                math.cos(mf.rad(haP1)) * math.sin(mf.rad(piP1)) -
+                    math.tan(mf.rad(dP1)) * math.cos(mf.rad(piP1)),
+              ),
+            ) +
+            180,
+        360.0,
+      );
+
+      //Waktu Kontak P1
+
+      jdSolarEclipseP1TD = mf.floor(jde2 - 0.5) + 0.5 + p1TD / 24.0;
+      jdSolarEclipseP1UT = mf.floor(jde2 - 0.5) + 0.5 + p1UT / 24.0;
+
+      // Penumbral Last External Contact (P4)
+
+      double xP4 = 0.0;
+      double yP4 = 0.0;
+      double dP4 = 0.0;
+      double muP4 = 0.0;
+      double xpP4 = 0.0;
+      double ypP4 = 0.0;
+      double l1P4 = 0.0;
+      double omP4 = 0.0;
+      double msP4 = 0.0;
+      double y1P4 = 0.0;
+      double m1P4 = 0.0;
+      double roP4 = 0.0;
+      double n2P4 = 0.0;
+      double nsP4 = 0.0;
+      double psP4 = 0.0;
+
+      double tuP4 = 0.0;
+      double tP4 = 0.0;
+
+      tP4 += tuP4;
+
+      for (int i = 1; i <= 5; i++) {
+        xP4 =
+            x[0] +
+            x[1] * tP4 +
+            x[2] * tP4 * tP4 +
+            x[3] * tP4 * tP4 * tP4 +
+            x[4] * tP4 * tP4 * tP4 * tP4;
+
+        yP4 =
+            y[0] +
+            y[1] * tP4 +
+            y[2] * tP4 * tP4 +
+            y[3] * tP4 * tP4 * tP4 +
+            y[4] * tP4 * tP4 * tP4 * tP4;
+
+        dP4 =
+            d[0] +
+            d[1] * tP4 +
+            d[2] * tP4 * tP4 +
+            d[3] * tP4 * tP4 * tP4 +
+            d[4] * tP4 * tP4 * tP4 * tP4;
+
+        muP4 =
+            mu[0] +
+            mu[1] * tP4 +
+            mu[2] * tP4 * tP4 +
+            mu[3] * tP4 * tP4 * tP4 +
+            mu[4] * tP4 * tP4 * tP4 * tP4;
+
+        xpP4 =
+            x[1] +
+            2 * x[2] * tP4 +
+            3 * x[3] * tP4 * tP4 +
+            4 * x[4] * tP4 * tP4 * tP4;
+
+        ypP4 =
+            y[1] +
+            2 * y[2] * tP4 +
+            3 * y[3] * tP4 * tP4 +
+            4 * y[4] * tP4 * tP4 * tP4;
+
+        l1P4 =
+            l1[0] +
+            l1[1] * tP4 +
+            l1[2] * tP4 * tP4 +
+            l1[3] * tP4 * tP4 * tP4 +
+            l1[4] * tP4 * tP4 * tP4 * tP4;
+
+        omP4 = SafeMath.safeDiv(
+          1.0,
+          SafeMath.sqrt(
+            1.0 - e2 * math.cos(mf.rad(dP4)) * math.cos(mf.rad(dP4)),
+          ),
+        );
+
+        msP4 = SafeMath.sqrt(xP4 * xP4 + yP4 * yP4);
+
+        y1P4 = yP4 * omP4;
+
+        m1P4 = SafeMath.sqrt(xP4 * xP4 + y1P4 * y1P4);
+
+        roP4 = SafeMath.safeDiv(msP4, m1P4);
+
+        n2P4 = xpP4 * xpP4 + ypP4 * ypP4;
+
+        nsP4 = SafeMath.sqrt(n2P4);
+
+        psP4 = SafeMath.asin(
+          SafeMath.safeDiv((xP4 * ypP4 - xpP4 * yP4), (nsP4 * (l1P4 + roP4))),
+        );
+
+        tuP4 =
+            SafeMath.safeDiv((l1P4 + roP4), nsP4) * math.cos(psP4) -
+            SafeMath.safeDiv((xP4 * xpP4 + yP4 * ypP4), (nsP4 * nsP4));
+
+        tP4 = tP4 + tuP4;
+      }
+
+      double p4TD = mf.mod(t0 + tP4, 24.0);
+      double p4UT = mf.mod(p4TD - dt / 3600.0, 24.0);
+
+      // Koordinat saat kontak P4
+
+      double d1P4 = mf.deg(
+        math.atan(
+          SafeMath.safeDiv(math.sin(mf.rad(dP4)), (math.cos(mf.rad(dP4)) * ba)),
+        ),
+      );
+
+      double rhP4 = SafeMath.sqrt(
+        math.sin(mf.rad(dP4)) * math.sin(mf.rad(dP4)) +
+            (math.cos(mf.rad(dP4)) * ba) * (math.cos(mf.rad(dP4)) * ba),
+      );
+
+      double yIP4 = SafeMath.safeDiv(yP4, rhP4);
+
+      double mIP4 = SafeMath.sqrt(xP4 * xP4 + yIP4 * yIP4);
+
+      double x1P4 = SafeMath.safeDiv(xP4, mIP4);
+      double y2P4 = SafeMath.safeDiv(yIP4, mIP4);
+
+      double pi1P4 = mf.deg(SafeMath.asin(y2P4 * math.cos(mf.rad(d1P4))));
+
+      piP4 = mf.deg(math.atan(ab * math.tan(mf.rad(pi1P4))));
+
+      double x2P4 = -y2P4 * math.sin(mf.rad(dP4));
+
+      double haP4 = mf.mod(mf.deg(math.atan2(x1P4, x2P4)), 360.0);
+
+      double caP4 = haP4 - muP4 + (0.004178 * dt);
+
+      ldP4;
+
+      if (caP4 > 180.0) {
+        ldP4 = caP4 - 360.0;
+      } else if (caP4 < -180.0) {
+        ldP4 = caP4 + 360.0;
+      } else {
+        ldP4 = caP4;
+      }
+
+      // Azimuth dan Altitude saat kontak P4
+
+      altP4 = mf.deg(
+        SafeMath.asin(
+          math.sin(mf.rad(piP4)) * math.sin(mf.rad(dP4)) +
+              math.cos(mf.rad(piP4)) *
+                  math.cos(mf.rad(dP4)) *
+                  math.cos(mf.rad(haP4)),
+        ),
+      );
+
+      azmP4 = mf.mod(
+        mf.deg(
+              math.atan2(
+                math.sin(mf.rad(haP4)),
+                math.cos(mf.rad(haP4)) * math.sin(mf.rad(piP4)) -
+                    math.tan(mf.rad(dP4)) * math.cos(mf.rad(piP4)),
+              ),
+            ) +
+            180.0,
+        360.0,
+      );
+
+      //Waktu Kontak P4
+
+      jdSolarEclipseP4TD = mf.floor(jde2 - 0.5) + 0.5 + p4TD / 24.0;
+      jdSolarEclipseP4UT = mf.floor(jde2 - 0.5) + 0.5 + p4UT / 24.0;
+
+      //KONTAK P2 & P3
       // ===============================
       // Penumbral First Internal Contact (P2)
       // ===============================
@@ -2011,29 +2012,9 @@ class SolarEclipseService {
       jdSolarEclipseP3TD = mf.floor(jde2 - 0.5) + 0.5 + p3TD / 24.0;
 
       jdSolarEclipseP3UT = mf.floor(jde2 - 0.5) + 0.5 + p3UT / 24.0;
-    }
 
-    //BAGIAN AKHIR P2 DAN P3
+      //KONTAK U1, U2, U3, U4
 
-    // BUNGKUS U1,U2,U3, U4
-
-    double? jdSolarEclipseU1TD;
-    double? jdSolarEclipseU2TD;
-    double? jdSolarEclipseU3TD;
-    double? jdSolarEclipseU4TD;
-
-    double? jdSolarEclipseU1UT;
-    double? jdSolarEclipseU2UT;
-    double? jdSolarEclipseU3UT;
-    double? jdSolarEclipseU4UT;
-
-    double? altU1, altU2, altU3, altU4;
-    double? azmU1, azmU2, azmU3, azmU4;
-
-    double? piU1, piU2, piU3, piU4;
-    double? ldU1, ldU2, ldU3, ldU4;
-
-    if (adaUmbra) {
       // ===============================
       // U1
       // ===============================
@@ -2752,23 +2733,7 @@ class SolarEclipseService {
       jdSolarEclipseU4TD = mf.floor(jde2 - 0.5) + 0.5 + u4TD / 24.0;
 
       jdSolarEclipseU4UT = mf.floor(jde2 - 0.5) + 0.5 + u4UT / 24.0;
-    }
-    //BATAS AKHIR U1,U2,U3,U4
 
-    //BAUNGKUS C1 DAN C2
-
-    double? jdSolarEclipseC1TD;
-    double? jdSolarEclipseC2TD;
-    double? jdSolarEclipseC1UT;
-    double? jdSolarEclipseC2UT;
-
-    double? altC1, altC2;
-    double? azmC1, azmC2;
-
-    double? piC1, piC2;
-    double? ldC1, ldC2;
-
-    if (isTotal) {
       // ===============================
       // C1
       // ===============================
@@ -3079,6 +3044,345 @@ class SolarEclipseService {
       jdSolarEclipseC2TD = mf.floor(jde2 - 0.5) + 0.5 + c2TD / 24.0;
 
       jdSolarEclipseC2UT = mf.floor(jde2 - 0.5) + 0.5 + c2UT / 24.0;
+    } else {
+      // hanya P1 dan P4
+
+      //KONTAK P1 & P4
+      //Penumbral First External Contact (P1)
+
+      double xP1 = 0.0;
+      double yP1 = 0.0;
+      double dP1 = 0.0;
+      double muP1 = 0.0;
+      double xpP1 = 0.0;
+      double ypP1 = 0.0;
+      double l1P1 = 0.0;
+      double omP1 = 0.0;
+      double msP1 = 0.0;
+      double y1P1 = 0.0;
+      double m1P1 = 0.0;
+      double roP1 = 0.0;
+      double n2P1 = 0.0;
+      double nsP1 = 0.0;
+      double psP1 = 0.0;
+
+      double tuP1 = 0.0;
+      double tP1 = 0.0;
+
+      tP1 += tuP1;
+
+      for (int i = 1; i <= 5; i++) {
+        xP1 =
+            x[0] +
+            x[1] * tP1 +
+            x[2] * tP1 * tP1 +
+            x[3] * tP1 * tP1 * tP1 +
+            x[4] * tP1 * tP1 * tP1 * tP1;
+
+        yP1 =
+            y[0] +
+            y[1] * tP1 +
+            y[2] * tP1 * tP1 +
+            y[3] * tP1 * tP1 * tP1 +
+            y[4] * tP1 * tP1 * tP1 * tP1;
+
+        dP1 =
+            d[0] +
+            d[1] * tP1 +
+            d[2] * tP1 * tP1 +
+            d[3] * tP1 * tP1 * tP1 +
+            d[4] * tP1 * tP1 * tP1 * tP1;
+
+        muP1 =
+            mu[0] +
+            mu[1] * tP1 +
+            mu[2] * tP1 * tP1 +
+            mu[3] * tP1 * tP1 * tP1 +
+            mu[4] * tP1 * tP1 * tP1 * tP1;
+
+        xpP1 =
+            x[1] +
+            2 * x[2] * tP1 +
+            3 * x[3] * tP1 * tP1 +
+            4 * x[4] * tP1 * tP1 * tP1;
+
+        ypP1 =
+            y[1] +
+            2 * y[2] * tP1 +
+            3 * y[3] * tP1 * tP1 +
+            4 * y[4] * tP1 * tP1 * tP1;
+
+        l1P1 =
+            l1[0] +
+            l1[1] * tP1 +
+            l1[2] * tP1 * tP1 +
+            l1[3] * tP1 * tP1 * tP1 +
+            l1[4] * tP1 * tP1 * tP1 * tP1;
+
+        omP1 = SafeMath.safeDiv(
+          1.0,
+          SafeMath.sqrt(1 - e2 * math.cos(mf.rad(dP1)) * math.cos(mf.rad(dP1))),
+        );
+
+        msP1 = SafeMath.sqrt(xP1 * xP1 + yP1 * yP1);
+
+        y1P1 = yP1 * omP1;
+        m1P1 = SafeMath.sqrt(xP1 * xP1 + y1P1 * y1P1);
+        roP1 = SafeMath.safeDiv(msP1, m1P1);
+
+        n2P1 = xpP1 * xpP1 + ypP1 * ypP1;
+        nsP1 = SafeMath.sqrt(n2P1);
+
+        psP1 = SafeMath.asin(
+          SafeMath.safeDiv((xP1 * ypP1 - xpP1 * yP1), (nsP1 * (l1P1 + roP1))),
+        );
+
+        tuP1 =
+            SafeMath.safeDiv((l1P1 + roP1), nsP1) * -math.cos(psP1) -
+            SafeMath.safeDiv((xP1 * xpP1 + yP1 * ypP1), (nsP1 * nsP1));
+
+        tP1 = tP1 + tuP1;
+      }
+
+      double p1TD = mf.mod(t0 + tP1, 24.0);
+      double p1UT = mf.mod(p1TD - dt / 3600.0, 24.0);
+
+      // Koordinat saat kontak P1
+      double d1P1 = mf.deg(
+        math.atan(
+          SafeMath.safeDiv(math.sin(mf.rad(dP1)), (math.cos(mf.rad(dP1)) * ba)),
+        ),
+      );
+
+      double rhP1 = SafeMath.sqrt(
+        math.sin(mf.rad(dP1)) * math.sin(mf.rad(dP1)) +
+            (math.cos(mf.rad(dP1)) * ba) * (math.cos(mf.rad(dP1)) * ba),
+      );
+
+      double yIP1 = SafeMath.safeDiv(yP1, rhP1);
+      double mIP1 = SafeMath.sqrt(xP1 * xP1 + yIP1 * yIP1);
+
+      double x1P1 = SafeMath.safeDiv(xP1, mIP1);
+      double y2P1 = SafeMath.safeDiv(yIP1, mIP1);
+
+      double pi1P1 = mf.deg(SafeMath.asin(y2P1 * math.cos(mf.rad(d1P1))));
+
+      piP1 = mf.deg(math.atan(ab * math.tan(mf.rad(pi1P1))));
+
+      double x2P1 = -y2P1 * math.sin(mf.rad(dP1));
+
+      double haP1 = mf.mod(mf.deg(math.atan2(x1P1, x2P1)), 360.0);
+
+      double caP1 = haP1 - muP1 + (0.004178 * dt);
+
+      ldP1;
+
+      if (caP1 > 180) {
+        ldP1 = caP1 - 360;
+      } else if (caP1 < -180) {
+        ldP1 = caP1 + 360;
+      } else {
+        ldP1 = caP1;
+      }
+
+      // Azimuth dan Altitude
+      altP1 = mf.deg(
+        SafeMath.asin(
+          math.sin(mf.rad(piP1)) * math.sin(mf.rad(dP1)) +
+              math.cos(mf.rad(piP1)) *
+                  math.cos(mf.rad(dP1)) *
+                  math.cos(mf.rad(haP1)),
+        ),
+      );
+
+      azmP1 = mf.mod(
+        mf.deg(
+              math.atan2(
+                math.sin(mf.rad(haP1)),
+                math.cos(mf.rad(haP1)) * math.sin(mf.rad(piP1)) -
+                    math.tan(mf.rad(dP1)) * math.cos(mf.rad(piP1)),
+              ),
+            ) +
+            180,
+        360.0,
+      );
+
+      //Waktu Kontak P1
+
+      jdSolarEclipseP1TD = mf.floor(jde2 - 0.5) + 0.5 + p1TD / 24.0;
+      jdSolarEclipseP1UT = mf.floor(jde2 - 0.5) + 0.5 + p1UT / 24.0;
+
+      // Penumbral Last External Contact (P4)
+
+      double xP4 = 0.0;
+      double yP4 = 0.0;
+      double dP4 = 0.0;
+      double muP4 = 0.0;
+      double xpP4 = 0.0;
+      double ypP4 = 0.0;
+      double l1P4 = 0.0;
+      double omP4 = 0.0;
+      double msP4 = 0.0;
+      double y1P4 = 0.0;
+      double m1P4 = 0.0;
+      double roP4 = 0.0;
+      double n2P4 = 0.0;
+      double nsP4 = 0.0;
+      double psP4 = 0.0;
+
+      double tuP4 = 0.0;
+      double tP4 = 0.0;
+
+      tP4 += tuP4;
+
+      for (int i = 1; i <= 5; i++) {
+        xP4 =
+            x[0] +
+            x[1] * tP4 +
+            x[2] * tP4 * tP4 +
+            x[3] * tP4 * tP4 * tP4 +
+            x[4] * tP4 * tP4 * tP4 * tP4;
+
+        yP4 =
+            y[0] +
+            y[1] * tP4 +
+            y[2] * tP4 * tP4 +
+            y[3] * tP4 * tP4 * tP4 +
+            y[4] * tP4 * tP4 * tP4 * tP4;
+
+        dP4 =
+            d[0] +
+            d[1] * tP4 +
+            d[2] * tP4 * tP4 +
+            d[3] * tP4 * tP4 * tP4 +
+            d[4] * tP4 * tP4 * tP4 * tP4;
+
+        muP4 =
+            mu[0] +
+            mu[1] * tP4 +
+            mu[2] * tP4 * tP4 +
+            mu[3] * tP4 * tP4 * tP4 +
+            mu[4] * tP4 * tP4 * tP4 * tP4;
+
+        xpP4 =
+            x[1] +
+            2 * x[2] * tP4 +
+            3 * x[3] * tP4 * tP4 +
+            4 * x[4] * tP4 * tP4 * tP4;
+
+        ypP4 =
+            y[1] +
+            2 * y[2] * tP4 +
+            3 * y[3] * tP4 * tP4 +
+            4 * y[4] * tP4 * tP4 * tP4;
+
+        l1P4 =
+            l1[0] +
+            l1[1] * tP4 +
+            l1[2] * tP4 * tP4 +
+            l1[3] * tP4 * tP4 * tP4 +
+            l1[4] * tP4 * tP4 * tP4 * tP4;
+
+        omP4 = SafeMath.safeDiv(
+          1.0,
+          SafeMath.sqrt(
+            1.0 - e2 * math.cos(mf.rad(dP4)) * math.cos(mf.rad(dP4)),
+          ),
+        );
+
+        msP4 = SafeMath.sqrt(xP4 * xP4 + yP4 * yP4);
+
+        y1P4 = yP4 * omP4;
+
+        m1P4 = SafeMath.sqrt(xP4 * xP4 + y1P4 * y1P4);
+
+        roP4 = SafeMath.safeDiv(msP4, m1P4);
+
+        n2P4 = xpP4 * xpP4 + ypP4 * ypP4;
+
+        nsP4 = SafeMath.sqrt(n2P4);
+
+        psP4 = SafeMath.asin(
+          SafeMath.safeDiv((xP4 * ypP4 - xpP4 * yP4), (nsP4 * (l1P4 + roP4))),
+        );
+
+        tuP4 =
+            SafeMath.safeDiv((l1P4 + roP4), nsP4) * math.cos(psP4) -
+            SafeMath.safeDiv((xP4 * xpP4 + yP4 * ypP4), (nsP4 * nsP4));
+
+        tP4 = tP4 + tuP4;
+      }
+
+      double p4TD = mf.mod(t0 + tP4, 24.0);
+      double p4UT = mf.mod(p4TD - dt / 3600.0, 24.0);
+
+      // Koordinat saat kontak P4
+
+      double d1P4 = mf.deg(
+        math.atan(
+          SafeMath.safeDiv(math.sin(mf.rad(dP4)), (math.cos(mf.rad(dP4)) * ba)),
+        ),
+      );
+
+      double rhP4 = SafeMath.sqrt(
+        math.sin(mf.rad(dP4)) * math.sin(mf.rad(dP4)) +
+            (math.cos(mf.rad(dP4)) * ba) * (math.cos(mf.rad(dP4)) * ba),
+      );
+
+      double yIP4 = SafeMath.safeDiv(yP4, rhP4);
+
+      double mIP4 = SafeMath.sqrt(xP4 * xP4 + yIP4 * yIP4);
+
+      double x1P4 = SafeMath.safeDiv(xP4, mIP4);
+      double y2P4 = SafeMath.safeDiv(yIP4, mIP4);
+
+      double pi1P4 = mf.deg(SafeMath.asin(y2P4 * math.cos(mf.rad(d1P4))));
+
+      piP4 = mf.deg(math.atan(ab * math.tan(mf.rad(pi1P4))));
+
+      double x2P4 = -y2P4 * math.sin(mf.rad(dP4));
+
+      double haP4 = mf.mod(mf.deg(math.atan2(x1P4, x2P4)), 360.0);
+
+      double caP4 = haP4 - muP4 + (0.004178 * dt);
+
+      ldP4;
+
+      if (caP4 > 180.0) {
+        ldP4 = caP4 - 360.0;
+      } else if (caP4 < -180.0) {
+        ldP4 = caP4 + 360.0;
+      } else {
+        ldP4 = caP4;
+      }
+
+      // Azimuth dan Altitude saat kontak P4
+
+      altP4 = mf.deg(
+        SafeMath.asin(
+          math.sin(mf.rad(piP4)) * math.sin(mf.rad(dP4)) +
+              math.cos(mf.rad(piP4)) *
+                  math.cos(mf.rad(dP4)) *
+                  math.cos(mf.rad(haP4)),
+        ),
+      );
+
+      azmP4 = mf.mod(
+        mf.deg(
+              math.atan2(
+                math.sin(mf.rad(haP4)),
+                math.cos(mf.rad(haP4)) * math.sin(mf.rad(piP4)) -
+                    math.tan(mf.rad(dP4)) * math.cos(mf.rad(piP4)),
+              ),
+            ) +
+            180.0,
+        360.0,
+      );
+
+      //Waktu Kontak P4
+
+      jdSolarEclipseP4TD = mf.floor(jde2 - 0.5) + 0.5 + p4TD / 24.0;
+      jdSolarEclipseP4UT = mf.floor(jde2 - 0.5) + 0.5 + p4UT / 24.0;
     }
 
     //Durasi keseluruhan Gerhana
@@ -3204,96 +3508,123 @@ class SolarEclipseService {
     );
   }
 
-  // String formatKontakGerhana(Map<String, dynamic> k) {
-  //   final jdTD =
-  //       (k["MXTD"] ??
-  //               k["P1TD"] ??
-  //               k["P2TD"] ??
-  //               k["U1TD"] ??
-  //               k["U2TD"] ??
-  //               k["C1TD"] ??
-  //               k["C2TD"] ??
-  //               k["U3TD"] ??
-  //               k["U4TD"] ??
-  //               k["P3TD"] ??
-  //               k["P4TD"])
-  //           as double;
+  List<SolarEclipseGlobalSummary> solarEclipseGlobalRangeHijri({
+    required int tahunAwalH,
+    required int tahunAkhirH,
+    required TimeScale timeScale,
+  }) {
+    final List<SolarEclipseGlobalSummary> hasil = [];
 
-  //   final jdUT =
-  //       (k["MXUT"] ??
-  //               k["P1UT"] ??
-  //               k["P2UT"] ??
-  //               k["U1UT"] ??
-  //               k["U2UT"] ??
-  //               k["C1UT"] ??
-  //               k["C2UT"] ??
-  //               k["U3UT"] ??
-  //               k["U4UT"] ??
-  //               k["P3UT"] ??
-  //               k["P4UT"])
-  //           as double;
+    for (int thn = tahunAwalH; thn <= tahunAkhirH; thn++) {
+      for (int bln = 1; bln <= 12; bln++) {
+        final eclipse = solarEclipseGlobal(blnH: bln, thnH: thn);
 
-  //   final lmd =
-  //       (k["lmdMX"] ??
-  //               k["lmdP1"] ??
-  //               k["lmdP2"] ??
-  //               k["lmdU1"] ??
-  //               k["lmdU2"] ??
-  //               k["lmdC1"] ??
-  //               k["lmdC2"] ??
-  //               k["lmdU3"] ??
-  //               k["lmdU4"] ??
-  //               k["lmdP3"] ??
-  //               k["lmdP4"])
-  //           as double;
-  //   final phi =
-  //       (k["phiMX"] ??
-  //               k["phiP1"] ??
-  //               k["phiP2"] ??
-  //               k["phiU1"] ??
-  //               k["phiU2"] ??
-  //               k["phiC1"] ??
-  //               k["phiC2"] ??
-  //               k["phiU3"] ??
-  //               k["phiU4"] ??
-  //               k["phiP3"] ??
-  //               k["phiP4"])
-  //           as double;
-  //   final azm =
-  //       (k["azmMX"] ??
-  //               k["azmP1"] ??
-  //               k["azmP2"] ??
-  //               k["azmU1"] ??
-  //               k["azmU2"] ??
-  //               k["azmC1"] ??
-  //               k["azmC2"] ??
-  //               k["azmU3"] ??
-  //               k["azmU4"] ??
-  //               k["azmP3"] ??
-  //               k["azmP4"])
-  //           as double;
-  //   final alt =
-  //       (k["altMX"] ??
-  //               k["altP1"] ??
-  //               k["altP2"] ??
-  //               k["altU1"] ??
-  //               k["altU2"] ??
-  //               k["altC1"] ??
-  //               k["altC2"] ??
-  //               k["altU3"] ??
-  //               k["altU4"] ??
-  //               k["altP3"] ??
-  //               k["altP4"])
-  //           as double;
+        if (eclipse == null || eclipse.ada != true) continue;
 
-  //   return """
-  // Tanggal  : ${julianDay.jdkm(jdTD)}
-  // Jam TD   : ${mf.dhhms(double.parse(julianDay.jdkm(jdTD, 0, "Jam Des")), optResult: "HH:MM:SS", secDecPlaces: 1)}
-  // Jam UT   : ${mf.dhhms(double.parse(julianDay.jdkm(jdUT, 0, "Jam Des")), optResult: "HH:MM:SS", secDecPlaces: 1)}
-  // Bujur    : ${mf.dddms(lmd, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}
-  // Lintang  : ${mf.dddms(phi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}
-  // Azimuth  : ${mf.dddms(azm, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}
-  // Altitude : ${mf.dddms(alt, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}
-  // """;
-  // }
+        double? p1;
+        double? max;
+        double? p4;
+
+        if (timeScale == TimeScale.jdTD) {
+          p1 = eclipse.p1?.jd;
+          max = eclipse.mx?.jd;
+          p4 = eclipse.p4?.jd;
+        } else {
+          p1 = eclipse.p1?.jd2;
+          max = eclipse.mx?.jd2;
+          p4 = eclipse.p4?.jd2;
+        }
+
+        hasil.add(
+          SolarEclipseGlobalSummary(
+            tahunHijri: thn,
+            bulanHijri: bln,
+            p1: p1,
+            max: max,
+            p4: p4,
+            durasi: eclipse.durasiGerhana,
+            jenis: eclipse.jenis ?? "",
+          ),
+        );
+      }
+    }
+
+    return hasil;
+  }
+
+  List<SolarEclipseLocalSummary> solarEclipseLocalRangeHijri({
+    required int tahunAwalH,
+    required int tahunAkhirH,
+    required double gLon,
+    required double gLat,
+    required double elev,
+    required double pres,
+    required double temp,
+    required double tmZn,
+    required TimeScale timeScale,
+  }) {
+    final List<SolarEclipseLocalSummary> hasil = [];
+
+    for (int thn = tahunAwalH; thn <= tahunAkhirH; thn++) {
+      for (int bln = 1; bln <= 12; bln++) {
+        final eclipse = solarEclipseLocal(
+          blnH: bln,
+          thnH: thn,
+          gLon: gLon,
+          gLat: gLat,
+          elev: elev,
+          pres: pres,
+          temp: temp,
+          tmZn: tmZn,
+        );
+
+        if (eclipse == null || eclipse.ada != true) continue;
+
+        // ============================
+        // Tentukan JD sesuai TimeScale
+        // ============================
+
+        double? convert(double? jd) {
+          if (jd == null) return null;
+
+          switch (timeScale) {
+            case TimeScale.jdTD:
+              return jd; // sudah TD
+            case TimeScale.jdUT:
+              return jd - (eclipse.deltaT ?? 0) / 86400.0;
+          }
+        }
+
+        final u1 = convert(eclipse.u1?.jd);
+        final u2 = convert(eclipse.u2?.jd);
+        final max = convert(eclipse.mx?.jd);
+        final u3 = convert(eclipse.u3?.jd);
+        final u4 = convert(eclipse.u4?.jd);
+
+        hasil.add(
+          SolarEclipseLocalSummary(
+            tahunHijri: thn,
+            bulanHijri: bln,
+            u1: u1,
+            u2: u2,
+            max: max,
+            u3: u3,
+            u4: u4,
+
+            // altitude TIDAK ikut timeScale
+            altU1: eclipse.u1?.altitude,
+            altU2: eclipse.u2?.altitude,
+            altMax: eclipse.mx?.altitude,
+            altU3: eclipse.u3?.altitude,
+            altU4: eclipse.u4?.altitude,
+
+            durasi: eclipse.durasiGerhana,
+            jenis: eclipse.jenis ?? "",
+          ),
+        );
+      }
+    }
+
+    return hasil;
+  }
 }

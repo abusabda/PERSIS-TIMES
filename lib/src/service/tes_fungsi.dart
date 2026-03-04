@@ -1453,7 +1453,7 @@ void main() {
   final blnH3 = 5;
   final thnH3 = 1437;
   final gLon3 = (108 + 17 / 60.0 + 50 / 3600.0);
-  final gLat3 = -(6 + 51 / 60.0 + 25 / 3600.0);
+  final gLat3 = -(2 + 51 / 60.0 + 25 / 3600.0);
   final elev3 = 2.0;
   final pres3 = 1010.0;
   final temp3 = 10.0;
@@ -1585,14 +1585,14 @@ void main() {
     }
   }
 
-  // INPUT GERHANA MATAHARI GLOBAL
-  final blnH4 = 5;
-  final thnH4 = 1437;
-
   print("========================================");
   print("     DATA GERHANA MATAHARI GLOBAL");
   print("========================================");
   print("");
+
+  // INPUT GERHANA MATAHARI GLOBAL
+  final blnH4 = 11;
+  final thnH4 = 1439;
 
   final resSEG = se.solarEclipseGlobal(blnH: blnH4, thnH: thnH4);
 
@@ -1724,36 +1724,77 @@ void main() {
     }
   }
 
-  // final resSEG = se.solarEclipseGlobal(blnH: blnH4, thnH: thnH4);
+  print("");
 
-  // if (resSEG["ADA"] == false) {
-  //   print(resSEG["KET"]);
-  // } else {
-  //   print("Jenis Gerhana      : ${resSEG["JSE"]}");
-  //   print("Magnitude Gerhana  : ${resSEG["MAG"]}");
-  //   print("Durasi Gerhana     : ${resSEG["DUR"]}");
-  //   print("Lebar Gerhana      : ${resSEG["lbr"]}");
+  print("=============================================");
+  print("DATA GERHANA MATAHARI LOKAL PER RENTANG TAHUN");
+  print("=============================================");
 
-  //   print("");
+  //GERHANA PER RENTANG TAHUN
+  final thnAwwalHijri = 1440;
+  final thnAkhirHijri = 1450;
+  final gLon6 = (108 + 17 / 60.0 + 50 / 3600.0);
+  final gLat6 = -(2 + 51 / 60.0 + 25 / 3600.0);
+  final elev6 = 2.0;
+  final pres6 = 1010.0;
+  final temp6 = 10.0;
+  double tmZn6 = 7.0;
 
-  //   final kontakList = [
-  //     "P1",
-  //     "P2",
-  //     "U1",
-  //     "U2",
-  //     "C1",
-  //     "MX",
-  //     "C2",
-  //     "U3",
-  //     "U4",
-  //     "P3",
-  //     "P4",
-  //   ];
+  final selRange = se.solarEclipseLocalRangeHijri(
+    tahunAwalH: thnAwwalHijri,
+    tahunAkhirH: thnAkhirHijri,
+    gLon: gLon6,
+    gLat: gLat6,
+    elev: elev6,
+    pres: pres6,
+    temp: temp6,
+    tmZn: tmZn6,
+    timeScale: TimeScale.jdTD,
+  );
 
-  //   for (var k in kontakList) {
-  //     print("Kontak $k");
-  //     print(se.formatKontakGerhana(resSEG[k]));
-  //     print("");
-  //   }
-  // }
+  for (final e in selRange) {
+    print("=================================");
+    print("Tahun H   : ${e.tahunHijri}");
+    print("Bulan H   : ${e.bulanHijri}");
+
+    List<double?> altitudes = [e.altU1, e.altU2, e.altMax, e.altU3, e.altU4];
+    bool terlihat = altitudes.any((alt) => alt != null && alt > 0);
+
+    if (!terlihat) {
+      print("Gerhana tidak terlihat di lokasi");
+      continue;
+    }
+
+    print("Jenis     : ${e.jenis}");
+    print("U1        : ${e.u1}");
+    print("Max       : ${e.max}");
+    print("U4        : ${e.u4}");
+    print("Durasi    : ${e.durasi}");
+  }
+
+  print("");
+  print("==============================================");
+  print("DATA GERHANA MATAHARI GLOBAL PER RENTANG TAHUN");
+  print("==============================================");
+
+  //GERHANA PER RENTANG TAHUN
+  final thnAwwalHijri2 = 1440;
+  final thnAkhirHijri2 = 1450;
+
+  final segRange = se.solarEclipseGlobalRangeHijri(
+    tahunAwalH: thnAwwalHijri2,
+    tahunAkhirH: thnAkhirHijri2,
+    timeScale: TimeScale.jdUT,
+  );
+
+  for (final e in segRange) {
+    print("=================================");
+    print("Tahun H  : ${e.tahunHijri}");
+    print("Bulan H  : ${e.bulanHijri}");
+    print("Jenis    : ${e.jenis}");
+    print("P1       : ${e.p1}");
+    print("Max      : ${e.max}");
+    print("P4       : ${e.p4}");
+    print("Durasi   : ${e.durasi}");
+  }
 }

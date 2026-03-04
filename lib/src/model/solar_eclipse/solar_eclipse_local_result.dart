@@ -18,6 +18,8 @@ class SolarEclipseLocalResult {
   final double? obscuration;
   final String? jenis;
 
+  final double? deltaT; // ← TAMBAHKAN INI
+
   final double? durasiGerhana;
   final double? durasiTotalitas;
 
@@ -36,6 +38,7 @@ class SolarEclipseLocalResult {
     this.jenis,
     this.durasiGerhana,
     this.durasiTotalitas,
+    this.deltaT,
   });
 }
 

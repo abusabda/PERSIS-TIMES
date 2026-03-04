@@ -321,6 +321,44 @@ class MathFunction {
     final B = x00 - xM1;
     final C = xP1 - x00;
     final D = xP2 - xP1;
+
+    final E = B - A;
+    final F = C - B;
+    final G = D - C;
+    final H = F - E;
+    final J = G - F;
+    final K = J - H;
+
+    switch (optResult) {
+      case 0:
+        return x00;
+      case 1:
+        return ((B + C) / 2 - (H + J) / 12);
+      case 2:
+        return (F / 2 - K / 24);
+      case 3:
+        return ((H + J) / 12);
+      case 4:
+        return (K / 24);
+      default:
+        return x00;
+    }
+  }
+
+  // interpolation From Five Tabular Values
+  double interp5Angle(
+    double xM2,
+    double xM1,
+    double x00,
+    double xP1,
+    double xP2,
+    int optResult,
+  ) {
+    final A = mod(xM1 - xM2, 360);
+    final B = mod(x00 - xM1, 360);
+    final C = mod(xP1 - x00, 360);
+    final D = mod(xP2 - xP1, 360);
+
     final E = B - A;
     final F = C - B;
     final G = D - C;
