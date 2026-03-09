@@ -1,3 +1,14 @@
+## 1.0.1
+
+- Improved README with scientific documentation
+- Added explanation of VSOP87D solar model
+- Added explanation of ELPMPP02 lunar theory
+- Documentation improvements
+
 ## 1.0.0
 
-- Initial version.
+- Initial release
+- Astronomical calculations for Islamic prayer times
+- Qibla direction computation
+- Hijri calendar conversion
+- Eclipse estimation
