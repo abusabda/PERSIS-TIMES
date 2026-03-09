@@ -1,8 +1,8 @@
 import 'package:test/test.dart';
 
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
-import 'package:myhisab/src/core/prayer/waktu_salat.dart';
-import 'package:myhisab/src/core/qibla/arah_kiblat.dart';
+import 'package:persis_times/src/core/astronomy/julian_day.dart';
+import 'package:persis_times/src/core/prayer/waktu_salat.dart';
+import 'package:persis_times/src/core/qibla/arah_kiblat.dart';
 
 void main() {
   group('Astronomy Test', () {

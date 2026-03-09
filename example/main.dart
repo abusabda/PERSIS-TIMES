@@ -1,4 +1,4 @@
-import 'package:myhisab/myhisab.dart';
+import 'package:persis_times/persis_times.dart';
 
 // import '../model/solar_eclipse/solar_eclipse_local_result.dart';
 // import '../model/solar_eclipse/solar_eclipse_global_result.dart';
@@ -348,7 +348,7 @@ void main() {
     gLat: -(7 + 5 / 60),
     elev: 0,
     tmZn: 7,
-    ihty: 2,
+    ihty: 0,
   );
 
   void printSalat(String nama, SalatValue value) {
