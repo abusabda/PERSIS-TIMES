@@ -11,8 +11,8 @@ import '../model/solar_eclipse/solar_eclipse_global_result.dart';
 import '../model/solar_eclipse/solar_eclipse_global_range_result.dart';
 import '../model/solar_eclipse/solar_eclipse_local_range_result.dart';
 import 'package:myhisab/src/core/math/safe_math.dart';
-
-enum TimeScale { jdTD, jdUT }
+import 'package:myhisab/src/core/astronomy/time_scale.dart';
+import 'package:myhisab/src/model/helper_eclipse/helper_eclipse.dart';
 
 class SolarEclipseService {
   final julianDay = JulianDay();
@@ -31,12 +31,6 @@ class SolarEclipseService {
     final jdeSolarEclipse2 =
         mf.floor(jdeSolarEclipse1) +
         (((jdeSolarEclipse1 - mf.floor(jdeSolarEclipse1)) * 24).round()) / 24.0;
-
-    // final t0 = mf.mod(
-    //   (((jdeSolarEclipse2 - mf.floor(jdeSolarEclipse2)) * 24).round())
-    //       .toDouble(),
-    //   24.0,
-    // );
 
     final t0 =
         (((jdeSolarEclipse2 + 0.5) - (jdeSolarEclipse2 + 0.5).floor()) * 24)
@@ -63,24 +57,6 @@ class SolarEclipseService {
     final rSp1 = sn.sunGeocentricDistance(jdeSolarEclipse2 + 1 / 24, 0, "AU");
     final rSp2 = sn.sunGeocentricDistance(jdeSolarEclipse2 + 2 / 24, 0, "AU");
 
-    // final ghaSm2 = sn.sunGeocentricGreenwichHourAngle(
-    //   jdeSolarEclipse2 - 2 / 24,
-    //   0,
-    // );
-    // final ghaSm1 = sn.sunGeocentricGreenwichHourAngle(
-    //   jdeSolarEclipse2 - 1 / 24,
-    //   0,
-    // );
-    // final ghaS00 = sn.sunGeocentricGreenwichHourAngle(jdeSolarEclipse2, 0);
-    // final ghaSp1 = sn.sunGeocentricGreenwichHourAngle(
-    //   jdeSolarEclipse2 + 1 / 24,
-    //   0,
-    // );
-    // final ghaSp2 = sn.sunGeocentricGreenwichHourAngle(
-    //   jdeSolarEclipse2 + 2 / 24,
-    //   0,
-    // );
-
     // === MOON ===
     final arMm2 = mo.moonGeocentricRightAscension(jdeSolarEclipse2 - 2 / 24, 0);
     final arMm1 = mo.moonGeocentricRightAscension(jdeSolarEclipse2 - 1 / 24, 0);
@@ -93,12 +69,6 @@ class SolarEclipseService {
     final dM00 = mo.moonGeocentricDeclination(jdeSolarEclipse2, 0);
     final dMp1 = mo.moonGeocentricDeclination(jdeSolarEclipse2 + 1 / 24, 0);
     final dMp2 = mo.moonGeocentricDeclination(jdeSolarEclipse2 + 2 / 24, 0);
-
-    // final rMm2 = md.moonGeocentricDistance(jdeSolarEclipse2 - 2 / 24, 0, "AU");
-    // final rMm1 = md.moonGeocentricDistance(jdeSolarEclipse2 - 1 / 24, 0, "AU");
-    // final rM00 = md.moonGeocentricDistance(jdeSolarEclipse2, 0, "AU");
-    // final rMp1 = md.moonGeocentricDistance(jdeSolarEclipse2 + 1 / 24, 0, "AU");
-    // final rMp2 = md.moonGeocentricDistance(jdeSolarEclipse2 + 2 / 24, 0, "AU");
 
     final hpMm2 = mo.moonEquatorialHorizontalParallax(
       jdeSolarEclipse2 - 2 / 24,
@@ -3607,18 +3577,19 @@ class SolarEclipseService {
             bulanHijri: bln,
             u1: u1,
             u2: u2,
-            max: max,
+            mx: max,
             u3: u3,
             u4: u4,
 
             // altitude TIDAK ikut timeScale
             altU1: eclipse.u1?.altitude,
             altU2: eclipse.u2?.altitude,
-            altMax: eclipse.mx?.altitude,
+            altMx: eclipse.mx?.altitude,
             altU3: eclipse.u3?.altitude,
             altU4: eclipse.u4?.altitude,
 
-            durasi: eclipse.durasiGerhana,
+            durasiTotal: eclipse.durasiTotalitas,
+            durasiGerhana: eclipse.durasiGerhana,
             jenis: eclipse.jenis ?? "",
           ),
         );

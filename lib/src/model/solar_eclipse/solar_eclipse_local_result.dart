@@ -1,4 +1,5 @@
 import 'package:myhisab/src/model/solar_eclipse/solar_besselian_result.dart';
+import 'package:myhisab/src/model/helper_eclipse/helper_eclipse.dart';
 
 class SolarEclipseLocalResult {
   final bool ada;
@@ -42,29 +43,29 @@ class SolarEclipseLocalResult {
   });
 }
 
-class EclipseContact {
-  final double? jd;
-  final double? azimuth;
-  final double? altitude;
+// class EclipseContact {
+//   final double? jd;
+//   final double? azimuth;
+//   final double? altitude;
 
-  const EclipseContact({this.jd, this.azimuth, this.altitude});
-}
+//   const EclipseContact({this.jd, this.azimuth, this.altitude});
+// }
 
-class EclipseEphemeris {
-  final EclipseEphemerisBody? sun;
-  final EclipseEphemerisBody? moon;
+// class EclipseEphemeris {
+//   final EclipseEphemerisBody? sun;
+//   final EclipseEphemerisBody? moon;
 
-  const EclipseEphemeris({this.sun, this.moon});
-}
+//   const EclipseEphemeris({this.sun, this.moon});
+// }
 
-class EclipseEphemerisBody {
-  final double? ra;
-  final double? dec;
-  final double? sd;
-  final double? hp;
+// class EclipseEphemerisBody {
+//   final double? ra;
+//   final double? dec;
+//   final double? sd;
+//   final double? hp;
 
-  const EclipseEphemerisBody({this.ra, this.dec, this.sd, this.hp});
-}
+//   const EclipseEphemerisBody({this.ra, this.dec, this.sd, this.hp});
+// }
 
 // class BesselianElement {
 //   final List<double>? x;

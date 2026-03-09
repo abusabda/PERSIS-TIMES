@@ -4,6 +4,13 @@ import 'package:myhisab/src/core/astronomy/julian_day.dart';
 import 'package:myhisab/src/core/math/math_utils.dart';
 import 'package:myhisab/src/core/astronomy/moon_function.dart';
 import 'package:myhisab/src/core/astronomy/sun_function.dart';
+import 'package:myhisab/src/model/lunar_eclipse/lunar_besselian_result.dart';
+import 'package:myhisab/src/model/lunar_eclipse/lunar_eclipse_global_result.dart';
+import 'package:myhisab/src/model/lunar_eclipse/lunar_eclipse_local_result.dart';
+import 'package:myhisab/src/model/lunar_eclipse/lunar_eclipse_global_range_result.dart';
+import 'package:myhisab/src/model/lunar_eclipse/lunar_eclipse_local_range_result.dart';
+import 'package:myhisab/src/core/astronomy/time_scale.dart';
+import 'package:myhisab/src/model/helper_eclipse/helper_eclipse.dart';
 
 class LunarEclipseService {
   final julDay = JulianDay();
@@ -13,16 +20,16 @@ class LunarEclipseService {
   final mf = MathFunction();
   final mo = MoonFunction();
 
-  double lBesselian(int blnH, int thnH, String optResult) {
+  LunarBesselianResult? lBesselian(int blnH, int thnH) {
     final jdEclipse1 = mo.jdeEclipseModified(blnH, thnH, 2);
-    if (jdEclipse1 <= 0) return double.nan;
+    if (jdEclipse1 <= 0) return null;
 
     final jdEclipse2 =
         mf.floor(jdEclipse1) +
         (((jdEclipse1 - mf.floor(jdEclipse1)) * 24).roundToDouble() / 24.0);
 
     final t0 = mf.mod(
-      (((jdEclipse2 - mf.floor(jdEclipse2)) * 24).roundToDouble()),
+      (((jdEclipse2 + 0.5) - mf.floor(jdEclipse2 + 0.5)) * 24).roundToDouble(),
       24.0,
     );
 
@@ -71,6 +78,12 @@ class LunarEclipseService {
     final sm00 = mo.moonGeocentricSemidiameter(jdEclipse2, 0);
     final smP1 = mo.moonGeocentricSemidiameter(jdEclipse2 + 1 / 24, 0);
     final smP2 = mo.moonGeocentricSemidiameter(jdEclipse2 + 2 / 24, 0);
+
+    final muM2 = mo.moonGeocentricGreenwichHourAngle(jdEclipse2 - 2 / 24, 0);
+    final muM1 = mo.moonGeocentricGreenwichHourAngle(jdEclipse2 - 1 / 24, 0);
+    final mu00 = mo.moonGeocentricGreenwichHourAngle(jdEclipse2, 0);
+    final muP1 = mo.moonGeocentricGreenwichHourAngle(jdEclipse2 + 1 / 24, 0);
+    final muP2 = mo.moonGeocentricGreenwichHourAngle(jdEclipse2 + 2 / 24, 0);
 
     final hpmM2 = mo
         .moonEquatorialHorizontalParallax(jdEclipse2 - 2 / 24, 0)
@@ -140,301 +153,665 @@ class LunarEclipseService {
     final yP1 = y(dmP1, dP1, eP1);
     final yP2 = y(dmP2, dP2, eP2);
 
-    // ---------------- Hasil Interpolasi ----------------
-    switch (optResult) {
-      case "JDL":
-        return jdEclipse2;
-      case "DT":
-        return dT;
+    return LunarBesselianResult(
+      jde: jdEclipse2,
+      deltaT: dT,
+      t0: t0,
 
-      // x interpolation
-      case "x0":
-        return mf.interp5(xM2, xM1, x00, xP1, xP2, 0);
-      case "x1":
-        return mf.interp5(xM2, xM1, x00, xP1, xP2, 1);
-      case "x2":
-        return mf.interp5(xM2, xM1, x00, xP1, xP2, 2);
-      case "x3":
-        return mf.interp5(xM2, xM1, x00, xP1, xP2, 3);
-      case "x4":
-        return mf.interp5(xM2, xM1, x00, xP1, xP2, 4);
+      x: [
+        mf.interp5(xM2, xM1, x00, xP1, xP2, 0),
+        mf.interp5(xM2, xM1, x00, xP1, xP2, 1),
+        mf.interp5(xM2, xM1, x00, xP1, xP2, 2),
+        mf.interp5(xM2, xM1, x00, xP1, xP2, 3),
+        mf.interp5(xM2, xM1, x00, xP1, xP2, 4),
+      ],
 
-      // y interpolation
-      case "y0":
-        return mf.interp5(yM2, yM1, y00, yP1, yP2, 0);
-      case "y1":
-        return mf.interp5(yM2, yM1, y00, yP1, yP2, 1);
-      case "y2":
-        return mf.interp5(yM2, yM1, y00, yP1, yP2, 2);
-      case "y3":
-        return mf.interp5(yM2, yM1, y00, yP1, yP2, 3);
-      case "y4":
-        return mf.interp5(yM2, yM1, y00, yP1, yP2, 4);
+      y: [
+        mf.interp5(yM2, yM1, y00, yP1, yP2, 0),
+        mf.interp5(yM2, yM1, y00, yP1, yP2, 1),
+        mf.interp5(yM2, yM1, y00, yP1, yP2, 2),
+        mf.interp5(yM2, yM1, y00, yP1, yP2, 3),
+        mf.interp5(yM2, yM1, y00, yP1, yP2, 4),
+      ],
 
-      // d interpolation
-      case "d0":
-        return mf.interp5(dM2, dM1, d00, dP1, dP2, 0);
-      case "d1":
-        return mf.interp5(dM2, dM1, d00, dP1, dP2, 1);
-      case "d2":
-        return mf.interp5(dM2, dM1, d00, dP1, dP2, 2);
-      case "d3":
-        return mf.interp5(dM2, dM1, d00, dP1, dP2, 3);
-      case "d4":
-        return mf.interp5(dM2, dM1, d00, dP1, dP2, 4);
+      f1: [
+        mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 0),
+        mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 1),
+        mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 2),
+        mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 3),
+        mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 4),
+      ],
 
-      // f1 interpolation
-      case "f10":
-        return mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 0);
-      case "f11":
-        return mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 1);
-      case "f12":
-        return mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 2);
-      case "f13":
-        return mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 3);
-      case "f14":
-        return mf.interp5(f1M2, f1M1, f100, f1P1, f1P2, 4);
+      f2: [
+        mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 0),
+        mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 1),
+        mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 2),
+        mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 3),
+        mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 4),
+      ],
 
-      // f2 interpolation
-      case "f20":
-        return mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 0);
-      case "f21":
-        return mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 1);
-      case "f22":
-        return mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 2);
-      case "f23":
-        return mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 3);
-      case "f24":
-        return mf.interp5(f2M2, f2M1, f200, f2P1, f2P2, 4);
+      sm: [
+        mf.interp5(smM2, smM1, sm00, smP1, smP2, 0),
+        mf.interp5(smM2, smM1, sm00, smP1, smP2, 1),
+        mf.interp5(smM2, smM1, sm00, smP1, smP2, 2),
+        mf.interp5(smM2, smM1, sm00, smP1, smP2, 3),
+        mf.interp5(smM2, smM1, sm00, smP1, smP2, 4),
+      ],
 
-      // HPm interpolation
-      case "HP0":
-        return mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 0);
-      case "HP1":
-        return mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 1);
-      case "HP2":
-        return mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 2);
-      case "HP3":
-        return mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 3);
-      case "HP4":
-        return mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 4);
+      mu: [
+        mf.interp5(muM2, muM1, mu00, muP1, muP2, 0),
+        mf.interp5(muM2, muM1, mu00, muP1, muP2, 1),
+        mf.interp5(muM2, muM1, mu00, muP1, muP2, 2),
+        mf.interp5(muM2, muM1, mu00, muP1, muP2, 3),
+        mf.interp5(muM2, muM1, mu00, muP1, muP2, 4),
+      ],
 
-      // dm interpolation
-      case "dm0":
-        return mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 0);
-      case "dm1":
-        return mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 1);
-      case "dm2":
-        return mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 2);
-      case "dm3":
-        return mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 3);
-      case "dm4":
-        return mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 4);
+      hp: [
+        mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 0),
+        mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 1),
+        mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 2),
+        mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 3),
+        mf.interp5(hpmM2, hpmM1, hpm00, hpmP1, hpmP2, 4),
+      ],
 
-      // Sm interpolation
-      case "Sm0":
-        return mf.interp5(smM2, smM1, sm00, smP1, smP2, 0);
-      case "Sm1":
-        return mf.interp5(smM2, smM1, sm00, smP1, smP2, 1);
-      case "Sm2":
-        return mf.interp5(smM2, smM1, sm00, smP1, smP2, 2);
-      case "Sm3":
-        return mf.interp5(smM2, smM1, sm00, smP1, smP2, 3);
-      case "Sm4":
-        return mf.interp5(smM2, smM1, sm00, smP1, smP2, 4);
+      d: [
+        mf.interp5(dM2, dM1, d00, dP1, dP2, 0),
+        mf.interp5(dM2, dM1, d00, dP1, dP2, 1),
+        mf.interp5(dM2, dM1, d00, dP1, dP2, 2),
+        mf.interp5(dM2, dM1, d00, dP1, dP2, 3),
+        mf.interp5(dM2, dM1, d00, dP1, dP2, 4),
+      ],
 
-      default:
-        return mf.mod(t0 + 12, 24);
-    }
+      dm: [
+        mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 0),
+        mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 1),
+        mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 2),
+        mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 3),
+        mf.interp5(dmM2, dmM1, dm00, dmP1, dmP2, 4),
+      ],
+    );
   }
 
-  Map<String, dynamic> lunarEclipse({
+  LunarEclipseLocalResult? lunarEclipseLocal({
     required int blnH,
     required int thnH,
     required double gLon,
     required double gLat,
     required double elev,
+    required double pres,
+    required double temp,
     required double tmZn,
   }) {
-    // =======================================
-    // Besselian elements for lunar eclipse
-    // =======================================
+    final bessel = lBesselian(blnH, thnH);
+    if (bessel == null || !bessel.isValid) return null;
+
+    final dt = bessel.deltaT;
+    final jdE2 = bessel.jde;
+    final t0 = bessel.t0;
+
+    final x = bessel.x;
+    final y = bessel.y;
+    final f1c = bessel.f1;
+    final f2c = bessel.f2;
+    final smc = bessel.sm;
+
     double t = 0.0;
-    double x = 0.0, y = 0.0, x_ = 0.0, y_ = 0.0;
-    double n = 0.0, n2 = 0.0, tx = 0.0;
-    double f1 = 0.0, f2 = 0.0;
-    double sm = 0.0;
+    double tx = 0.0;
 
-    // double jdl = lBesselian(blnH, thnH, "JDL");
-    double dt = lBesselian(blnH, thnH, "DT");
+    double? xVal, yVal, xDer, yDer, f1, f2, sm;
 
-    double x0 = lBesselian(blnH, thnH, "x0");
-    double x1 = lBesselian(blnH, thnH, "x1");
-    double x2 = lBesselian(blnH, thnH, "x2");
-    double x3 = lBesselian(blnH, thnH, "x3");
-    double x4 = lBesselian(blnH, thnH, "x4");
+    // =====================================
+    // ITERASI TENGAH GERHANA
+    // =====================================
 
-    double y0 = lBesselian(blnH, thnH, "y0");
-    double y1 = lBesselian(blnH, thnH, "y1");
-    double y2 = lBesselian(blnH, thnH, "y2");
-    double y3 = lBesselian(blnH, thnH, "y3");
-    double y4 = lBesselian(blnH, thnH, "y4");
-
-    //double d0 = lBesselian(blnH, thnH, "d0");
-    // double d1 = lBesselian(blnH, thnH, "d1");
-    // double d2 = lBesselian(blnH, thnH, "d2");
-    // double d3 = lBesselian(blnH, thnH, "d3");
-    // double d4 = lBesselian(blnH, thnH, "d4");
-
-    double f10 = lBesselian(blnH, thnH, "f10");
-    double f11 = lBesselian(blnH, thnH, "f11");
-    double f12 = lBesselian(blnH, thnH, "f12");
-    double f13 = lBesselian(blnH, thnH, "f13");
-    double f14 = lBesselian(blnH, thnH, "f14");
-
-    double f20 = lBesselian(blnH, thnH, "f20");
-    double f21 = lBesselian(blnH, thnH, "f21");
-    double f22 = lBesselian(blnH, thnH, "f22");
-    double f23 = lBesselian(blnH, thnH, "f23");
-    double f24 = lBesselian(blnH, thnH, "f24");
-
-    // double hp0 = lBesselian(blnH, thnH, "HP0");
-    // double hp1 = lBesselian(blnH, thnH, "HP1");
-    // double hp2 = lBesselian(blnH, thnH, "HP2");
-    // double hp3 = lBesselian(blnH, thnH, "HP3");
-    // double hp4 = lBesselian(blnH, thnH, "HP4");
-
-    // double dm0 = lBesselian(blnH, thnH, "dm0");
-    // double dm1 = lBesselian(blnH, thnH, "dm1");
-    // double dm2 = lBesselian(blnH, thnH, "dm2");
-    // double dm3 = lBesselian(blnH, thnH, "dm3");
-    // double dm4 = lBesselian(blnH, thnH, "dm4");
-
-    double sm0 = lBesselian(blnH, thnH, "Sm0");
-    double sm1 = lBesselian(blnH, thnH, "Sm1");
-    double sm2 = lBesselian(blnH, thnH, "Sm2");
-    double sm3 = lBesselian(blnH, thnH, "Sm3");
-    double sm4 = lBesselian(blnH, thnH, "Sm4");
-
-    double jdE1 = mo.jdeEclipseModified(blnH, thnH, 2);
-    double jdE2 =
-        (mf.floor(jdE1)) +
-        (((jdE1 - mf.floor(jdE1)) * 24).roundToDouble()) / 24.0;
-
-    double t0 =
-        (((jdE2 + 0.5 + (0.0 / 24.0)) - mf.floor(jdE2 + 0.5 + (0.0 / 24.0))) *
-                24)
-            .roundToDouble();
-
-    // =======================================
-    // Iterasi koreksi T, X, Y
-    // =======================================
-    for (int i = 1; i <= 3; i++) {
+    for (int i = 0; i < 3; i++) {
       t += tx;
 
-      x = x0 + x1 * t + x2 * t * t + x3 * t * t * t + x4 * t * t * t * t;
-      y = y0 + y1 * t + y2 * t * t + y3 * t * t * t + y4 * t * t * t * t;
+      final t2 = t * t;
+      final t3 = t2 * t;
+      final t4 = t2 * t2;
 
-      x_ = x1 + 2 * x2 * t + 3 * x3 * t * t + 4 * x4 * t * t * t;
-      y_ = y1 + 2 * y2 * t + 3 * y3 * t * t + 4 * y4 * t * t * t;
+      xVal = x[0] + x[1] * t + x[2] * t2 + x[3] * t3 + x[4] * t4;
+      yVal = y[0] + y[1] * t + y[2] * t2 + y[3] * t3 + y[4] * t4;
 
-      f1 = f10 + f11 * t + f12 * t * t + f13 * t * t * t + f14 * t * t * t * t;
-      f2 = f20 + f21 * t + f22 * t * t + f23 * t * t * t + f24 * t * t * t * t;
-      sm = sm0 + sm1 * t + sm2 * t * t + sm3 * t * t * t + sm4 * t * t * t * t;
+      xDer = x[1] + 2 * x[2] * t + 3 * x[3] * t2 + 4 * x[4] * t3;
+      yDer = y[1] + 2 * y[2] * t + 3 * y[3] * t2 + 4 * y[4] * t3;
 
-      n2 = x_ * x_ + y_ * y_;
-      n = math.sqrt(n2);
-      tx = -1 / n2 * (x * x_ + y * y_);
+      f1 = f1c[0] + f1c[1] * t + f1c[2] * t2 + f1c[3] * t3 + f1c[4] * t4;
+      f2 = f2c[0] + f2c[1] * t + f2c[2] * t2 + f2c[3] * t3 + f2c[4] * t4;
+      sm = smc[0] + smc[1] * t + smc[2] * t2 + smc[3] * t3 + smc[4] * t4;
+
+      final n2 = xDer * xDer + yDer * yDer;
+      if (n2 == 0.0) return null;
+
+      tx = -(xVal * xDer + yVal * yDer) / n2;
     }
 
-    // =======================================
-    // Besselian coefficients untuk f, sm
-    // =======================================
+    if (xVal == null ||
+        yVal == null ||
+        xDer == null ||
+        yDer == null ||
+        f1 == null ||
+        f2 == null ||
+        sm == null) {
+      return null;
+    }
 
-    double d = math.sqrt(x * x + y * y);
+    final n = math.sqrt(xDer * xDer + yDer * yDer);
+    if (n == 0.0) return null;
 
-    double l1 = f1 + sm;
-    double l2 = f2 + sm;
-    double l3 = f2 - sm;
+    final d = math.sqrt(xVal * xVal + yVal * yVal);
 
-    double radP = l1 - sm;
-    double radU = l2 - sm;
+    final l1 = f1 + sm;
+    final l2 = f2 + sm;
+    final l3 = f2 - sm;
 
-    double magP = (1 / (2 * sm)) * (l1 - d);
-    double magU = (1 / (2 * sm)) * (l2 - d);
+    final testP = l1 * l1 - d * d;
+    if (testP <= 0) return null;
 
-    double tm1 = 1 / n * math.sqrt(l1 * l1 - d * d);
-    double tm2 = 1 / n * math.sqrt(l2 * l2 - d * d);
-    double tm3 = 1 / n * math.sqrt(l3 * l3 - d * d);
+    final testU = l2 * l2 - d * d;
+    final testT = l3 * l3 - d * d;
 
-    double durP = tm1 * 2;
-    double durU = tm2 * 2;
-    double durT = tm3 * 2;
+    final hasUmbral = testU > 0;
+    final hasTotal = testT > 0;
 
-    // =======================================
-    // Julian Day berbagai fase
-    // =======================================
-    double jdBase = mf.floor(jdE2 + 0.5) - 0.5;
-    double p1 = jdBase + ((t0 + t - tm1) / 24.0) - dt / 86400.0;
-    double u1 = jdBase + ((t0 + t - tm2) / 24.0) - dt / 86400.0;
-    double u2 = jdBase + ((t0 + t - tm3) / 24.0) - dt / 86400.0;
-    double mx = jdBase + ((t0 + t) / 24.0) - dt / 86400.0;
-    double u3 = jdBase + ((t0 + t + tm3) / 24.0) - dt / 86400.0;
-    double u4 = jdBase + ((t0 + t + tm2) / 24.0) - dt / 86400.0;
-    double p4 = jdBase + ((t0 + t + tm1) / 24.0) - dt / 86400.0;
+    final double? tm1 = testP > 0 ? math.sqrt(testP) / n : null;
+    final tm2 = hasUmbral ? math.sqrt(testU) / n : null;
+    final tm3 = hasTotal ? math.sqrt(testT) / n : null;
 
-    // Menentukan jenis gerhana Bulan
-    String jLE;
-    if (l3 * l3 - d * d > 0.0) {
-      jLE = "GERHANA BULAN TOTAL";
-    } else if (l2 * l2 - d * d > 0.0 && l3 * l3 - d * d < 0.0) {
-      jLE = "GERHANA BULAN SEBAGIAN";
-    } else if (l1 * l1 - d * d > 0.0 && l2 * l2 - d * d < 0.0) {
-      jLE = "GERHANA BULAN PENUMBRAL";
+    // =====================================
+    // KONVERSI JD
+    // =====================================
+
+    final jdBase = mf.floor(jdE2 + 0.5) - 0.5;
+    final mx = jdBase + ((t0 + t) / 24) - dt / 86400;
+
+    double? p1, p4, u1, u2, u3, u4;
+
+    if (tm1 != null) {
+      p1 = jdBase + ((t0 + t - tm1) / 24) - dt / 86400;
+      p4 = jdBase + ((t0 + t + tm1) / 24) - dt / 86400;
+    }
+
+    if (tm2 != null) {
+      u1 = jdBase + ((t0 + t - tm2) / 24) - dt / 86400;
+      u4 = jdBase + ((t0 + t + tm2) / 24) - dt / 86400;
+    }
+
+    if (tm3 != null) {
+      u2 = jdBase + ((t0 + t - tm3) / 24) - dt / 86400;
+      u3 = jdBase + ((t0 + t + tm3) / 24) - dt / 86400;
+    }
+
+    // =====================================
+    // DURASI
+    // =====================================
+
+    final durP = tm1 != null ? 2 * tm1 : null;
+    final durU = tm2 != null ? 2 * tm2 : null;
+    final durT = tm3 != null ? 2 * tm3 : null;
+
+    // =====================================
+    // MAGNITUDE
+    // =====================================
+
+    final magPen = (l1 - d) / (2 * sm);
+    final magUmb = hasUmbral ? (l2 - d) / (2 * sm) : null;
+
+    final radPen = l1 - sm;
+    final radUmb = hasUmbral ? (l2 - sm) : null;
+
+    final jenis = hasTotal
+        ? "GERHANA BULAN TOTAL"
+        : hasUmbral
+        ? "GERHANA BULAN SEBAGIAN"
+        : "GERHANA BULAN PENUMBRAL";
+
+    final mo = MoonFunction();
+    final sn = SunFunction();
+
+    // =====================================
+    // AZIMUTH & ALTITUDE (pakai pres & temp)
+    // =====================================
+
+    double? alt(double? jd) => jd == null
+        ? null
+        : mo.moonTopocentricAltitude(
+            jd,
+            dt,
+            gLon,
+            gLat,
+            elev,
+            pres,
+            temp,
+            'htoc',
+          );
+
+    double? az(double? jd) =>
+        jd == null ? null : mo.moonTopocentricAzimuth(jd, dt, gLon, gLat, elev);
+
+    final azmP1 = az(p1);
+    final azmU1 = az(u1);
+    final azmU2 = az(u2);
+    final azmMax = az(mx);
+    final azmU3 = az(u3);
+    final azmU4 = az(u4);
+    final azmP4 = az(p4);
+
+    final altP1 = alt(p1);
+    final altU1 = alt(u1);
+    final altU2 = alt(u2);
+    final altMax = alt(mx);
+    final altU3 = alt(u3);
+    final altU4 = alt(u4);
+    final altP4 = alt(p4);
+
+    // =====================================
+    // DATA EPHEMERIS SAAT PUNCAK
+    // =====================================
+
+    double? safe(double? v) {
+      if (v == null) return null;
+      if (v.isNaN || v.isInfinite) return null;
+      return v;
+    }
+
+    EclipseEphemerisBody? sunData;
+    EclipseEphemerisBody? moonData;
+
+    if (mx.isFinite) {
+      final raS = safe(sn.sunGeocentricRightAscension(mx, 0));
+      final dcS = safe(sn.sunGeocentricDeclination(mx, 0));
+      final sdS = safe(sn.sunGeocentricSemidiameter(mx, 0));
+      final hpS = safe(sn.sunEquatorialHorizontalParallax(mx, 0));
+
+      final raM = safe(mo.moonGeocentricRightAscension(mx, 0));
+      final dcM = safe(mo.moonGeocentricDeclination(mx, 0));
+      final sdM = safe(mo.moonGeocentricSemidiameter(mx, 0));
+      final hpM = safe(mo.moonEquatorialHorizontalParallax(mx, 0));
+
+      sunData = EclipseEphemerisBody(
+        ra: raS != null ? raS / 15.0 : null, // konversi ke jam
+        dec: dcS,
+        sd: sdS,
+        hp: hpS,
+      );
+
+      moonData = EclipseEphemerisBody(
+        ra: raM != null ? raM / 15.0 : null, // konversi ke jam
+        dec: dcM,
+        sd: sdM,
+        hp: hpM,
+      );
+    }
+
+    // =====================================
+    // RETURN
+    // =====================================
+
+    return LunarEclipseLocalResult(
+      isValid: true,
+      ada: true,
+
+      p1: p1,
+      u1: u1,
+      u2: u2,
+      mx: mx,
+      u3: u3,
+      u4: u4,
+      p4: p4,
+
+      azmP1: azmP1,
+      azmU1: azmU1,
+      azmU2: azmU2,
+      azmMx: azmMax,
+      azmU3: azmU3,
+      azmU4: azmU4,
+      azmP4: azmP4,
+
+      altP1: altP1,
+      altU1: altU1,
+      altU2: altU2,
+      altMx: altMax,
+      altU3: altU3,
+      altU4: altU4,
+      altP4: altP4,
+
+      durasiPenumbral: durP,
+      durasiUmbral: durU,
+      durasiTotal: durT,
+      magnitudePenumbral: magPen,
+      magnitudeUmbral: magUmb,
+      radiusPenumbral: radPen,
+      radiusUmbral: radUmb,
+
+      sun: sunData,
+      moon: moonData,
+
+      jenis: jenis,
+    );
+  }
+
+  LunarEclipseGlobalResult? lunarEclipseGlobal({
+    required int blnH,
+    required int thnH,
+  }) {
+    final bessel = lBesselian(blnH, thnH);
+    if (bessel == null || !bessel.isValid) return null;
+
+    final dt = bessel.deltaT;
+    final jdE2 = bessel.jde;
+    final t0 = bessel.t0;
+
+    final x = bessel.x;
+    final y = bessel.y;
+    final f1c = bessel.f1;
+    final f2c = bessel.f2;
+    final smc = bessel.sm;
+
+    double t = 0.0;
+    double tx = 0.0;
+
+    double? xVal, yVal, xDer, yDer, f1, f2, sm;
+
+    // =====================================
+    // ITERASI TENGAH GERHANA
+    // =====================================
+
+    for (int i = 0; i < 3; i++) {
+      t += tx;
+
+      final t2 = t * t;
+      final t3 = t2 * t;
+      final t4 = t2 * t2;
+
+      xVal = x[0] + x[1] * t + x[2] * t2 + x[3] * t3 + x[4] * t4;
+      yVal = y[0] + y[1] * t + y[2] * t2 + y[3] * t3 + y[4] * t4;
+
+      xDer = x[1] + 2 * x[2] * t + 3 * x[3] * t2 + 4 * x[4] * t3;
+      yDer = y[1] + 2 * y[2] * t + 3 * y[3] * t2 + 4 * y[4] * t3;
+
+      f1 = f1c[0] + f1c[1] * t + f1c[2] * t2 + f1c[3] * t3 + f1c[4] * t4;
+      f2 = f2c[0] + f2c[1] * t + f2c[2] * t2 + f2c[3] * t3 + f2c[4] * t4;
+      sm = smc[0] + smc[1] * t + smc[2] * t2 + smc[3] * t3 + smc[4] * t4;
+
+      final n2 = xDer * xDer + yDer * yDer;
+      if (n2 == 0.0) return null;
+
+      tx = -(xVal * xDer + yVal * yDer) / n2;
+    }
+
+    if (xVal == null ||
+        yVal == null ||
+        xDer == null ||
+        yDer == null ||
+        f1 == null ||
+        f2 == null ||
+        sm == null) {
+      return null;
+    }
+
+    final n = math.sqrt(xDer * xDer + yDer * yDer);
+    if (n == 0.0) return null;
+
+    final d = math.sqrt(xVal * xVal + yVal * yVal);
+
+    final l1 = f1 + sm;
+    final l2 = f2 + sm;
+    final l3 = f2 - sm;
+
+    final testP = l1 * l1 - d * d;
+    if (testP <= 0) return null;
+
+    final testU = l2 * l2 - d * d;
+    final testT = l3 * l3 - d * d;
+
+    final hasUmbral = testU > 0;
+    final hasTotal = testT > 0;
+
+    final double? tm1 = testP > 0 ? math.sqrt(testP) / n : null;
+    final tm2 = hasUmbral ? math.sqrt(testU) / n : null;
+    final tm3 = hasTotal ? math.sqrt(testT) / n : null;
+
+    // =====================================
+    // KONVERSI JD
+    // =====================================
+
+    final jdBase = mf.floor(jdE2 + 0.5) - 0.5;
+    final mx = jdBase + ((t0 + t) / 24) - dt / 86400;
+
+    double? p1, p4, u1, u2, u3, u4;
+
+    if (tm1 != null) {
+      p1 = jdBase + ((t0 + t - tm1) / 24) - dt / 86400;
+      p4 = jdBase + ((t0 + t + tm1) / 24) - dt / 86400;
+    }
+
+    if (tm2 != null) {
+      u1 = jdBase + ((t0 + t - tm2) / 24) - dt / 86400;
+      u4 = jdBase + ((t0 + t + tm2) / 24) - dt / 86400;
+    }
+
+    if (tm3 != null) {
+      u2 = jdBase + ((t0 + t - tm3) / 24) - dt / 86400;
+      u3 = jdBase + ((t0 + t + tm3) / 24) - dt / 86400;
+    }
+
+    // =====================================
+    // DURASI
+    // =====================================
+
+    final durP = tm1 != null ? 2 * tm1 : null;
+    final durU = tm2 != null ? 2 * tm2 : null;
+    final durT = tm3 != null ? 2 * tm3 : null;
+
+    // =====================================
+    // MAGNITUDE
+    // =====================================
+
+    final magPen = (l1 - d) / (2 * sm);
+    final magUmb = hasUmbral ? (l2 - d) / (2 * sm) : null;
+
+    final radPen = l1 - sm;
+    final radUmb = hasUmbral ? (l2 - sm) : null;
+
+    String jenis;
+
+    if (hasTotal) {
+      jenis = "GERHANA BULAN TOTAL";
+    } else if (hasUmbral) {
+      jenis = "GERHANA BULAN SEBAGIAN";
     } else {
-      jLE = "TIDAK ADA GERHANA";
+      jenis = "GERHANA BULAN PENUMBRAL";
     }
 
-    // ================== Data matahari saat maximum=====================
-    double raS = sn.sunGeocentricRightAscension(mx, dt);
-    double dcS = sn.sunGeocentricDeclination(mx, dt);
-    double sdS = sn.sunGeocentricSemidiameter(mx, dt);
-    double hpS = sn.sunEquatorialHorizontalParallax(mx, dt);
+    // =====================================
+    // DATA EPHEMERIS SAAT PUNCAK
+    // =====================================
 
-    // ================== Data bulan saat maximum=====================
-    double raM = mo.moonGeocentricRightAscension(mx, dt);
-    double dcM = mo.moonGeocentricDeclination(mx, dt);
-    double sdM = mo.moonGeocentricSemidiameter(mx, dt);
-    double hpM = mo.moonEquatorialHorizontalParallax(mx, dt);
+    double? safe(double? v) {
+      if (v == null) return null;
+      if (v.isNaN || v.isInfinite) return null;
+      return v;
+    }
 
-    // =======================================
-    // Return berdasarkan OptResult
-    // =======================================
+    EclipseEphemerisBody? sunData;
+    EclipseEphemerisBody? moonData;
 
-    return {
-      "JDP1": p1,
-      "JDU1": u1,
-      "JDU2": u2,
-      "JDMX": mx,
-      "JDU3": u3,
-      "JDU4": u4,
-      "JDP4": p4,
-      "DURP": durP,
-      "DURU": durU,
-      "DURT": durT,
-      "MAGP": magP,
-      "MAGU": magU,
-      "RADP": radP,
-      "RADU": radU,
-      "JLE": jLE,
-      "RAS": raS,
-      "DCS": dcS,
-      "SDS": sdS,
-      "HPS": hpS,
-      "RAM": raM,
-      "DCM": dcM,
-      "SDM": sdM,
-      "HPM": hpM,
-    };
+    if (mx.isFinite) {
+      final raS = safe(sn.sunGeocentricRightAscension(mx, 0));
+      final dcS = safe(sn.sunGeocentricDeclination(mx, 0));
+      final sdS = safe(sn.sunGeocentricSemidiameter(mx, 0));
+      final hpS = safe(sn.sunEquatorialHorizontalParallax(mx, 0));
+
+      final raM = safe(mo.moonGeocentricRightAscension(mx, 0));
+      final dcM = safe(mo.moonGeocentricDeclination(mx, 0));
+      final sdM = safe(mo.moonGeocentricSemidiameter(mx, 0));
+      final hpM = safe(mo.moonEquatorialHorizontalParallax(mx, 0));
+
+      sunData = EclipseEphemerisBody(
+        ra: raS != null ? raS / 15.0 : null, // konversi ke jam
+        dec: dcS,
+        sd: sdS,
+        hp: hpS,
+      );
+
+      moonData = EclipseEphemerisBody(
+        ra: raM != null ? raM / 15.0 : null, // konversi ke jam
+        dec: dcM,
+        sd: sdM,
+        hp: hpM,
+      );
+    }
+
+    // =====================================
+    // RETURN
+    // =====================================
+
+    return LunarEclipseGlobalResult(
+      isValid: true,
+
+      p1: p1,
+      u1: u1,
+      u2: u2,
+      mx: mx,
+      u3: u3,
+      u4: u4,
+      p4: p4,
+
+      durasiPenumbral: durP,
+      durasiUmbral: durU,
+      durasiTotal: durT,
+      magnitudePenumbral: magPen,
+      magnitudeUmbral: magUmb,
+      radiusPenumbral: radPen,
+      radiusUmbral: radUmb,
+
+      sun: sunData,
+      moon: moonData,
+
+      jenis: jenis,
+    );
+  }
+
+  //HISAB GERHANA BULAN GLOBAL PER RENTANG TAHUN
+
+  List<LunarEclipseGlobalSummary> lunarEclipseGlobalRangeHijri({
+    required int tahunAwalH,
+    required int tahunAkhirH,
+  }) {
+    final List<LunarEclipseGlobalSummary> hasil = [];
+
+    for (int thn = tahunAwalH; thn <= tahunAkhirH; thn++) {
+      for (int bln = 1; bln <= 12; bln++) {
+        final eclipse = lunarEclipseGlobal(blnH: bln, thnH: thn);
+
+        if (eclipse == null || eclipse.isValid != true) continue;
+
+        hasil.add(
+          LunarEclipseGlobalSummary(
+            tahunHijri: thn,
+            bulanHijri: bln,
+            p1: eclipse.p1,
+            u1: eclipse.u1,
+            u2: eclipse.u2,
+            mx: eclipse.mx,
+            u3: eclipse.u3,
+            u4: eclipse.u4,
+            p4: eclipse.p4,
+
+            durasiUmbral: eclipse.durasiUmbral,
+            durasiPenumbral: eclipse.durasiPenumbral,
+
+            jenis: eclipse.jenis,
+          ),
+        );
+      }
+    }
+
+    return hasil;
+  }
+
+  List<LunarEclipseLocalSummary> lunarEclipseLocalRangeHijri({
+    required int tahunAwalH,
+    required int tahunAkhirH,
+    required double gLon,
+    required double gLat,
+    required double elev,
+    required double pres,
+    required double temp,
+    required double tmZn,
+    required TimeScale timeScale,
+  }) {
+    final List<LunarEclipseLocalSummary> hasil = [];
+
+    for (int thn = tahunAwalH; thn <= tahunAkhirH; thn++) {
+      for (int bln = 1; bln <= 12; bln++) {
+        final eclipse = lunarEclipseLocal(
+          blnH: bln,
+          thnH: thn,
+          gLon: gLon,
+          gLat: gLat,
+          elev: elev,
+          pres: pres,
+          temp: temp,
+          tmZn: tmZn,
+        );
+
+        if (eclipse == null || eclipse.ada != true) continue;
+
+        // ============================
+        // Tentukan JD sesuai TimeScale
+        // ============================
+
+        double? convert(double? jd) {
+          if (jd == null) return null;
+
+          switch (timeScale) {
+            case TimeScale.jdTD:
+              return jd; // sudah TD
+            case TimeScale.jdUT:
+              return jd - (eclipse.deltaT ?? 0) / 86400.0;
+          }
+        }
+
+        final p1 = convert(eclipse.p1);
+        final u1 = convert(eclipse.u1);
+        final u2 = convert(eclipse.u2);
+        final mx = convert(eclipse.mx);
+        final u3 = convert(eclipse.u3);
+        final u4 = convert(eclipse.u4);
+        final p4 = convert(eclipse.p4);
+
+        hasil.add(
+          LunarEclipseLocalSummary(
+            tahunHijri: thn,
+            bulanHijri: bln,
+            p1: p1,
+            u1: u1,
+            u2: u2,
+            mx: mx,
+            u3: u3,
+            u4: u4,
+            p4: p4,
+
+            // altitude TIDAK ikut timeScale
+            altP1: eclipse.p1,
+            altU1: eclipse.u1,
+            altU2: eclipse.u2,
+            altMx: eclipse.mx,
+            altU3: eclipse.u3,
+            altU4: eclipse.u4,
+            altP4: eclipse.p4,
+
+            durasiUmbral: eclipse.durasiUmbral,
+            durasiPenumbral: eclipse.durasiPenumbral,
+            jenis: eclipse.jenis,
+          ),
+        );
+      }
+    }
+
+    return hasil;
   }
 }
