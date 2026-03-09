@@ -1,22 +1,4 @@
-import '../core/astronomy/julian_day.dart';
-import '../core/astronomy/time_scale.dart';
-import '../core/math/math_utils.dart';
-
-import '../model/salat/salat_status.dart';
-import '../model/salat/salat_value.dart';
-import '../service/salat_service.dart';
-
-import '../service/qibla_service.dart';
-
-import '../service/hisab_awal_bulan_service.dart';
-import '../service/calendar_service.dart';
-
-import '../service/lunar_eclipse_service.dart';
-import '../service/solar_eclipse_service.dart';
-import '../model/helper_eclipse/helper_eclipse.dart';
-
-import '../service/moon_service.dart';
-import '../service/sun_service.dart';
+import 'package:myhisab/myhisab.dart';
 
 // import '../model/solar_eclipse/solar_eclipse_local_result.dart';
 // import '../model/solar_eclipse/solar_eclipse_global_result.dart';
@@ -29,7 +11,6 @@ void main() {
   final se = SolarEclipseService();
   final jd = JulianDay();
   final mf = MathFunction();
-  //final mo = MoonFunction();
   final moonService = MoonService();
   final sunService = SunService();
 
