@@ -1,6 +1,6 @@
-import 'package:myhisab/src/core/qibla/arah_kiblat.dart';
-import 'package:myhisab/src/model/qibla/qibla_result.dart';
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import '../core/qibla/arah_kiblat.dart';
+import '../core/astronomy/julian_day.dart';
+import '../model/qibla/qibla_result.dart';
 
 class QiblaService {
   final ArahKiblat _aq = ArahKiblat();

@@ -1,9 +1,9 @@
 import 'dart:math' as math;
-import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
-import 'package:myhisab/src/core/math/math_utils.dart';
-import 'package:myhisab/src/core/astronomy/sun_function.dart';
-import 'package:myhisab/src/model/qibla/qibla_event_result.dart';
+import '../astronomy/dynamical_time.dart';
+import '../astronomy/julian_day.dart';
+import '../math/math_utils.dart';
+import '../astronomy/sun_function.dart';
+import '../../model/qibla/qibla_event_result.dart';
 
 class ArahKiblat {
   final julianDay = JulianDay();

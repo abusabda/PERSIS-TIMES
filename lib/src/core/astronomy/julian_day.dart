@@ -1,4 +1,4 @@
-import 'package:myhisab/src/core/math/math_utils.dart';
+import '../math/math_utils.dart';
 
 class JulianDay {
   //final dt = DynamicalTime();

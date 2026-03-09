@@ -1,5 +1,5 @@
-import 'package:myhisab/src/model/solar_eclipse/solar_besselian_result.dart';
-import 'package:myhisab/src/model/helper_eclipse/helper_eclipse.dart';
+import '../../model/solar_eclipse/solar_besselian_result.dart';
+import '../../model/helper_eclipse/helper_eclipse.dart';
 
 class SolarEclipseGlobalResult {
   final bool ada;

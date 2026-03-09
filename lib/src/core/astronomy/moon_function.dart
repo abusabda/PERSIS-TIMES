@@ -1,7 +1,4 @@
 import 'dart:math' as math;
-
-//import 'package:myhisab/service/sun_service.dart';
-
 import 'moon_longitude.dart';
 import 'moon_latitude.dart';
 import 'moon_distance.dart';

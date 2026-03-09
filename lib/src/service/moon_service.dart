@@ -1,10 +1,10 @@
-import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
-import 'package:myhisab/src/core/astronomy/moon_function.dart';
-import 'package:myhisab/src/core/astronomy/moon_longitude.dart';
-import 'package:myhisab/src/core/astronomy/moon_latitude.dart';
-import 'package:myhisab/src/core/astronomy/moon_distance.dart';
-import 'package:myhisab/src/model/moon/moon_result.dart';
+import '../core/astronomy/dynamical_time.dart';
+import '../core/astronomy/julian_day.dart';
+import '../core/astronomy/moon_function.dart';
+import '../core/astronomy/moon_longitude.dart';
+import '../core/astronomy/moon_latitude.dart';
+import '../core/astronomy/moon_distance.dart';
+import '../model/moon/moon_result.dart';
 
 class MoonService {
   final JulianDay _julianDay = JulianDay();

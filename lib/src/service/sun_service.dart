@@ -1,7 +1,7 @@
-import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
-import 'package:myhisab/src/core/astronomy/sun_function.dart';
-import 'package:myhisab/src/model/sun/sun_result.dart';
+import '../core/astronomy/dynamical_time.dart';
+import '../core/astronomy/julian_day.dart';
+import '../core/astronomy/sun_function.dart';
+import '../model/sun/sun_result.dart';
 
 class SunService {
   final JulianDay _julianDay = JulianDay();

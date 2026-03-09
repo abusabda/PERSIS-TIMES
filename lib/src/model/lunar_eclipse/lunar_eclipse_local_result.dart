@@ -1,5 +1,5 @@
-import 'package:myhisab/src/model/lunar_eclipse/lunar_besselian_result.dart';
-import 'package:myhisab/src/model/helper_eclipse/helper_eclipse.dart';
+import '../../model/lunar_eclipse/lunar_besselian_result.dart';
+import '../../model/helper_eclipse/helper_eclipse.dart';
 
 class LunarEclipseLocalResult {
   final bool isValid;

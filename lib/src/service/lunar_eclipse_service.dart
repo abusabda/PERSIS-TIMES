@@ -1,16 +1,17 @@
 import 'dart:math' as math;
-import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
-import 'package:myhisab/src/core/math/math_utils.dart';
-import 'package:myhisab/src/core/astronomy/moon_function.dart';
-import 'package:myhisab/src/core/astronomy/sun_function.dart';
-import 'package:myhisab/src/model/lunar_eclipse/lunar_besselian_result.dart';
-import 'package:myhisab/src/model/lunar_eclipse/lunar_eclipse_global_result.dart';
-import 'package:myhisab/src/model/lunar_eclipse/lunar_eclipse_local_result.dart';
-import 'package:myhisab/src/model/lunar_eclipse/lunar_eclipse_global_range_result.dart';
-import 'package:myhisab/src/model/lunar_eclipse/lunar_eclipse_local_range_result.dart';
-import 'package:myhisab/src/core/astronomy/time_scale.dart';
-import 'package:myhisab/src/model/helper_eclipse/helper_eclipse.dart';
+import '../core/astronomy/dynamical_time.dart';
+import '../core/astronomy/julian_day.dart';
+import '../core/math/math_utils.dart';
+import '../core/astronomy/moon_function.dart';
+import '../core/astronomy/sun_function.dart';
+import '../core/astronomy/time_scale.dart';
+
+import '../model/lunar_eclipse/lunar_besselian_result.dart';
+import '../model/lunar_eclipse/lunar_eclipse_global_result.dart';
+import '../model/lunar_eclipse/lunar_eclipse_local_result.dart';
+import '../model/lunar_eclipse/lunar_eclipse_global_range_result.dart';
+import '../model/lunar_eclipse/lunar_eclipse_local_range_result.dart';
+import '../model/helper_eclipse/helper_eclipse.dart';
 
 class LunarEclipseService {
   final julDay = JulianDay();

@@ -1,8 +1,8 @@
-import 'package:myhisab/src/model/sun/sun_data_geo.dart';
-import 'package:myhisab/src/model/sun/sun_data_topo.dart';
-import 'package:myhisab/src/model/moon/moon_data_geo.dart';
-import 'package:myhisab/src/model/moon/moon_data_topo.dart';
-import 'package:myhisab/src/model/awal_bulan/hilal_data.dart';
+import '../../model/sun/sun_data_geo.dart';
+import '../../model/sun/sun_data_topo.dart';
+import '../../model/moon/moon_data_geo.dart';
+import '../../model/moon/moon_data_topo.dart';
+import '../../model/awal_bulan/hilal_data.dart';
 
 class HisabAwalBulanResult {
   final double jd;

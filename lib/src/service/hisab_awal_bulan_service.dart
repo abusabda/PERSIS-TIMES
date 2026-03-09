@@ -1,18 +1,18 @@
 import 'dart:math' as math;
-import 'package:myhisab/src/core/astronomy/dynamical_time.dart';
-import 'package:myhisab/src/core/astronomy/moon_function.dart';
-import 'package:myhisab/src/core/astronomy/moon_longitude.dart';
-import 'package:myhisab/src/core/astronomy/moon_latitude.dart';
-import 'package:myhisab/src/core/astronomy/moon_distance.dart';
+import '../core/astronomy/dynamical_time.dart';
+import '../core/astronomy/moon_function.dart';
+import '../core/astronomy/moon_longitude.dart';
+import '../core/astronomy/moon_latitude.dart';
+import '../core/astronomy/moon_distance.dart';
 
-import 'package:myhisab/src/core/astronomy/sun_function.dart';
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import '../core/astronomy/sun_function.dart';
+import '../core/astronomy/julian_day.dart';
 
-import 'package:myhisab/src/model/sun/sun_data_geo.dart';
-import 'package:myhisab/src/model/sun/sun_data_topo.dart';
-import 'package:myhisab/src/model/moon/moon_data_geo.dart';
-import 'package:myhisab/src/model/moon/moon_data_topo.dart';
-import 'package:myhisab/src/model/awal_bulan/hilal_data.dart';
+import '../model/sun/sun_data_geo.dart';
+import '../model/sun/sun_data_topo.dart';
+import '../model/moon/moon_data_geo.dart';
+import '../model/moon/moon_data_topo.dart';
+import '../model/awal_bulan/hilal_data.dart';
 import '../model/awal_bulan/hisab_awal_bulan_result.dart';
 
 class HisabAwalBulanService {

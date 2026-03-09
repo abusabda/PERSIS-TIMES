@@ -1,8 +1,8 @@
-import 'package:myhisab/src/model/salat/salat_daily_result.dart';
-import 'package:myhisab/src/core/prayer/waktu_salat.dart';
-import 'package:myhisab/src/model/salat/salat_status.dart';
-import 'package:myhisab/src/model/salat/salat_value.dart';
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
+import '../core/prayer/waktu_salat.dart';
+import '../core/astronomy/julian_day.dart';
+import '../model/salat/salat_status.dart';
+import '../model/salat/salat_value.dart';
+import '../model/salat/salat_daily_result.dart';
 
 class SalatService {
   final JulianDay _jd = JulianDay();

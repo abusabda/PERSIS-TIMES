@@ -1,18 +1,23 @@
-import 'package:myhisab/src/core/astronomy/julian_day.dart';
-import 'package:myhisab/src/core/astronomy/time_scale.dart';
-import 'package:myhisab/src/core/math/math_utils.dart';
-//import 'package:myhisab/src/core/astronomy/moon_function.dart';
-import 'package:myhisab/src/model/salat/salat_status.dart';
-import 'package:myhisab/src/model/salat/salat_value.dart';
-import 'package:myhisab/src/service/salat_service.dart';
-import 'package:myhisab/src/service/calendar_service.dart';
-import 'package:myhisab/src/service/lunar_eclipse_service.dart';
-import 'package:myhisab/src/service/solar_eclipse_service.dart';
-import 'package:myhisab/src/service/moon_service.dart';
-import 'package:myhisab/src/service/sun_service.dart';
-import 'package:myhisab/src/service/qibla_service.dart';
-import 'package:myhisab/src/service/hisab_awal_bulan_service.dart';
-import 'package:myhisab/src/model/helper_eclipse/helper_eclipse.dart';
+import '../core/astronomy/julian_day.dart';
+import '../core/astronomy/time_scale.dart';
+import '../core/math/math_utils.dart';
+
+import '../model/salat/salat_status.dart';
+import '../model/salat/salat_value.dart';
+import '../service/salat_service.dart';
+
+import '../service/qibla_service.dart';
+
+import '../service/hisab_awal_bulan_service.dart';
+import '../service/calendar_service.dart';
+
+import '../service/lunar_eclipse_service.dart';
+import '../service/solar_eclipse_service.dart';
+import '../model/helper_eclipse/helper_eclipse.dart';
+
+import '../service/moon_service.dart';
+import '../service/sun_service.dart';
+
 // import '../model/solar_eclipse/solar_eclipse_local_result.dart';
 // import '../model/solar_eclipse/solar_eclipse_global_result.dart';
 // import '../model/lunar_eclipse/lunar_eclipse_global_range_result.dart';
