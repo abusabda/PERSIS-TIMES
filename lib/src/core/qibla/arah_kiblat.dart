@@ -3,6 +3,7 @@ import '../astronomy/dynamical_time.dart';
 import '../astronomy/julian_day.dart';
 import '../math/math_utils.dart';
 import '../astronomy/sun_function.dart';
+import '../astronomy/moon_function.dart';
 import '../../model/qibla/qibla_event_result.dart';
 
 class ArahKiblat {
@@ -10,6 +11,7 @@ class ArahKiblat {
   final dynamicalTime = DynamicalTime();
   final mf = MathFunction();
   final sn = SunFunction();
+  final mn = MoonFunction();
 
   double arahQiblatSpherical(double gLon, double gLat) {
     final gLatKabah = 21.0 + 25.0 / 60.0 + 21.02 / 3600.0;
@@ -422,4 +424,237 @@ class ArahKiblat {
       deklinasi: dm,
     );
   }
+
+  // List<QiblaEventResult> rashdulQiblatBulan(int tahun, double tmZn) {
+  //   final double gLatK = 21.0 + 25.0 / 60.0 + 21.02 / 3600.0;
+
+  //   List<QiblaEventResult> results = [];
+
+  //   final jdStart = julianDay.kmjd(1, 1, tahun, 0, 0);
+  //   final jdEnd = julianDay.kmjd(31, 12, tahun, 24, 0);
+
+  //   const step = 0.25; // 6 jam
+
+  //   double jd1 = jdStart;
+
+  //   while (jd1 < jdEnd) {
+  //     final jd2 = jd1 + step;
+
+  //     final dec1 = mn.moonGeocentricDeclination(
+  //       jd1 + dynamicalTime.deltaT(jd1) / 86400.0,
+  //       0.0,
+  //     );
+
+  //     final dec2 = mn.moonGeocentricDeclination(
+  //       jd2 + dynamicalTime.deltaT(jd2) / 86400.0,
+  //       0.0,
+  //     );
+
+  //     final f1 = dec1 - gLatK;
+  //     final f2 = dec2 - gLatK;
+
+  //     if (f1 * f2 <= 0) {
+  //       double a = jd1;
+  //       double b = jd2;
+  //       double mid = 0;
+
+  //       for (int i = 0; i < 25; i++) {
+  //         mid = (a + b) / 2;
+
+  //         final decMid = mn.moonGeocentricDeclination(
+  //           mid + dynamicalTime.deltaT(mid) / 86400.0,
+  //           0.0,
+  //         );
+
+  //         final fmid = decMid - gLatK;
+
+  //         if (f1 * fmid < 0) {
+  //           b = mid;
+  //         } else {
+  //           a = mid;
+  //         }
+  //       }
+
+  //       final jdEvent = (a + b) / 2;
+
+  //       final dm = mn.moonGeocentricDeclination(
+  //         jdEvent + dynamicalTime.deltaT(jdEvent) / 86400.0,
+  //         0.0,
+  //       );
+
+  //       final tinggi = 90.0 - (gLatK - dm).abs();
+
+  //       final jamDes = double.parse(julianDay.jdkm(jdEvent, tmZn, "JAM DES"));
+
+  //       results.add(
+  //         QiblaEventResult(
+  //           jd: jdEvent,
+  //           jamDes: jamDes,
+  //           tinggi: tinggi,
+  //           deklinasi: dm,
+  //         ),
+  //       );
+  //     }
+
+  //     jd1 = jd2;
+  //   }
+
+  //   return results;
+  // }
+
+  //   class QiblaEventResult {
+  //   final double jd;
+  //   final double selisih;
+  //   final double deklinasi;
+  //   final double tinggi;
+  //   final double jamDes;
+
+  //   QiblaEventResult({
+  //     required this.jd,
+  //     required this.selisih,
+  //     required this.deklinasi,
+  //     required this.tinggi,
+  //     required this.jamDes,
+  //   });
+  // }
+
+  // List<QiblaEventResult> rashdulQiblatBulan(int tahun, double tmZn) {
+  //   final double latK = 21.0 + 25.0 / 60.0 + 21.02 / 3600.0;
+  //   final double lonK = 39.0 + 49.0 / 60.0 + 34.27 / 3600.0;
+  //   final double tzK = 3.0;
+
+  //   // 🔴 simpan pasangan (selisih + data)
+  //   List<Map<String, dynamic>> temp = [];
+
+  //   for (int i = 1; i <= 366; i++) {
+  //     final jd = julianDay.kmjd(i, 1, tahun, 0, tzK);
+  //     final jde = jd + dynamicalTime.deltaT(jd) / 86400.0;
+
+  //     final tgl = int.parse(julianDay.jdkm(jde, 0, "TGLM"));
+  //     final bln = int.parse(julianDay.jdkm(jde, 0, "BLNM"));
+  //     final thn = int.parse(julianDay.jdkm(jde, 0, "THNM"));
+
+  //     final trs = mn.moonTransitRiseSet(
+  //       tgl,
+  //       bln,
+  //       thn,
+  //       lonK,
+  //       latK,
+  //       10,
+  //       tzK,
+  //       "TRANSIT",
+  //       3,
+  //     );
+
+  //     final jdTransit = (jd.floorToDouble() + 0.5) - 0.5 + (trs - tzK) / 24.0;
+
+  //     final dm = mn.moonGeocentricDeclination(
+  //       jdTransit + dynamicalTime.deltaT(jdTransit) / 86400.0,
+  //       0.0,
+  //     );
+
+  //     final selisih = (dm - latK).abs();
+  //     final tinggi = 90.0 - selisih;
+
+  //     final jamDes = double.parse(julianDay.jdkm(jdTransit, tmZn, "JAM DES"));
+
+  //     temp.add({
+  //       "selisih": selisih,
+  //       "data": QiblaEventResult(
+  //         jd: jdTransit,
+  //         jamDes: jamDes,
+  //         tinggi: tinggi,
+  //         deklinasi: dm,
+  //       ),
+  //     });
+  //   }
+
+  //   // 🔥 sort berdasarkan selisih
+  //   temp.sort((a, b) => a["selisih"].compareTo(b["selisih"]));
+
+  //   // 🔥 ambil 5 terbaik
+  //   final top5 = temp
+  //       .take(5)
+  //       .map((e) => e["data"] as QiblaEventResult)
+  //       .toList();
+
+  //   // 🔥 urutkan kembali berdasarkan waktu (opsional, biar rapi)
+  //   top5.sort((a, b) => a.jd.compareTo(b.jd));
+
+  //   return top5;
+  // }
+
+  List<QiblaEventResult> rashdulQiblatBulan(int tahun, double tmZn) {
+    final double latK = 21.0 + 25.0 / 60.0 + 21.02 / 3600.0;
+    final double lonK = 39.0 + 49.0 / 60.0 + 34.27 / 3600.0;
+    final double tzK = 3.0;
+
+    List<QiblaEventResult> results = [];
+
+    for (int i = 1; i <= 366; i++) {
+      final jd = julianDay.kmjd(i, 1, tahun, 0, tzK);
+
+      final jde = jd + dynamicalTime.deltaT(jd) / 86400.0;
+
+      // 🔴 HARUS dari JDE (sesuai VB)
+      final tgl = int.parse(julianDay.jdkm(jde, 0, "TGLM"));
+      final bln = int.parse(julianDay.jdkm(jde, 0, "BLNM"));
+      final thn = int.parse(julianDay.jdkm(jde, 0, "THNM"));
+
+      // 🔴 TRANSIT
+      final trs = mn.moonTransitRiseSet(
+        tgl,
+        bln,
+        thn,
+        lonK,
+        latK,
+        10,
+        tzK,
+        "TRANSIT",
+        3,
+      );
+
+      final jdTransit = (jd.floorToDouble() + 0.5) - 0.5 + (trs - tzK) / 24.0;
+
+      // 🔴 PENTING: DeltaT pakai jd (bukan jdTransit)
+      final dm = mn.moonGeocentricDeclination(
+        jdTransit + dynamicalTime.deltaT(jd) / 86400.0,
+        0.0,
+      );
+
+      final selisih = (dm - latK).abs();
+
+      // 🔴 FILTER seperti VB
+      if (selisih <= 0.5) {
+        final tinggi = 90.0 - selisih;
+
+        final jamDes = double.parse(julianDay.jdkm(jdTransit, tmZn, "JAM DES"));
+
+        results.add(
+          QiblaEventResult(
+            jd: jdTransit,
+            jamDes: jamDes,
+            tinggi: tinggi,
+            deklinasi: dm,
+          ),
+        );
+      }
+    }
+
+    return results;
+  }
+
+  // List<QiblaEventResult> rangeRashdulQiblatBulan(
+  //   int startYear,
+  //   int endYear,
+  //   double tmZn,
+  // ) {
+  //   List<QiblaEventResult> results = [];
+
+  //   for (int y = startYear; y <= endYear; y++) {
+  //     results.addAll(rashdulQiblatBulan(y, tmZn));
+  //   }
+
+  //   return results;
+  // }
 }

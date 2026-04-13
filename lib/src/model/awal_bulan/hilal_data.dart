@@ -9,7 +9,7 @@ class HilalData {
   final double relativeAltitudeTopo;
 
   final double qOdeh;
-  final double bestTime;
+  final double? bestTime;
 
   final double imkanMabimsStatus;
   final double imkanTurkiStatus;

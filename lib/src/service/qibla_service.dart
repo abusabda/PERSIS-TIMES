@@ -1,6 +1,7 @@
 import '../core/qibla/arah_kiblat.dart';
 import '../core/astronomy/julian_day.dart';
 import '../model/qibla/qibla_result.dart';
+import '../model/qibla/qibla_moon_yearly_result.dart';
 
 class QiblaService {
   final ArahKiblat _aq = ArahKiblat();
@@ -150,5 +151,23 @@ class QiblaService {
     }
 
     return results;
+  }
+
+  //RASHDUL QIBLAT DENGAN BULAN PER-RANGE
+
+  QiblaMoonYearlyResult getRashdulBulanRange({
+    required int tahunAwal,
+    required int tahunAkhir,
+    required double tmZn,
+  }) {
+    final List<QiblaMoonYearlyEvent> results = [];
+
+    for (int tahun = tahunAwal; tahun <= tahunAkhir; tahun++) {
+      final events = _aq.rashdulQiblatBulan(tahun, tmZn);
+
+      results.add(QiblaMoonYearlyEvent(tahun: tahun, events: events));
+    }
+
+    return QiblaMoonYearlyResult(data: results);
   }
 }

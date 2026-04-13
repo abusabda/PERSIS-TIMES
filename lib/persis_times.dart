@@ -1,4 +1,4 @@
-//library myhisab;
+//library persis_times;
 
 // Astronomy
 export 'src/core/astronomy/julian_day.dart';

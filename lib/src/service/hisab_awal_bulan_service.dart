@@ -1,4 +1,6 @@
 import 'dart:math' as math;
+import 'package:persis_times/src/core/math/math_utils.dart';
+
 import '../core/astronomy/dynamical_time.dart';
 import '../core/astronomy/moon_function.dart';
 import '../core/astronomy/moon_longitude.dart';
@@ -38,6 +40,7 @@ class HisabAwalBulanService {
     final sn = SunFunction();
     final dt = DynamicalTime();
     final jd = JulianDay();
+    final mf = MathFunction();
 
     final double geojdIjtimak = mo.geocentricConjunction(
       blnH,
@@ -47,6 +50,13 @@ class HisabAwalBulanService {
     );
 
     final double deltaT = dt.deltaT(geojdIjtimak.floorToDouble() + 0.5);
+
+    final double geojdIjtimak2 = mo.geocentricConjunction(
+      blnH,
+      thnH,
+      deltaT,
+      "Ijtima",
+    );
 
     final double topojdIjtimak = mo.topocentricConjunction(
       blnH,
@@ -611,11 +621,11 @@ class HisabAwalBulanService {
 
     final double crescentGeo =
         mo.moonGeocentricSemidiameter(sunsetJD, deltaT) *
-        (1 - math.cos(elongGeo));
+        (1 - math.cos(mf.rad(elongGeo)));
 
     final double crescentTopo =
         mo.moonTopocentricSemidiameter(sunsetJD, deltaT, gLon, gLat, elev) *
-        (1 - math.cos(elongTopo));
+        (1 - math.cos(mf.rad(elongTopo)));
 
     final double qOdeh =
         relAltTopo -
@@ -624,7 +634,13 @@ class HisabAwalBulanService {
             6.3226 * (crescentTopo * 60) +
             7.1651);
 
-    final double bestTime = sunsetJD + (4 / 9.0);
+    double? bestTime;
+
+    if (moonsetJD != null) {
+      bestTime =
+          double.parse(jd.jdkm(sunsetJD, tmZn, "JAMDES")) +
+          4 / 9 * ((moonsetJD - sunsetJD) * 24.0);
+    }
 
     // ===================
     // KRITERIA
@@ -648,7 +664,7 @@ class HisabAwalBulanService {
     return HisabAwalBulanResult(
       jd: sunsetJD,
       deltaT: deltaT,
-      geojdIjtimak: geojdIjtimak,
+      geojdIjtimak: geojdIjtimak2,
       topojdIjtimak: topojdIjtimak,
       sunsetJD: sunsetJD,
       moonsetJD: moonsetJD,

@@ -582,7 +582,7 @@ void main() {
     print("\n");
   }
 
-  // Rashdul Qiblat untuk rentang tahun
+  // Antipoda Qiblat untuk rentang tahun
   print("=== ANTIPODA QIBLAT ===");
   final hasil3 = qiblaService.getAntipodaRange(
     tahunAwal: 2026,
@@ -619,6 +619,31 @@ void main() {
       "AQ 2 Deklinasi : ${mf.dddms(r2.deklinasi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",
     );
     print("\n");
+  }
+
+  // RASHDUL QIBLAT DENGAN BULAN
+  print("RASHDUL QIBLAT DENGAN BULAN");
+  final arah = qiblaService.getRashdulBulanRange(
+    tahunAwal: 2025,
+    tahunAkhir: 2026,
+    tmZn: 7,
+  );
+
+  for (var yearly in arah.data) {
+    print("Tahun : ${yearly.tahun}");
+
+    int no = 1;
+    for (var e in yearly.events) {
+      print("Event      : $no");
+      print("JD         : ${jd.jdkm(e.jd, 7, "")}");
+      print("Jam Des    : ${mf.dhhms(e.jamDes)}");
+      print("Tinggi     : ${mf.dddms(e.tinggi)}");
+      print("Deklinasi  : ${mf.dddms(e.deklinasi)}");
+      print("---------------------------");
+      no++;
+    }
+
+    print(""); // spasi antar tahun
   }
 
   print("========================================");
@@ -929,9 +954,22 @@ void main() {
   print("");
   print(".......Data-data lainnya.......");
   print("Range-q Odeh               : ${rs.hilal.qOdeh}");
-  print(
-    "Best Time                  : ${mf.dhhms(double.parse(jd.jdkm(rs.hilal.bestTime, tmZn, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
-  );
+
+  // if (rs.hilal.bestTime != null) {
+  //   print(
+  //     "Best Time                  : ${mf.dhhms(double.parse(jd.jdkm(rs.hilal.bestTime!, 0, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+  //   );
+  // } else {
+  //   "Best Time                  : - ";
+  // }
+
+  if (rs.hilal.bestTime != null) {
+    print(
+      "Best Time                  : ${mf.dhhms(rs.hilal.bestTime!, optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+    );
+  } else {
+    "Best Time                  : - ";
+  }
 
   print("");
 
