@@ -341,20 +341,21 @@ void main() {
   final ss = SalatService();
 
   final result4 = ss.waktuSalatHarian(
-    tglM: 24,
-    blnM: 2,
+    tglM: 19,
+    blnM: 4,
     thnM: 2026,
-    gLon: (107 + 36 / 60),
-    gLat: -(7 + 5 / 60),
+    gLon: (107 + 31 / 60 + 2.80 / 3600),
+    gLat: -(6 + 58 / 60 + 15.84 / 3600),
     elev: 0,
     tmZn: 7,
-    ihty: 0,
+    ihty: 2,
   );
 
   void printSalat(String nama, SalatValue value) {
     if (value.isNormal) {
       print(
-        "${nama.padRight(12)} : ${mf.dhhm(value.time!, optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+        "${nama.padRight(12)} : ${value.time!}",
+        // "${nama.padRight(12)} : ${mf.dhhm(value.time!, optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
       );
     } else {
       print("${nama.padRight(12)} : ${value.status.label}");

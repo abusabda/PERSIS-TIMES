@@ -102,43 +102,31 @@ class MathFunction {
     }
   }
 
-  // Format jam HH:MM
   String dhhm(
     double dHrs, {
     String optResult = "HH:MM",
-    int minDecPlaces = 2,
+    int minDecPlaces = 2, // tidak dipakai lagi untuk HH:MM
     String posNegSign = "",
   }) {
-    final uDHrs = abs(dHrs);
-    double uHrs = floor(uDHrs);
-    final uDMin = (uDHrs - uHrs) * 60.0;
-    String uMin = uDMin.toStringAsFixed(minDecPlaces);
+    final isNeg = dHrs < 0;
+    final uDHrs = dHrs.abs();
 
-    // koreksi bila menit = 60.0
-    if (double.parse(uMin) == 60.0) {
-      uMin = 0.0.toStringAsFixed(minDecPlaces);
-      uHrs += 1.0;
-    }
+    // 🔥 kunci: pakai total menit (floor)
+    int totalMinutes = (uDHrs * 60).floor();
 
-    final sHrs = uHrs.toInt() < 10 ? "0${uHrs.toInt()}" : "${uHrs.toInt()}";
-    final sMin = double.parse(uMin) < 10.0 ? "0$uMin" : uMin;
+    int hrs = totalMinutes ~/ 60;
+    int mins = totalMinutes % 60;
+
+    final sHrs = hrs.toString().padLeft(2, '0');
+    final sMin = mins.toString().padLeft(2, '0');
 
     // tanda positif/negatif
-    String pns;
+    String pns = "";
     if (posNegSign == "+-") {
-      if (dHrs > 0.0) {
-        pns = "+";
-      } else if (dHrs < 0.0) {
-        pns = "-";
-      } else {
-        pns = "";
-      }
+      if (dHrs > 0) pns = "+";
+      if (dHrs < 0) pns = "-";
     } else {
-      if (dHrs < 0.0) {
-        pns = "-";
-      } else {
-        pns = "";
-      }
+      if (isNeg) pns = "-";
     }
 
     switch (optResult) {
