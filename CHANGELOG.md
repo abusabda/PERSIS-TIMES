@@ -1,3 +1,7 @@
+## 1.0.2
+- Perbaikan kode format dhhm
+- Perbaikan kode kalender KHGT/IR Turki
+
 ## 1.0.1
 
 - Improved README with scientific documentation
