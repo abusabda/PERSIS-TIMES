@@ -1,3 +1,7 @@
+## 1.0.4
+
+- Penambahan nama pembuat untuk pub dev
+
 ## 1.0.3
 
 - Perbaikan kesalahan kode kalender KHGT/IR Turki
