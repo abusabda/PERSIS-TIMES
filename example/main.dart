@@ -1044,6 +1044,9 @@ void main() {
   final abqTurkiNow = cs.serviceKalenderHijriahTURKI(tglM, blnM, thnM);
   print("Turki/KHGT                      : $abqTurkiNow");
 
+  final abqUQNow = cs.serviceKalenderHijriahUQ(tglM, blnM, thnM);
+  print("Ummul Qura                      : $abqUQNow");
+
   print(" ");
 
   // INPUT GERHANA BULAN

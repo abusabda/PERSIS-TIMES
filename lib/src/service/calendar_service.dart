@@ -150,6 +150,45 @@ class CalendarService {
     return jdAbqWH.ceilToDouble();
   }
 
+  // Fungsi Hisab Awal Bulan Hijriah Menurut Kalender Ummul Qura
+
+  // Fungsi Hisab Awal Bulan Hijriah Menurut Wujudul Hilal
+  double abqUmmulQura(int blnH, int thnH) {
+    double gLon = (39 + 49 / 60 + 34.27 / 3600);
+    double gLat = (21 + 25 / 60 + 21.02 / 3600);
+    double tmZn = 3;
+    double elev = 304;
+
+    final jdNM = mo.geocentricConjunction(blnH, thnH, 0.0, "Ijtimak");
+    final delT = dyTme.deltaT(jdNM);
+    final jdNM2 = mo.geocentricConjunction(blnH, thnH, delT, "Ijtimak");
+    final jdGS = sn.jdGhurubSyams(jdNM2, gLat, gLon, elev, tmZn);
+
+    final tglM = int.parse(julDay.jdkm(jdGS, tmZn, "TGLM")); //Tanggal Dalam LCT
+    final blnM = int.parse(julDay.jdkm(jdGS, tmZn, "BLNM")); //Bulan dalam LCT
+    final thnM = int.parse(julDay.jdkm(jdGS, tmZn, "THNM")); //Tahun dalam LCT
+
+    final moonSet = mo.moonTransitRiseSet(
+      tglM,
+      blnM,
+      thnM,
+      gLon,
+      gLat,
+      elev,
+      tmZn,
+      "SET",
+      2,
+    );
+
+    final sunSet = double.parse(julDay.jdkm(jdGS, tmZn, "JAMDES"));
+
+    final int uQ = (moonSet > sunSet && jdNM2 < jdGS) ? 1 : 2;
+
+    final jdAbqUQ = ((mf.floor(jdNM2 + 0.5 + 0.0 / 24.0)) - 0.0 / 24.0) + uQ;
+
+    return jdAbqUQ.ceilToDouble();
+  }
+
   // Fungsi Hisab Awal Bulan Hijriah Menurut IR TURKI/KHGT
 
   double abqTurki(int blnH, int thnH) {
@@ -350,6 +389,55 @@ class CalendarService {
       abqList.add(ab.abqWujudulHilal(blnH, thnH));
     }
     abqList.add(ab.abqWujudulHilal(1, thnH + 1)); // Muharram tahun berikutnya
+
+    // Loop hari dari tiap ABQ ke ABQ berikutnya
+    for (var i = 0; i < abqList.length - 1; i++) {
+      final jdStart = abqList[i].toInt();
+      final jdEnd = abqList[i + 1].toInt();
+
+      final blnH = (i == 0)
+          ? 12
+          : (i == 13)
+          ? 12
+          : i;
+      final thnHij = (i == 0)
+          ? thnH - 1
+          : (i >= 1 && i <= 12)
+          ? thnH
+          : thnH + 1;
+
+      final namaBlnH = namaBulanHijriah[blnH - 1];
+
+      var nomorUrut = 1;
+      for (var jdHari = jdStart; jdHari < jdEnd; jdHari++) {
+        if (jdHari == jd2.toInt()) {
+          return "${julDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
+        }
+        nomorUrut++;
+      }
+    }
+
+    return "Tidak ditemukan";
+  }
+
+  String serviceKalenderHijriahUQ(int tglM, int blnM, int thnM) {
+    final jd = julDay.kmjd(tglM, blnM, thnM);
+    final cjdnM = (jd + 0.5).floorToDouble();
+    final jd2 = jd.ceilToDouble();
+
+    final thnH = int.parse(
+      julDay
+          .cjdnKH(cjdnM.toInt(), hCalE: 2, hCalL: 2, optResult: "THNH")
+          .toString(),
+    );
+
+    // Kumpulkan semua ABQ
+    final abqList = <double>[];
+    abqList.add(ab.abqUmmulQura(12, thnH - 1)); // Zulhijjah tahun sebelumnya
+    for (var blnH = 1; blnH <= 12; blnH++) {
+      abqList.add(ab.abqUmmulQura(blnH, thnH));
+    }
+    abqList.add(ab.abqUmmulQura(1, thnH + 1)); // Muharram tahun berikutnya
 
     // Loop hari dari tiap ABQ ke ABQ berikutnya
     for (var i = 0; i < abqList.length - 1; i++) {
