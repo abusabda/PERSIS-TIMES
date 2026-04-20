@@ -152,102 +152,6 @@ class CalendarService {
 
   // Fungsi Hisab Awal Bulan Hijriah Menurut IR TURKI/KHGT
 
-  // double abqTurki(int blnH, int thnH) {
-  //   final lokasi = [
-  //     Lokasi2(65, -166.7, -9),
-  //     Lokasi2(54.47, -164.91, -9),
-  //     Lokasi2(60, -139.6304, -9),
-  //     Lokasi2(55.9182, -133.8442, -8),
-  //     Lokasi2(50, -127.45, -8),
-  //     Lokasi2(47, -124.21, -8),
-  //     Lokasi2(34, -118.92, -8),
-  //     Lokasi2(33, -117.33, -8),
-  //     Lokasi2(20, -105.5555, -6),
-  //     Lokasi2(14, -91.557, -6),
-  //     Lokasi2(13, -87.62, -6),
-  //     Lokasi2(9, -83.65, -6),
-  //     Lokasi2(7.25, -80.9333, -5),
-  //     Lokasi2(7, -77.692, -5),
-  //     Lokasi2(3, -77.674, -5),
-  //     Lokasi2(0, -80.1, -5),
-  //     Lokasi2(-3, -79.83, -5),
-  //     Lokasi2(-8, -79.235, -5),
-  //     Lokasi2(-16, -74.0254, -4),
-  //     Lokasi2(-24, -70.5235, -4),
-  //     Lokasi2(-32, -71.5397, -4),
-  //     Lokasi2(-40, -73.726, -4),
-  //     Lokasi2(-44, -73.2683, -3),
-  //     Lokasi2(-49, -75.6755, -3),
-  //     Lokasi2(-55.9385, -67.2877, -3),
-  //   ];
-
-  //   final jdNM = mo.geocentricConjunction(blnH, thnH, 0.0, "Ijtimak");
-  //   final dT = dyTme.deltaT(jdNM);
-  //   final jdNM2 = mo.geocentricConjunction(blnH, thnH, dT, "Ijtimak");
-
-  //   int irTurki = 2;
-
-  //   bool isBefore00UT = false;
-  //   bool isAfter00UT = false;
-
-  //   for (final loc in lokasi) {
-  //     final jdGS = sn.jdGhurubSyams(jdNM, loc.gLat, loc.gLon, 0, loc.tmZn);
-  //     final tHlal00 = mo.moonGeocentricAltitude(jdGS, dT, loc.gLon, loc.gLat);
-  //     final elong00 = mo.moonSunGeocentricElongation(jdGS, dT);
-  //     final grb00 =
-  //         double.tryParse(julDay.jdkm(jdGS, loc.tmZn, "Jam Des").toString()) ??
-  //         0.0;
-
-  //     final jSunSUT0 = grb00 - loc.tmZn;
-
-  //     if (elong00 >= 8 && tHlal00 >= 5) {
-  //       if (jSunSUT0 < 24) {
-  //         isBefore00UT = true;
-  //         irTurki = 1;
-  //         break;
-  //       } else {
-  //         isAfter00UT = true;
-  //       }
-  //     }
-  //   }
-
-  //   if (!isBefore00UT && isAfter00UT) {
-  //     final jdFP = (jdNM2 + 0.5).floorToDouble() - 0.5 + 17 / 24.0;
-  //     final lonNZ = 174 + 48 / 60.0;
-  //     final latNZ = -(41 + 19 / 60.0);
-  //     final tzNZ = 12.0;
-  //     final kwd = (lonNZ - (tzNZ * 15)) / 15.0;
-  //     final dek = sn.sunGeocentricDeclination(jdFP, 0);
-  //     final eqt = sn.equationOfTime(jdFP, 0);
-  //     final hmF = -18.0; // default untuk fajar -18 derajat
-  //     final hAm = mf.deg(
-  //       math.acos(
-  //         (math.sin(mf.rad(hmF)) -
-  //                 math.sin(mf.rad(latNZ)) * math.sin(mf.rad(dek))) /
-  //             (math.cos(mf.rad(latNZ)) * math.cos(mf.rad(dek))),
-  //       ),
-  //     );
-  //     final awf = 12 - eqt - hAm / 15 - kwd;
-  //     final awfUTC = mf.mod((awf - 12), 24);
-  //     final jdFUTC = mf.floor(jdNM2 + 0.5) - 0.5 + awfUTC / 24.0;
-
-  //     final wIjtimak =
-  //         double.tryParse(julDay.jdkm(jdNM2, 0, "Jam Des").toString()) ?? 0.0;
-  //     final wFajarNZ =
-  //         double.tryParse(julDay.jdkm(jdFUTC, 0, "Jam Des").toString()) ?? 0.0;
-
-  //     if (wIjtimak < wFajarNZ) {
-  //       irTurki = 1; // Ijtimak sebelum fajar
-  //     } else {
-  //       irTurki = 2; // Ijtimak setelah fajar
-  //     }
-  //   }
-
-  //   final abq = ((mf.floor(jdNM2 + 0.5 + 0.0 / 24.0)) - 0.0 / 24.0) + irTurki;
-
-  //   return abq;
-  // }
-
   double abqTurki(int blnH, int thnH) {
     final lokasi = [
       Lokasi2(65, -166.7, -9),
@@ -277,53 +181,64 @@ class CalendarService {
       Lokasi2(-55.9385, -67.2877, -3),
     ];
 
-    final jdNM = mo.geocentricConjunction(blnH, thnH, 0.0, "Ijtimak");
+    // ── 1. Ijtimak ──────────────────────────────────────────────────────────
+    final jdNM = mo.geocentricConjunction(blnH, thnH, 0.0, "Ijtimak"); // UT
     final dT = dyTme.deltaT(jdNM);
-    final jdNM2 = mo.geocentricConjunction(blnH, thnH, dT, "Ijtimak");
+    final jdNM2 = mo.geocentricConjunction(
+      blnH,
+      thnH,
+      dT,
+      "Ijtimak",
+    ); // UT + ΔT
 
+    // ── 2. Batas 00 UT (dihitung dari jdNM2, sesuai VB) ─────────────────────
+    // VB: jd0UT        = Math.Floor(jdNM2 + 0.5) - 0.5
+    //     jd0UTNextDay = jd0UT + 1
+    final jd0UTNextDay = (jdNM2 + 0.5).floorToDouble() - 0.5 + 1.0;
+
+    // ── 3. Loop lokasi ───────────────────────────────────────────────────────
     int irTurki = 2;
-
     bool isBefore00UT = false;
     bool isAfter00UT = false;
 
-    // 👉 00 UT global
-    final jd0UT = (jdNM2 + 0.5).floorToDouble() - 0.5;
-    final jd0UTNextDay = jd0UT + 1;
-
     for (final loc in lokasi) {
+      // VB: JDGhurubSyams3 → parameter ke-4 = 0 (mdl), ke-5 = TmZn
       final jdGS = sn.jdGhurubSyams(jdNM, loc.gLat, loc.gLon, 0, loc.tmZn);
+      final tHlal = mo.moonGeocentricAltitude(jdGS, dT, loc.gLon, loc.gLat);
+      final elong = mo.moonSunGeocentricElongation(jdGS, dT);
 
-      final tHlal00 = mo.moonGeocentricAltitude(jdGS, dT, loc.gLon, loc.gLat);
-      final elong00 = mo.moonSunGeocentricElongation(jdGS, dT);
-
-      // ✅ SYARAT KHGT
-      if (elong00 >= 8 && tHlal00 >= 5) {
+      if (elong >= 8 && tHlal >= 5) {
         if (jdGS < jd0UTNextDay) {
-          // ✅ sebelum 00 UT
+          // ✅ Kondisi terpenuhi sebelum 00 UT → langsung keluar
           isBefore00UT = true;
           irTurki = 1;
           break;
         } else {
-          // ✅ setelah 00 UT
+          // Kondisi terpenuhi setelah 00 UT → catat, lanjut loop
           isAfter00UT = true;
         }
       }
     }
 
-    // 👉 Jika tidak ada sebelum 00 UT
+    // ── 4. Fallback: cek fajar New Zealand ──────────────────────────────────
+    // Hanya dijalankan jika tidak ada lokasi yang memenuhi sebelum 00 UT
+    // tetapi ada yang memenuhi setelah 00 UT  (sesuai VB)
     if (!isBefore00UT && isAfter00UT) {
-      final jdFP = (jdNM2 + 0.5).floorToDouble() - 0.5 + 17 / 24.0;
+      // Perkiraan fajar di New Zealand
+      // VB: JDFP = Math.Floor(jdNM2 + 0.5) - 0.5 + 17/24
+      final jdFP = (jdNM2 + 0.5).floorToDouble() - 0.5 + 17.0 / 24.0;
 
-      final lonNZ = 174 + 48 / 60.0;
-      final latNZ = -(41 + 19 / 60.0);
-      final tzNZ = 12.0;
+      const lonNZ = 174 + 48 / 60.0; //  174.8°
+      const latNZ = -(41 + 19 / 60.0); // -41.317°
+      const tzNZ = 12.0;
 
       final kwd = (lonNZ - (tzNZ * 15)) / 15.0;
 
       final dek = sn.sunGeocentricDeclination(jdFP, 0);
       final eqt = sn.equationOfTime(jdFP, 0);
 
-      final hmF = -18.0;
+      // Ambil nilai hmF dari settings (VB: My.Settings.tbTgSubhVal, default -18)
+      const hmF = -18.0;
 
       final hAm = mf.deg(
         math.acos(
@@ -333,20 +248,22 @@ class CalendarService {
         ),
       );
 
-      final awf = 12 - eqt - hAm / 15 - kwd;
-      final awfUTC = mf.mod((awf - 12), 24);
+      final awf = 12.0 - eqt - hAm / 15.0 - kwd;
 
+      // VB: AWFUTC = ModFDiv((AWF - 12), 24)  →  Dart: mod(awf - 12, 24)
+      final awfUTC = mf.mod(awf - 12.0, 24.0);
+
+      // VB: JDFUTC = Math.Floor(jdNM2 + 0.5) - 0.5 + AWFUTC / 24
       final jdFUTC = (jdNM2 + 0.5).floorToDouble() - 0.5 + awfUTC / 24.0;
 
-      // ❗ PERBAIKAN PENTING (ikut VB)
-      if (jdNM2 < jdFUTC) {
-        irTurki = 1; // sebelum fajar
-      } else {
-        irTurki = 2; // setelah fajar
-      }
+      // VB: If jdNM2 < JDFUTC → IRTurki = 1, Else → IRTurki = 2
+      irTurki = (jdNM2 < jdFUTC) ? 1 : 2;
     }
 
-    final abq = ((jdNM2 + 0.5).floorToDouble() - 0.5) + irTurki;
+    // ── 5. ABQ final ─────────────────────────────────────────────────────────
+    // VB: abq = (Math.Floor(jdNM2 + 0.5 + 0.0/24.0) - 0.0/24.0) + IRTurki
+    //         = Math.Floor(jdNM2 + 0.5) + IRTurki
+    final abq = (jdNM2 + 0.5).floorToDouble() + irTurki.toDouble();
 
     return abq;
   }

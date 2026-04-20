@@ -348,7 +348,7 @@ void main() {
     gLat: -(6 + 58 / 60 + 15.84 / 3600),
     elev: 0,
     tmZn: 7,
-    ihty: 2,
+    ihty: 0,
   );
 
   void printSalat(String nama, SalatValue value) {
@@ -1031,8 +1031,8 @@ void main() {
 
   //Konversi Masehi ke Hijri Hakiki
 
-  final tglM = 21;
-  final blnM = 3;
+  final tglM = 19;
+  final blnM = 4;
   final thnM = 2026;
 
   final abqMabimsNow = cs.serviceKalenderHijriahMABIMS(tglM, blnM, thnM);
