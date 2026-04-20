@@ -150,9 +150,7 @@ class CalendarService {
     return jdAbqWH.ceilToDouble();
   }
 
-  // Fungsi Hisab Awal Bulan Hijriah Menurut Kalender Ummul Qura
-
-  // Fungsi Hisab Awal Bulan Hijriah Menurut Wujudul Hilal
+  // Method Hisab Awal Bulan Hijriah Menurut Kalender Ummul Qura
   double abqUmmulQura(int blnH, int thnH) {
     double gLon = (39 + 49 / 60 + 34.27 / 3600);
     double gLat = (21 + 25 / 60 + 21.02 / 3600);
@@ -190,7 +188,6 @@ class CalendarService {
   }
 
   // Fungsi Hisab Awal Bulan Hijriah Menurut IR TURKI/KHGT
-
   double abqTurki(int blnH, int thnH) {
     final lokasi = [
       Lokasi2(65, -166.7, -9),
