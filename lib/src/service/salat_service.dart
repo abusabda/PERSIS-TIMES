@@ -6,6 +6,7 @@ import '../model/salat/salat_daily_result.dart';
 
 class SalatService {
   final JulianDay _jd = JulianDay();
+
   SalatDailyResult waktuSalatHarian({
     required int tglM,
     required int blnM,
@@ -14,56 +15,52 @@ class SalatService {
     required double gLat,
     required double elev,
     required double tmZn,
-    required int ihty,
+    required int ihty, // fallback default jika per-salat tidak diisi
+    // ← Tambahan: ihtiyath per-salat (opsional)
+    int? ihtySubuh,
+    int? ihtySyuruk,
+    int? ihtyDuha,
+    int? ihtyZuhur,
+    int? ihtyAsar,
+    int? ihtyMagrib,
+    int? ihtyIsya,
+    int? ihtyNisfu,
   }) {
     final ws = WaktuSalat();
 
     SalatValue applyIhtiyath(SalatValue value, int iht) {
-      if (value.status != SalatStatus.normal) {
-        return value; // kalau up/down/bright/dark → jangan diubah
-      }
-
+      if (value.status != SalatStatus.normal) return value;
       final newTime = ws.ihtiyathShalat(value.time!, iht);
-
       return SalatValue(time: newTime, status: SalatStatus.normal);
     }
 
     final subuh = applyIhtiyath(
       ws.subuh(tglM, blnM, thnM, gLon, gLat, tmZn),
-      ihty,
+      ihtySubuh ?? ihty,
     );
-
     final syuruk = applyIhtiyath(
       ws.syuruk(tglM, blnM, thnM, gLon, gLat, elev, tmZn),
-      -2,
+      (ihtySyuruk ?? ihty),
     );
+    final duha = ws.duha(tglM, blnM, thnM, gLon, gLat, elev, tmZn);
 
-    final duha = applyIhtiyath(
-      ws.duha(tglM, blnM, thnM, gLon, gLat, elev, tmZn),
-      -ihty,
+    final zuhur = applyIhtiyath(
+      ws.zuhur(tglM, blnM, thnM, gLon, tmZn),
+      ihtyZuhur ?? ihty,
     );
-
-    final zuhur = applyIhtiyath(ws.zuhur(tglM, blnM, thnM, gLon, tmZn), ihty);
-
     final asar = applyIhtiyath(
       ws.asar(tglM, blnM, thnM, gLon, gLat, tmZn),
-      ihty,
+      ihtyAsar ?? ihty,
     );
-
     final magrib = applyIhtiyath(
       ws.magrib(tglM, blnM, thnM, gLon, gLat, elev, tmZn),
-      ihty,
+      ihtyMagrib ?? ihty,
     );
-
     final isya = applyIhtiyath(
       ws.isya(tglM, blnM, thnM, gLon, gLat, tmZn),
-      ihty,
+      ihtyIsya ?? ihty,
     );
-
-    final nisfu = applyIhtiyath(
-      ws.nisfuLail(tglM, blnM, thnM, gLon, gLat, elev, tmZn),
-      ihty,
-    );
+    final nisfu = ws.nisfuLail(tglM, blnM, thnM, gLon, gLat, elev, tmZn);
 
     return SalatDailyResult(
       subuh: subuh,

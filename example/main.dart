@@ -348,14 +348,22 @@ void main() {
     gLat: -(6 + 58 / 60 + 15.84 / 3600),
     elev: 0,
     tmZn: 7,
-    ihty: 0,
+    ihty: 2, // fallback default
+    ihtySubuh: 0, // Subuh +3 menit
+    ihtySyuruk: -2, // Syuruk -2 menit (otomatis jadi negatif di library)
+    ihtyDuha: 0, // Duha -2 menit (otomatis negatif)
+    ihtyZuhur: 0,
+    ihtyAsar: 0,
+    ihtyMagrib: 0,
+    ihtyIsya: 0,
+    ihtyNisfu: 0,
   );
 
   void printSalat(String nama, SalatValue value) {
     if (value.isNormal) {
       print(
-        "${nama.padRight(12)} : ${value.time!}",
-        // "${nama.padRight(12)} : ${mf.dhhm(value.time!, optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
+        //"${nama.padRight(12)} : ${value.time!}",
+        "${nama.padRight(12)} : ${mf.dhhm(value.time!, optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
       );
     } else {
       print("${nama.padRight(12)} : ${value.status.label}");
