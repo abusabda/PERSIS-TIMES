@@ -348,15 +348,12 @@ void main() {
     gLat: -(6 + 58 / 60 + 15.84 / 3600),
     elev: 0,
     tmZn: 7,
-    ihty: 2, // fallback default
-    ihtySubuh: 0, // Subuh +3 menit
-    ihtySyuruk: -2, // Syuruk -2 menit (otomatis jadi negatif di library)
-    ihtyDuha: 0, // Duha -2 menit (otomatis negatif)
-    ihtyZuhur: 0,
-    ihtyAsar: 0,
-    ihtyMagrib: 0,
-    ihtyIsya: 0,
-    ihtyNisfu: 0,
+    ihtySubuh: 2,
+    ihtySyuruk: -2,
+    ihtyZuhur: 2,
+    ihtyAsar: 2,
+    ihtyMagrib: 2,
+    ihtyIsya: 2,
   );
 
   void printSalat(String nama, SalatValue value) {
@@ -397,7 +394,12 @@ void main() {
     gLat: -7.08,
     elev: 0,
     tmZn: 7,
-    ihty: 2,
+    ihtySubuh: 2,
+    ihtySyuruk: -2,
+    ihtyZuhur: 2,
+    ihtyAsar: 2,
+    ihtyMagrib: 2,
+    ihtyIsya: 2,
   );
 
   for (final item in jadwal) {

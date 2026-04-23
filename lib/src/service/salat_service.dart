@@ -15,8 +15,6 @@ class SalatService {
     required double gLat,
     required double elev,
     required double tmZn,
-    required int ihty, // fallback default jika per-salat tidak diisi
-    // ← Tambahan: ihtiyath per-salat (opsional)
     int? ihtySubuh,
     int? ihtySyuruk,
     int? ihtyDuha,
@@ -36,31 +34,37 @@ class SalatService {
 
     final subuh = applyIhtiyath(
       ws.subuh(tglM, blnM, thnM, gLon, gLat, tmZn),
-      ihtySubuh ?? ihty,
+      ihtySubuh ?? 0,
     );
     final syuruk = applyIhtiyath(
       ws.syuruk(tglM, blnM, thnM, gLon, gLat, elev, tmZn),
-      (ihtySyuruk ?? ihty),
+      ihtySyuruk ?? 0,
     );
-    final duha = ws.duha(tglM, blnM, thnM, gLon, gLat, elev, tmZn);
+    final duha = applyIhtiyath(
+      ws.duha(tglM, blnM, thnM, gLon, gLat, elev, tmZn),
+      ihtySyuruk ?? 0,
+    );
 
     final zuhur = applyIhtiyath(
       ws.zuhur(tglM, blnM, thnM, gLon, tmZn),
-      ihtyZuhur ?? ihty,
+      ihtyZuhur ?? 0,
     );
     final asar = applyIhtiyath(
       ws.asar(tglM, blnM, thnM, gLon, gLat, tmZn),
-      ihtyAsar ?? ihty,
+      ihtyAsar ?? 0,
     );
     final magrib = applyIhtiyath(
       ws.magrib(tglM, blnM, thnM, gLon, gLat, elev, tmZn),
-      ihtyMagrib ?? ihty,
+      ihtyMagrib ?? 0,
     );
     final isya = applyIhtiyath(
       ws.isya(tglM, blnM, thnM, gLon, gLat, tmZn),
-      ihtyIsya ?? ihty,
+      ihtyIsya ?? 0,
     );
-    final nisfu = ws.nisfuLail(tglM, blnM, thnM, gLon, gLat, elev, tmZn);
+    final nisfu = applyIhtiyath(
+      ws.nisfuLail(tglM, blnM, thnM, gLon, gLat, elev, tmZn),
+      ihtyMagrib ?? 0,
+    );
 
     return SalatDailyResult(
       subuh: subuh,
@@ -87,15 +91,14 @@ class SalatService {
     required double gLat,
     required double elev,
     required double tmZn,
-    required int ihty,
-
-    // Tambahan: ihtiyath per-salat (opsional)
     int? ihtySubuh,
     int? ihtySyuruk,
+    int? ihtyDuha,
     int? ihtyZuhur,
     int? ihtyAsar,
     int? ihtyMagrib,
     int? ihtyIsya,
+    int? ihtyNisfu,
   }) {
     final List<Map<String, dynamic>> results = [];
 
@@ -115,7 +118,6 @@ class SalatService {
         gLat: gLat,
         elev: elev,
         tmZn: tmZn,
-        ihty: ihty,
         ihtySubuh: ihtySubuh,
         ihtySyuruk: ihtySyuruk,
         ihtyZuhur: ihtyZuhur,
