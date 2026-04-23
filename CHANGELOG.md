@@ -1,3 +1,8 @@
+## 1.0.6
+
+- Perbaikan kode ihtiyath dalam waktu salat harian dan tahunan/range
+
+
 ## 1.0.5
 
 - Penambahan kode kalender Ummul Qura
