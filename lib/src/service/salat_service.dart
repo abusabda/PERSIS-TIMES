@@ -74,6 +74,8 @@ class SalatService {
     );
   }
 
+  //SALAT TAHUNAN ATAU RANGE
+
   List<Map<String, dynamic>> getSalatRange({
     required int tglAwal,
     required int blnAwal,
@@ -86,6 +88,14 @@ class SalatService {
     required double elev,
     required double tmZn,
     required int ihty,
+
+    // Tambahan: ihtiyath per-salat (opsional)
+    int? ihtySubuh,
+    int? ihtySyuruk,
+    int? ihtyZuhur,
+    int? ihtyAsar,
+    int? ihtyMagrib,
+    int? ihtyIsya,
   }) {
     final List<Map<String, dynamic>> results = [];
 
@@ -106,6 +116,12 @@ class SalatService {
         elev: elev,
         tmZn: tmZn,
         ihty: ihty,
+        ihtySubuh: ihtySubuh,
+        ihtySyuruk: ihtySyuruk,
+        ihtyZuhur: ihtyZuhur,
+        ihtyAsar: ihtyAsar,
+        ihtyMagrib: ihtyMagrib,
+        ihtyIsya: ihtyIsya,
       );
 
       results.add({
