@@ -1,4 +1,5 @@
 import '../core/prayer/waktu_salat.dart';
+import '../core/prayer/prayer_method.dart';
 import '../core/astronomy/julian_day.dart';
 import '../model/salat/salat_status.dart';
 import '../model/salat/salat_value.dart';
@@ -15,6 +16,7 @@ class SalatService {
     required double gLat,
     required double elev,
     required double tmZn,
+    required PrayerMethod prayerMethod, //opsi hm Subuh dan Isya
     int? ihtySubuh,
     int? ihtySyuruk,
     int? ihtyDuha,
@@ -33,7 +35,7 @@ class SalatService {
     }
 
     final subuh = applyIhtiyath(
-      ws.subuh(tglM, blnM, thnM, gLon, gLat, tmZn),
+      ws.subuh(tglM, blnM, thnM, gLon, gLat, tmZn, prayerMethod.hmSubuh),
       ihtySubuh ?? 0,
     );
     final syuruk = applyIhtiyath(
@@ -58,11 +60,20 @@ class SalatService {
       ihtyMagrib ?? 0,
     );
     final isya = applyIhtiyath(
-      ws.isya(tglM, blnM, thnM, gLon, gLat, tmZn),
+      ws.isya(tglM, blnM, thnM, gLon, gLat, tmZn, prayerMethod.hmIsya),
       ihtyIsya ?? 0,
     );
     final nisfu = applyIhtiyath(
-      ws.nisfuLail(tglM, blnM, thnM, gLon, gLat, elev, tmZn),
+      ws.nisfuLail(
+        tglM,
+        blnM,
+        thnM,
+        gLon,
+        gLat,
+        elev,
+        tmZn,
+        prayerMethod: prayerMethod,
+      ),
       ihtyMagrib ?? 0,
     );
 
@@ -91,6 +102,7 @@ class SalatService {
     required double gLat,
     required double elev,
     required double tmZn,
+    required PrayerMethod prayerMethod,
     int? ihtySubuh,
     int? ihtySyuruk,
     int? ihtyDuha,
@@ -118,6 +130,7 @@ class SalatService {
         gLat: gLat,
         elev: elev,
         tmZn: tmZn,
+        prayerMethod: prayerMethod,
         ihtySubuh: ihtySubuh,
         ihtySyuruk: ihtySyuruk,
         ihtyZuhur: ihtyZuhur,

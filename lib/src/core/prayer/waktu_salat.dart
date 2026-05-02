@@ -6,6 +6,7 @@ import '../astronomy/sun_function.dart';
 
 import '/src/model/salat/salat_status.dart';
 import '/src/model/salat/salat_value.dart';
+import '/src/core/prayer/prayer_method.dart';
 
 class WaktuSalat {
   final julianDay = JulianDay();
@@ -128,8 +129,10 @@ class WaktuSalat {
     double gLon,
     double gLat,
     double tmZn,
+    double? hm, //optional ketinggian matahari saat isya
   ) {
     double isy = 19.0;
+    final hmValue = hm ?? -18.0;
 
     for (int i = 1; i <= 3; i++) {
       final jd = julianDay.kmjd(tglM, blnM, thnM, isy, tmZn);
@@ -138,11 +141,11 @@ class WaktuSalat {
       final dec = sn.sunGeocentricDeclination(jde, 0.0);
       final kwd = (gLon - (tmZn * 15.0)) / 15.0;
 
-      const hm = -18.0;
+      //const hm = -18.0;
 
       final costm =
           -tan(mf.rad(gLat)) * tan(mf.rad(dec)) +
-          sin(mf.rad(hm)) / cos(mf.rad(gLat)) / cos(mf.rad(dec));
+          sin(mf.rad(hmValue)) / cos(mf.rad(gLat)) / cos(mf.rad(dec));
 
       if (costm < -1) {
         return const SalatValue(time: null, status: SalatStatus.bright);
@@ -169,8 +172,10 @@ class WaktuSalat {
     double gLon,
     double gLat,
     double tmZn,
+    double? hm, //optional ketinggian matahari saat subuh
   ) {
     double sbh = 4.0;
+    final hmValue = hm ?? -20.0; // Default fallback
 
     for (int i = 1; i <= 3; i++) {
       final jd = julianDay.kmjd(tglM, blnM, thnM, sbh, tmZn);
@@ -179,11 +184,11 @@ class WaktuSalat {
       final dec = sn.sunGeocentricDeclination(jde, 0.0);
       final kwd = (gLon - (tmZn * 15.0)) / 15.0;
 
-      const hm = -20.0;
+      //const hm = -20.0;
 
       final costm =
           -tan(mf.rad(gLat)) * tan(mf.rad(dec)) +
-          sin(mf.rad(hm)) / cos(mf.rad(gLat)) / cos(mf.rad(dec));
+          sin(mf.rad(hmValue)) / cos(mf.rad(gLat)) / cos(mf.rad(dec));
 
       if (costm < -1) {
         return const SalatValue(time: null, status: SalatStatus.bright);
@@ -268,10 +273,19 @@ class WaktuSalat {
     double gLon,
     double gLat,
     double elev,
-    double tmZn,
-  ) {
+    double tmZn, {
+    required PrayerMethod prayerMethod,
+  }) {
     final wMgb = magrib(tglM, blnM, thnM, gLon, gLat, elev, tmZn);
-    final wSbh = subuh(tglM, blnM, thnM, gLon, gLat, tmZn);
+    final wSbh = subuh(
+      tglM,
+      blnM,
+      thnM,
+      gLon,
+      gLat,
+      tmZn,
+      prayerMethod.hmSubuh,
+    );
 
     if (!wMgb.isNormal || !wSbh.isNormal) {
       return const SalatValue(time: null, status: SalatStatus.invalid);

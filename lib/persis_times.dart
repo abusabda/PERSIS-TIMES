@@ -11,6 +11,7 @@ export 'src/core/math/math_utils.dart';
 export 'src/model/salat/salat_status.dart';
 export 'src/model/salat/salat_value.dart';
 export 'src/service/salat_service.dart';
+export 'src/core/prayer/prayer_method.dart';
 
 // Qibla
 export 'src/service/qibla_service.dart';

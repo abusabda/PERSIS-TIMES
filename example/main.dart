@@ -348,6 +348,8 @@ void main() {
     gLat: -(6 + 58 / 60 + 15.84 / 3600),
     elev: 0,
     tmZn: 7,
+    prayerMethod:
+        PrayerMethod.persatuanIslam, // opsi tinggi matahari subuh dan isya
     ihtySubuh: 2,
     ihtySyuruk: -2,
     ihtyZuhur: 2,
@@ -378,6 +380,68 @@ void main() {
 
   print("");
 
+  //penjelasan
+  // DAFTAR METODE PREDEFINED
+  // ------------------------
+  // Format: 'Nama Organisasi', hm Subuh = X°, hm Isya = Y°
+
+  // 1. PrayerMethod.persatuanIslam
+  //    hm Subuh = -20°, hm Isya = -18°
+
+  // 2. PrayerMethod.kemenagRI
+  //    hm Subuh = -20°, hm Isya = -18°
+
+  // 3. PrayerMethod.nahdlatulUlama
+  //    hm Subuh = -20°, hm Isya = -18°
+
+  // 4. PrayerMethod.muhammadiyah
+  //    hm Subuh = -18°, hm Isya = -18°
+
+  // 5. PrayerMethod.egyptianGeneralAuthority
+  //    hm Subuh = -19.5°, hm Isya = -17.5°
+
+  // 6. PrayerMethod.islamicSocietyNorthAmerica
+  //    hm Subuh = -18°, hm Isya = -18°
+
+  // 7. PrayerMethod.muslimWorldLeague
+  //    hm Subuh = -18°, hm Isya = -17°
+
+  // 8. PrayerMethod.universityIslamicScienceKarachi
+  //    hm Subuh = -18°, hm Isya = -18°
+
+  // 9. PrayerMethod.custom(nama, hmSubuh, hmIsya)
+  //    Untuk nilai custom yang bisa diinput oleh user
+
+  // CONTOH PENGGUNAAN
+  // -----------------
+
+  // 1. Menggunakan Metode Predefined:
+  //    final result = salatService.waktuSalatHarian(
+  //      tglM: 19, blnM: 4, thnM: 2026,
+  //      gLon: 107.517, gLat: -6.971,
+  //      elev: 0, tmZn: 7,
+  //      prayerMethod: PrayerMethod.persatuanIslam,
+  //    );
+  // 2. Menggunakan Metode Custom:
+  //    final customMethod = PrayerMethod.custom(
+  //      'Kriteria Masjid Raya',
+  //      hmSubuh: -21.0,
+  //      hmIsya: -19.0,
+  //    );
+  //    final result = salatService.waktuSalatHarian(
+  //      // ... parameter lainnya ...
+  //      prayerMethod: customMethod,
+  //    );
+
+  // 3. Lookup dari String:
+  //    final selected = PrayerMethod.fromName('Muslim World League');
+  //    if (selected != null) {
+  //      final result = salatService.waktuSalatHarian(
+  //        // ... parameter lainnya ...
+  //        prayerMethod: selected,
+  //      );
+  //    }
+
   //Waktu salat untuk rentang tanggal
   print("========================================");
   print("       WAKTU SALAT BULANAN");
@@ -394,6 +458,8 @@ void main() {
     gLat: -7.08,
     elev: 0,
     tmZn: 7,
+    prayerMethod:
+        PrayerMethod.persatuanIslam, // opsi tinggi matahari subuh dan isya
     ihtySubuh: 2,
     ihtySyuruk: -2,
     ihtyZuhur: 2,

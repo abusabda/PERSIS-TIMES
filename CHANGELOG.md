@@ -1,3 +1,9 @@
+
+## 1.0.8
+
+- Perbaikan kode waktu salat subuh dan Isya dengan input tinggi matahari optional
+
+
 ## 1.0.7
 
 - Perbaikan kode waktu salat harian dan tahunan/range
