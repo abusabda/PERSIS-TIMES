@@ -19,15 +19,15 @@ void main() {
   print("======================");
 
   final res2 = sunService.calculate(
-    tglM: 20,
-    blnM: 4,
-    thnM: 2023,
-    jam: 17,
-    menit: 51,
-    detik: 27,
-    gLon: (106 + 33 / 60.0 + 27.8 / 3600.0),
-    gLat: -(7 + 1 / 60.0 + 44.6 / 3600.0),
-    elev: 52.685,
+    tglM: 19,
+    blnM: 5,
+    thnM: 2026,
+    jam: 6,
+    menit: 32,
+    detik: 5,
+    gLon: (107 + 31 / 60.0 + 2.73 / 3600.0),
+    gLat: -(6 + 58 / 60.0 + 15.83 / 3600.0),
+    elev: 738,
     tmZn: 7.0,
     temp: 10.0,
     pres: 1010.0,
@@ -634,6 +634,7 @@ void main() {
     final r1 = item["rashdul1"];
     final r2 = item["rashdul2"];
 
+    print("Hari           : ${jd.jdkm(r1.jd, 0, "NMHRM")}");
     print("RQ 1 Tgl       : ${jd.jdkm(r1.jd, 0, "")}");
     print(
       "RQ 1 Jam       : ${mf.dhhm(r1.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
@@ -646,6 +647,7 @@ void main() {
     );
     print("");
 
+    print("Hari           : ${jd.jdkm(r2.jd, 0, "NMHRM")}");
     print("RQ 2 Tgl       : ${jd.jdkm(r2.jd, 0, "")}");
     print(
       "RQ 2 Jam       : ${mf.dhhm(r2.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",

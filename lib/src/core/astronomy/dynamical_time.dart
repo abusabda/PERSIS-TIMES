@@ -7,12 +7,16 @@ class DynamicalTime {
 
     // Rumus Desimal Years 2
     final thnM = int.parse(julianDay.jdkm(jd, 0.0, "ThnM"));
-    final jdTlMAw = julianDay.kmjd(1, 1, thnM);
-    final jdTlMAk = julianDay.kmjd(31, 12, thnM, 24, 0.0);
-    final jHrlTlM = jd - jdTlMAw;
-    final jHrTlM = jdTlMAk - jdTlMAw;
+    final blnM = int.parse(julianDay.jdkm(jd, 0.0, "ThnM"));
 
-    final dY = thnM + jHrlTlM / jHrTlM;
+    // final jdTlMAw = julianDay.kmjd(1, 1, thnM);
+    // final jdTlMAk = julianDay.kmjd(31, 12, thnM, 24, 0.0);
+    // final jHrlTlM = jd - jdTlMAw;
+    // final jHrTlM = jdTlMAk - jdTlMAw;
+
+    final dY = thnM + (blnM - 0.5) / 12;
+
+    //final dY = thnM + jHrlTlM / jHrTlM;
     double ku;
     double dltT = 0.0;
 
