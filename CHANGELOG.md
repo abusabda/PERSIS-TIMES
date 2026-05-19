@@ -1,4 +1,8 @@
 
+## 1.0.9
+
+- penggantian kode desimal year untuk deltaT
+
 ## 1.0.8
 
 - Perbaikan kode waktu salat subuh dan Isya dengan input tinggi matahari optional
