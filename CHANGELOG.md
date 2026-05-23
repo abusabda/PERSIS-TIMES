@@ -1,3 +1,7 @@
+## 1.0.11
+
+- perbaikan kode Sunset
+
 ## 1.0.10
 
 - perbaikan kode desimal year untuk deltaT

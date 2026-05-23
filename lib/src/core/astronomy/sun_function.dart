@@ -849,7 +849,7 @@ class SunFunction {
     double jSunSet = 17.0;
 
     // ** Proses Perhitungan **
-    cjdn = (jdNM + 0.5 + (0 / 24.0)).floorToDouble();
+    cjdn = (jdNM + 0.5 + (tmZn / 24.0)).floorToDouble();
 
     for (int itr = 1; itr <= 2; itr++) {
       jdGS = cjdn - 0.5 + (jSunSet - tmZn) / 24.0;

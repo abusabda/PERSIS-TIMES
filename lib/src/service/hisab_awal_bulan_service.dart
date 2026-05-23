@@ -69,7 +69,7 @@ class HisabAwalBulanService {
     );
 
     final double sunsetJD = sn.jdGhurubSyams(
-      geojdIjtimak2 + tbhHari,
+      geojdIjtimak + tbhHari,
       gLat,
       gLon,
       elev,
