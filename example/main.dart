@@ -930,9 +930,7 @@ void main() {
     "Altitude                   : ${mf.dddms(rs.moonGeo.altitude, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print(
-    "Illumination Fraction      : ${mf.dddms(rs.moonGeo.diskIlluminationFraction, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
-  );
+  print("Illumination Fraction      : ${rs.moonGeo.diskIlluminationFraction}");
 
   print(
     "Phase Angle                : ${mf.dddms(rs.moonGeo.phaseAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
@@ -1009,9 +1007,7 @@ void main() {
     "Altitude Observered Lower  : ${mf.dddms(rs.moonTopo.altitudeObservedLower, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
-  print(
-    "Illumination Fraction      : ${mf.dddms(rs.moonTopo.diskIlluminationFraction, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
-  );
+  print("Illumination Fraction      : ${rs.moonTopo.diskIlluminationFraction}");
 
   print(
     "Phase Angle                : ${mf.dddms(rs.moonTopo.phaseAngle, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",

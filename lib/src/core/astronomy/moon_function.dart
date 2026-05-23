@@ -163,7 +163,7 @@ class MoonFunction {
         rMoon - rSun * math.cos(mf.rad(d)),
       ),
     );
-    final k = ((1 + math.cos(mf.rad(i))) / 2);
+    double k = ((1 + math.cos(mf.rad(i))) / 2) * 100;
     return k;
   }
 

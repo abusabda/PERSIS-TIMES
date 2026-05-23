@@ -1,3 +1,7 @@
+## 1.0.12
+
+- perbaikan kode Fraction Illumination
+
 ## 1.0.11
 
 - perbaikan kode Sunset
