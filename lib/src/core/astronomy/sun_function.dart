@@ -833,25 +833,17 @@ class SunFunction {
     double gAlt,
     double tmZn,
   ) {
-    // ** Deklarasi Variabel **
     double cjdn;
     double jdGS = 0.0;
     double jdEGS;
-    double dltS;
-    double sdS;
-    double eot;
-    double rfS;
-    double dip;
-    double altTS;
-    double coshaS;
-    double haS;
-    double kwd;
+    double dltS, sdS, eot, rfS, dip, altTS, coshaS, haS, kwd;
     double jSunSet = 17.0;
 
-    // ** Proses Perhitungan **
-    cjdn = (jdNM + 0.5 + (tmZn / 24.0)).floorToDouble();
+    // ✅ FIX: Konversi jdNM ke local calendar day
+    cjdn = (jdNM + 0.5 + tmZn / 24.0).floorToDouble();
 
     for (int itr = 1; itr <= 2; itr++) {
+      // jdGS tetap dalam UT: LCT - tmZn
       jdGS = cjdn - 0.5 + (jSunSet - tmZn) / 24.0;
       jdEGS = jdGS + dt.deltaT(jdGS) / 86400.0;
 
@@ -878,7 +870,54 @@ class SunFunction {
       }
     }
 
-    // ** Hasil Perhitungan **
+    return jdGS;
+  }
+
+  double jdGhurubSyams2(
+    //ghrub UT
+    double jdNM,
+    double gLat,
+    double gLon,
+    double gAlt,
+    double tmZn,
+  ) {
+    double cjdn;
+    double jdGS = 0.0;
+    double jdEGS;
+    double dltS, sdS, eot, rfS, dip, altTS, coshaS, haS, kwd;
+    double jSunSet = 17.0;
+
+    // ✅ FIX: Konversi jdNM ke local calendar day
+    cjdn = (jdNM + 0.5 + 0.0 / 24.0).floorToDouble();
+
+    for (int itr = 1; itr <= 2; itr++) {
+      // jdGS tetap dalam UT: LCT - tmZn
+      jdGS = cjdn - 0.5 + (jSunSet - tmZn) / 24.0;
+      jdEGS = jdGS + dt.deltaT(jdGS) / 86400.0;
+
+      dltS = sunGeocentricDeclination(jdEGS, 0);
+      sdS = sunGeocentricSemidiameter(jdEGS, 0);
+      eot = equationOfTime(jdEGS, 0);
+
+      rfS = 34.16 / 60.0;
+      dip = 2.1 * math.sqrt(gAlt) / 60.0;
+      altTS = -(sdS + rfS + dip - 0.0024);
+
+      coshaS =
+          (math.sin(mf.rad(altTS)) -
+              math.sin(mf.rad(gLat)) * math.sin(mf.rad(dltS))) /
+          (math.cos(mf.rad(gLat)) * math.cos(mf.rad(dltS)));
+
+      if (coshaS.abs() < 1) {
+        haS = mf.deg(math.acos(coshaS));
+        kwd = gLon / 15.0 - tmZn;
+        jSunSet = haS / 15.0 + 12.0 - eot - kwd;
+        jdGS = cjdn - 0.5 + (jSunSet - tmZn) / 24.0;
+      } else {
+        jdGS = 0.0;
+      }
+    }
+
     return jdGS;
   }
 }

@@ -111,7 +111,7 @@ class CalendarService {
     }
 
     final jdAbqMabims =
-        ((mf.floor(jdNM2 + 0.5 + 0.0 / 24.0)) - 0.0 / 24.0) + irMabims;
+        ((mf.floor(jdNM2 + 0.5 + 7 / 24.0)) - 0.0 / 24.0) + irMabims;
 
     return jdAbqMabims.ceilToDouble();
   }
@@ -145,7 +145,7 @@ class CalendarService {
       wh = 1;
     }
 
-    final jdAbqWH = ((mf.floor(jdNM2 + 0.5 + 0.0 / 24.0)) - 0.0 / 24.0) + wh;
+    final jdAbqWH = ((mf.floor(jdNM2 + 0.5 + 7 / 24.0)) - 0.0 / 24.0) + wh;
 
     return jdAbqWH.ceilToDouble();
   }
@@ -239,7 +239,7 @@ class CalendarService {
 
     for (final loc in lokasi) {
       // VB: JDGhurubSyams3 → parameter ke-4 = 0 (mdl), ke-5 = TmZn
-      final jdGS = sn.jdGhurubSyams(jdNM, loc.gLat, loc.gLon, 0, loc.tmZn);
+      final jdGS = sn.jdGhurubSyams2(jdNM, loc.gLat, loc.gLon, 0, loc.tmZn);
       final tHlal = mo.moonGeocentricAltitude(jdGS, dT, loc.gLon, loc.gLat);
       final elong = mo.moonSunGeocentricElongation(jdGS, dT);
 
@@ -321,45 +321,53 @@ class CalendarService {
 
   String serviceKalenderHijriahMABIMS(int tglM, int blnM, int thnM) {
     final jd = julDay.kmjd(tglM, blnM, thnM);
-    final cjdnM = (jd + 0.5).floorToDouble();
-    final jd2 = jd.ceilToDouble();
+    final jdTarget = _jdToCJDN(jd);
 
     final thnH = int.parse(
       julDay
-          .cjdnKH(cjdnM.toInt(), hCalE: 2, hCalL: 2, optResult: "THNH")
+          .cjdnKH(_jdToCJDN(jd), hCalE: 2, hCalL: 2, optResult: "THNH")
           .toString(),
     );
 
-    // Kumpulkan semua ABQ
     final abqList = <double>[];
-    abqList.add(ab.abqMabims(12, thnH - 1)); // Zulhijjah tahun sebelumnya
+
+    // Tambahkan buffer di awal dan akhir agar semua tanggal ter-cover
+    abqList.add(ab.abqMabims(12, thnH - 1)); // Zulhijjah thn lalu
+
     for (var blnH = 1; blnH <= 12; blnH++) {
       abqList.add(ab.abqMabims(blnH, thnH));
     }
-    abqList.add(ab.abqMabims(1, thnH + 1)); // Muharram tahun berikutnya
+
+    abqList.add(ab.abqMabims(1, thnH + 1)); // Muharram thn depan
+    abqList.add(
+      ab.abqMabims(2, thnH + 1),
+    ); // ✅ FIX: Tambahkan Safar thn depan sebagai batas akhir
 
     // Loop hari dari tiap ABQ ke ABQ berikutnya
     for (var i = 0; i < abqList.length - 1; i++) {
-      final jdStart = abqList[i].toInt();
-      final jdEnd = abqList[i + 1].toInt();
+      final cjdnStart = _jdToCJDN(abqList[i]);
+      final cjdnEnd = _jdToCJDN(abqList[i + 1]);
 
-      final blnH = (i == 0)
-          ? 12
-          : (i == 13)
-          ? 12
-          : i;
-      final thnHij = (i == 0)
-          ? thnH - 1
-          : (i >= 1 && i <= 12)
-          ? thnH
-          : thnH + 1;
+      // Mapping index ke bulan/tahun yang benar
+      final blnH = switch (i) {
+        0 => 12, // Zulhijjah thn lalu
+        13 => 1, // Muharram thn depan
+        14 => 2, // Safar thn depan
+        _ => i, // 1-12 Muharram-Zulhijjah thn ini
+      };
+
+      final thnHij = switch (i) {
+        0 => thnH - 1,
+        >= 13 => thnH + 1,
+        _ => thnH,
+      };
 
       final namaBlnH = namaBulanHijriah[blnH - 1];
 
       var nomorUrut = 1;
-      for (var jdHari = jdStart; jdHari < jdEnd; jdHari++) {
-        if (jdHari == jd2.toInt()) {
-          return "${julDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
+      for (var cjdn = cjdnStart; cjdn < cjdnEnd; cjdn++) {
+        if (cjdn == jdTarget) {
+          return "${julDay.jdkm(_cjdnToJD(cjdn))} M | $nomorUrut $namaBlnH $thnHij H";
         }
         nomorUrut++;
       }
@@ -370,45 +378,49 @@ class CalendarService {
 
   String serviceKalenderHijriahWH(int tglM, int blnM, int thnM) {
     final jd = julDay.kmjd(tglM, blnM, thnM);
-    final cjdnM = (jd + 0.5).floorToDouble();
-    final jd2 = jd.ceilToDouble();
+    final jdTarget = _jdToCJDN(jd);
 
     final thnH = int.parse(
       julDay
-          .cjdnKH(cjdnM.toInt(), hCalE: 2, hCalL: 2, optResult: "THNH")
+          .cjdnKH(_jdToCJDN(jd), hCalE: 2, hCalL: 2, optResult: "THNH")
           .toString(),
     );
 
-    // Kumpulkan semua ABQ
     final abqList = <double>[];
-    abqList.add(ab.abqWujudulHilal(12, thnH - 1)); // Zulhijjah tahun sebelumnya
+
+    // Tambahkan buffer di awal dan akhir
+    abqList.add(ab.abqWujudulHilal(12, thnH - 1)); // Zulhijjah thn lalu
+
     for (var blnH = 1; blnH <= 12; blnH++) {
       abqList.add(ab.abqWujudulHilal(blnH, thnH));
     }
-    abqList.add(ab.abqWujudulHilal(1, thnH + 1)); // Muharram tahun berikutnya
 
-    // Loop hari dari tiap ABQ ke ABQ berikutnya
+    abqList.add(ab.abqWujudulHilal(1, thnH + 1)); // Muharram thn depan
+    abqList.add(ab.abqWujudulHilal(2, thnH + 1)); // ✅ Safar thn depan (buffer)
+
     for (var i = 0; i < abqList.length - 1; i++) {
-      final jdStart = abqList[i].toInt();
-      final jdEnd = abqList[i + 1].toInt();
+      final cjdnStart = _jdToCJDN(abqList[i]);
+      final cjdnEnd = _jdToCJDN(abqList[i + 1]);
 
-      final blnH = (i == 0)
-          ? 12
-          : (i == 13)
-          ? 12
-          : i;
-      final thnHij = (i == 0)
-          ? thnH - 1
-          : (i >= 1 && i <= 12)
-          ? thnH
-          : thnH + 1;
+      final blnH = switch (i) {
+        0 => 12, // Zulhijjah thn lalu
+        13 => 1, // Muharram thn depan
+        14 => 2, // Safar thn depan
+        _ => i, // 1-12 Muharram-Zulhijjah thn ini
+      };
+
+      final thnHij = switch (i) {
+        0 => thnH - 1,
+        >= 13 => thnH + 1,
+        _ => thnH,
+      };
 
       final namaBlnH = namaBulanHijriah[blnH - 1];
 
       var nomorUrut = 1;
-      for (var jdHari = jdStart; jdHari < jdEnd; jdHari++) {
-        if (jdHari == jd2.toInt()) {
-          return "${julDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
+      for (var cjdn = cjdnStart; cjdn < cjdnEnd; cjdn++) {
+        if (cjdn == jdTarget) {
+          return "${julDay.jdkm(_cjdnToJD(cjdn))} M | $nomorUrut $namaBlnH $thnHij H";
         }
         nomorUrut++;
       }
@@ -419,45 +431,49 @@ class CalendarService {
 
   String serviceKalenderHijriahUQ(int tglM, int blnM, int thnM) {
     final jd = julDay.kmjd(tglM, blnM, thnM);
-    final cjdnM = (jd + 0.5).floorToDouble();
-    final jd2 = jd.ceilToDouble();
+    final jdTarget = _jdToCJDN(jd);
 
     final thnH = int.parse(
       julDay
-          .cjdnKH(cjdnM.toInt(), hCalE: 2, hCalL: 2, optResult: "THNH")
+          .cjdnKH(_jdToCJDN(jd), hCalE: 2, hCalL: 2, optResult: "THNH")
           .toString(),
     );
 
-    // Kumpulkan semua ABQ
     final abqList = <double>[];
-    abqList.add(ab.abqUmmulQura(12, thnH - 1)); // Zulhijjah tahun sebelumnya
+
+    // Tambahkan buffer di awal dan akhir
+    abqList.add(ab.abqUmmulQura(12, thnH - 1)); // Zulhijjah thn lalu
+
     for (var blnH = 1; blnH <= 12; blnH++) {
       abqList.add(ab.abqUmmulQura(blnH, thnH));
     }
-    abqList.add(ab.abqUmmulQura(1, thnH + 1)); // Muharram tahun berikutnya
 
-    // Loop hari dari tiap ABQ ke ABQ berikutnya
+    abqList.add(ab.abqUmmulQura(1, thnH + 1)); // Muharram thn depan
+    abqList.add(ab.abqUmmulQura(2, thnH + 1)); // ✅ Safar thn depan (buffer)
+
     for (var i = 0; i < abqList.length - 1; i++) {
-      final jdStart = abqList[i].toInt();
-      final jdEnd = abqList[i + 1].toInt();
+      final cjdnStart = _jdToCJDN(abqList[i]);
+      final cjdnEnd = _jdToCJDN(abqList[i + 1]);
 
-      final blnH = (i == 0)
-          ? 12
-          : (i == 13)
-          ? 12
-          : i;
-      final thnHij = (i == 0)
-          ? thnH - 1
-          : (i >= 1 && i <= 12)
-          ? thnH
-          : thnH + 1;
+      final blnH = switch (i) {
+        0 => 12, // Zulhijjah thn lalu
+        13 => 1, // Muharram thn depan
+        14 => 2, // Safar thn depan
+        _ => i, // 1-12 Muharram-Zulhijjah thn ini
+      };
+
+      final thnHij = switch (i) {
+        0 => thnH - 1,
+        >= 13 => thnH + 1,
+        _ => thnH,
+      };
 
       final namaBlnH = namaBulanHijriah[blnH - 1];
 
       var nomorUrut = 1;
-      for (var jdHari = jdStart; jdHari < jdEnd; jdHari++) {
-        if (jdHari == jd2.toInt()) {
-          return "${julDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
+      for (var cjdn = cjdnStart; cjdn < cjdnEnd; cjdn++) {
+        if (cjdn == jdTarget) {
+          return "${julDay.jdkm(_cjdnToJD(cjdn))} M | $nomorUrut $namaBlnH $thnHij H";
         }
         nomorUrut++;
       }
@@ -468,45 +484,49 @@ class CalendarService {
 
   String serviceKalenderHijriahTURKI(int tglM, int blnM, int thnM) {
     final jd = julDay.kmjd(tglM, blnM, thnM);
-    final cjdnM = (jd + 0.5).floorToDouble();
-    final jd2 = jd.ceilToDouble();
+    final jdTarget = _jdToCJDN(jd);
 
     final thnH = int.parse(
       julDay
-          .cjdnKH(cjdnM.toInt(), hCalE: 2, hCalL: 2, optResult: "THNH")
+          .cjdnKH(_jdToCJDN(jd), hCalE: 2, hCalL: 2, optResult: "THNH")
           .toString(),
     );
 
-    // Kumpulkan semua ABQ
     final abqList = <double>[];
-    abqList.add(ab.abqTurki(12, thnH - 1)); // Zulhijjah tahun sebelumnya
+
+    // Tambahkan buffer di awal dan akhir
+    abqList.add(ab.abqTurki(12, thnH - 1)); // Zulhijjah thn lalu
+
     for (var blnH = 1; blnH <= 12; blnH++) {
       abqList.add(ab.abqTurki(blnH, thnH));
     }
-    abqList.add(ab.abqTurki(1, thnH + 1)); // Muharram tahun berikutnya
 
-    // Loop hari dari tiap ABQ ke ABQ berikutnya
+    abqList.add(ab.abqTurki(1, thnH + 1)); // Muharram thn depan
+    abqList.add(ab.abqTurki(2, thnH + 1)); // ✅ Safar thn depan (buffer)
+
     for (var i = 0; i < abqList.length - 1; i++) {
-      final jdStart = abqList[i].toInt();
-      final jdEnd = abqList[i + 1].toInt();
+      final cjdnStart = _jdToCJDN(abqList[i]);
+      final cjdnEnd = _jdToCJDN(abqList[i + 1]);
 
-      final blnH = (i == 0)
-          ? 12
-          : (i == 13)
-          ? 12
-          : i;
-      final thnHij = (i == 0)
-          ? thnH - 1
-          : (i >= 1 && i <= 12)
-          ? thnH
-          : thnH + 1;
+      final blnH = switch (i) {
+        0 => 12, // Zulhijjah thn lalu
+        13 => 1, // Muharram thn depan
+        14 => 2, // Safar thn depan
+        _ => i, // 1-12 Muharram-Zulhijjah thn ini
+      };
+
+      final thnHij = switch (i) {
+        0 => thnH - 1,
+        >= 13 => thnH + 1,
+        _ => thnH,
+      };
 
       final namaBlnH = namaBulanHijriah[blnH - 1];
 
       var nomorUrut = 1;
-      for (var jdHari = jdStart; jdHari < jdEnd; jdHari++) {
-        if (jdHari == jd2.toInt()) {
-          return "${julDay.jdkm(jdHari.toDouble())} M | $nomorUrut $namaBlnH $thnHij H";
+      for (var cjdn = cjdnStart; cjdn < cjdnEnd; cjdn++) {
+        if (cjdn == jdTarget) {
+          return "${julDay.jdkm(_cjdnToJD(cjdn))} M | $nomorUrut $namaBlnH $thnHij H";
         }
         nomorUrut++;
       }
@@ -514,4 +534,11 @@ class CalendarService {
 
     return "Tidak ditemukan";
   }
+
+  // ── Helper: Konversi JD → CJDN (Chronological Julian Day Number) ──
+  // CJDN: integer yang mewakili hari kalender (midnight-to-midnight)
+  int _jdToCJDN(double jd) => (jd + 0.5).floor();
+
+  // ── Helper: Konversi CJDN → JD (untuk display) ──
+  double _cjdnToJD(int cjdn) => cjdn.toDouble() - 0.5;
 }

@@ -729,8 +729,8 @@ void main() {
   print("        HISAB AWAL BULAN HIJRIAH");
   print("========================================");
   final String loc = "Banda Aceh";
-  final int blnH = 12;
-  final int thnH = 1447;
+  final int blnH = 3;
+  final int thnH = 1448;
   final double gLon = (95 + 19 / 60 + 1.92 / 3600);
   final double gLat = (5 + 33 / 60 + 12.96 / 3600);
   final double tmZn = 7;
@@ -1109,8 +1109,8 @@ void main() {
 
   //Konversi Masehi ke Hijri Hakiki
 
-  final tglM = 19;
-  final blnM = 4;
+  final tglM = 14;
+  final blnM = 8;
   final thnM = 2026;
 
   final abqMabimsNow = cs.serviceKalenderHijriahMABIMS(tglM, blnM, thnM);
