@@ -1,3 +1,6 @@
+## 1.0.10
+
+- perbaikan kode desimal year untuk deltaT
 
 ## 1.0.9
 

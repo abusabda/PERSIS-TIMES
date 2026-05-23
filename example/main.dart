@@ -728,13 +728,13 @@ void main() {
   print("========================================");
   print("        HISAB AWAL BULAN HIJRIAH");
   print("========================================");
-  final String loc = "Pelabuhan Ratu";
-  final int blnH = 10;
-  final int thnH = 1444;
-  final double gLon = (106 + 33 / 60 + 27.8 / 3600);
-  final double gLat = -(7 + 1 / 60 + 44.6 / 3600);
+  final String loc = "Banda Aceh";
+  final int blnH = 12;
+  final int thnH = 1447;
+  final double gLon = (95 + 19 / 60 + 1.92 / 3600);
+  final double gLat = (5 + 33 / 60 + 12.96 / 3600);
   final double tmZn = 7;
-  final double elev = 52.685;
+  final double elev = 20;
   final double pres = 1010;
   final double temp = 10;
   final int tbhHari = 0;
@@ -764,6 +764,7 @@ void main() {
   );
   print("Time Zone                  : $tmZn");
   print("Elevasi                    : $elev");
+  print("deltaT                     : ${rs.deltaT}");
   print("");
   print(
     "Ijtimak Geosentris         : "
@@ -1104,6 +1105,9 @@ void main() {
 
   final jdAbqTurki = cs.abqTurki(blnH, thnH);
   print("1 $namaBlnH $thnH H (TURKI/KHGT)   : ${jd.jdkm(jdAbqTurki)}");
+
+  final jdAbqUmmulQura = cs.abqUmmulQura(blnH, thnH);
+  print("1 $namaBlnH $thnH H (Ummul Qura)   : ${jd.jdkm(jdAbqUmmulQura)}");
 
   print("");
 

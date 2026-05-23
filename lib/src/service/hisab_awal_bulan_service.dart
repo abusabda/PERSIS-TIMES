@@ -64,12 +64,12 @@ class HisabAwalBulanService {
       deltaT,
       gLon,
       gLat,
-      0.0,
+      elev,
       "Ijtima",
     );
 
     final double sunsetJD = sn.jdGhurubSyams(
-      geojdIjtimak + tbhHari,
+      geojdIjtimak2 + tbhHari,
       gLat,
       gLon,
       elev,
