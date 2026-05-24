@@ -33,6 +33,8 @@ class SunResult {
   final double geoHorizontalParallax;
   final double geoSemidiameter;
 
+  final double equationOfTime;
+
   // ==========================
   // TOPOCENTRIC
   // ==========================
@@ -88,6 +90,8 @@ class SunResult {
 
     required this.geoHorizontalParallax,
     required this.geoSemidiameter,
+
+    required this.equationOfTime,
 
     required this.topoLongitudeApparent,
     required this.topoLatitudeApparent,

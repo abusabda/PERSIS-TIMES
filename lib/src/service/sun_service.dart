@@ -239,6 +239,8 @@ class SunService {
         temp,
         "htol",
       ),
+
+      equationOfTime: _sunData.equationOfTime(jd, dt),
     );
   }
 }

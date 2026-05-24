@@ -84,6 +84,9 @@ void main() {
   print(
     "Semidiameter         : ${mf.dddms(res2.geoSemidiameter, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
+  print(
+    "equation of Time     : ${mf.dhhms(res2.equationOfTime, optResult: "MMSS", secDecPlaces: 0, posNegSign: "+-")}",
+  );
 
   print("");
   print("======================");
