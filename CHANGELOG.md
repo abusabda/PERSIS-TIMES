@@ -1,3 +1,7 @@
+## 1.0.14
+
+- penambahan eqaution of time pada sun service
+
 ## 1.0.13
 
 - perbaikan kode ABQ
