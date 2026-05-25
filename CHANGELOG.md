@@ -1,3 +1,7 @@
+## 1.0.19
+
+- export method dynamical time
+
 ## 1.0.18
 
 - perubah kode dddms 
