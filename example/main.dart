@@ -31,6 +31,8 @@ void main() {
     tmZn: 7.0,
     temp: 10.0,
     pres: 1010.0,
+    deltaTOverride:
+        0.0, //default kalau tanpa deltaToverride maka otomatis menggunakan rumus deltaT
   );
 
   print("JD                   : ${res2.jd}");
@@ -182,6 +184,8 @@ void main() {
     tmZn: 7.0,
     temp: 10.0,
     pres: 1010.0,
+    deltaTOverride:
+        0.0, //default kalau tanpa deltaToverride maka otomatis menggunakan rumus deltaT
   );
 
   print("JD                   : ${res.jd}");

@@ -27,11 +27,12 @@ class MoonService {
     required double tmZn,
     required double temp,
     required double pres,
+    double? deltaTOverride,
   }) {
     final jamDes = jam + (menit / 60.0) + (detik / 3600.0);
 
     final jd = _julianDay.kmjd(tglM, blnM, thnM, jamDes, tmZn);
-    final dt = _dynamicalTime.deltaT(jd);
+    final dt = deltaTOverride ?? _dynamicalTime.deltaT(jd);
 
     double? moonSet = _moonData.moonTransitRiseSet(
       tglM,
