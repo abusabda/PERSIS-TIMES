@@ -1,3 +1,7 @@
+## 1.0.17
+
+- penambahan deltaTOverride di Class SunService dan MoonService, bila deltaTOverride tidak di tulis, maka otomatis menghitung dengan deltaT rumus pendekatan.
+
 ## 1.0.16
 
 - penambahan deltaTOverride di Class SunService dan MoonService, bila deltaTOverride tidak di tulis, maka otomatis menghitung dengan deltaT rumus pendekatan.

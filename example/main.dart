@@ -63,7 +63,7 @@ void main() {
     "Right Ascension      : ${mf.dddms(res2.geoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Declination          : ${mf.dddms(res2.geoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Declination          : ${mf.dddms(res2.geoDeclinationApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
@@ -105,7 +105,7 @@ void main() {
     "Right Ascension      : ${mf.dddms(res2.topoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Declination          : ${mf.dddms(res2.topoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Declination          : ${mf.dddms(res2.topoDeclinationApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
@@ -216,7 +216,7 @@ void main() {
     "Right Ascension      : ${mf.dddms(res.geoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Declination          : ${mf.dddms(res.geoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Declination          : ${mf.dddms(res.geoDeclinationApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(
@@ -267,7 +267,7 @@ void main() {
     "Right Ascension      : ${mf.dddms(res.topoRightAscensionApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
   print(
-    "Declination          : ${mf.dddms(res.topoDeclinationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
+    "Declination          : ${mf.dddms(res.topoDeclinationApparent, optResult: "DDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
   print(

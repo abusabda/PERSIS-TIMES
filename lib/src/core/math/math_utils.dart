@@ -139,87 +139,191 @@ class MathFunction {
     }
   }
 
-  // Format derajat DD°MM'SS"
+  // // Format derajat DD°MM'SS"
+  // String dddms(
+  //   double dDeg, {
+  //   String optResult = "DDMMSS",
+  //   int sdp = 2,
+  //   String posNegSign = "+-",
+  // }) {
+  //   final double uDDeg = abs(dDeg);
+  //   double uDeg = floor(uDDeg);
+  //   final double uDMin = (uDDeg - uDeg) * 60.0;
+  //   double uMin = floor(uDMin);
+  //   final double uDSec = (uDMin - uMin) * 60.0;
+  //   String uSec = uDSec.toStringAsFixed(sdp);
+
+  //   if (double.parse(uSec) == 60.0) {
+  //     uSec = 0.0.toStringAsFixed(sdp);
+  //     uMin = uMin + 1.0;
+  //   }
+
+  //   if (uMin == 60.0) {
+  //     uMin = 0.0;
+  //     uDeg = uDeg + 1.0;
+  //   }
+
+  //   final String sDeg = (uDeg.toInt() < 10)
+  //       ? "00${uDeg.toInt()}"
+  //       : (uDeg.toInt() < 100)
+  //       ? "0${uDeg.toInt()}"
+  //       : "${uDeg.toInt()}";
+
+  //   final String sMin = (uMin.toInt() < 10)
+  //       ? "0${uMin.toInt()}"
+  //       : "${uMin.toInt()}";
+
+  //   final String sSec = (double.parse(uSec) < 10.0) ? "0$uSec" : uSec;
+
+  //   // --- PNS sesuai aturan PosNegSign ---
+  //   final String pns;
+  //   if (posNegSign == "+-") {
+  //     if (dDeg > 0.0) {
+  //       pns = "+";
+  //     } else if (dDeg < 0.0) {
+  //       pns = "-";
+  //     } else {
+  //       pns = "";
+  //     }
+  //   } else {
+  //     if (dDeg > 0.0) {
+  //       pns = "";
+  //     } else if (dDeg < 0.0) {
+  //       pns = "-";
+  //     } else {
+  //       pns = "";
+  //     }
+  //   }
+
+  //   final String bbbt;
+  //   final String luls;
+
+  //   if (dDeg > 0.0) {
+  //     bbbt = "BT";
+  //     luls = "LU";
+  //   } else {
+  //     bbbt = "BB";
+  //     luls = "LS";
+  //   }
+
+  //   switch (optResult) {
+  //     case "DDMMSS":
+  //       return "$pns$sDeg° $sMin’ $sSec”";
+  //     case "MMSS":
+  //       return "$pns$sMin’ $sSec”";
+  //     case "SS":
+  //       return "$pns$sSec”";
+  //     case "BBBT":
+  //       return "$pns$sDeg° $sMin’ $sSec” $bbbt";
+  //     case "LULS":
+  //       return "$pns$sDeg° $sMin’ $sSec” $luls";
+  //     default:
+  //       return "$pns$sDeg° $sMin’ $sSec”";
+  //   }
+  // }
+
+  /// Mengonversi Desimal Derajat (Decimal Degrees) ke format Derajat, Menit, Detik (DMS).
+  ///
+  /// [xDecDeg] Nilai desimal derajat (misal: -106.8456).
+  /// [optResult] Format keluaran (contoh: 'DMMSS', '[D]', 'DMS', dll). Default: 'DMMSS'.
+  /// [secDetPlaces] Jumlah desimal untuk detik. Default: 3.
+  /// [posNegSign] Penanda arah/tanda (contoh: 'LON', 'LAT', 'B', '+/-', dll). Default: ''.
+  ///
+  /// Memerlukan Dart 3.0+ untuk sintaks Switch Expression.
   String dddms(
-    double dDeg, {
-    String optResult = "DDMMSS",
-    int sdp = 2,
-    String posNegSign = "+-",
+    double xDecDeg, {
+    String optResult = '',
+    int? sdp,
+    String posNegSign = '',
   }) {
-    final double uDDeg = abs(dDeg);
-    double uDeg = floor(uDDeg);
-    final double uDMin = (uDDeg - uDeg) * 60.0;
-    double uMin = floor(uDMin);
-    final double uDSec = (uDMin - uMin) * 60.0;
-    String uSec = uDSec.toStringAsFixed(sdp);
+    // 1. Hitung komponen absolut (Degrees, Minutes, Seconds)
+    final absDecDeg = xDecDeg.abs();
+    double absDeg = absDecDeg.floorToDouble();
+    double absDecMin = (absDecDeg - absDeg) * 60.0;
+    double absMin = absDecMin.floorToDouble();
+    double absDecSec = (absDecMin - absMin) * 60.0;
 
-    if (double.parse(uSec) == 60.0) {
-      uSec = 0.0.toStringAsFixed(sdp);
-      uMin = uMin + 1.0;
+    // 2. Validasi jumlah desimal detik
+    int places = sdp ?? 3;
+    if (places.abs() > 16) places = 3;
+    places = places.abs();
+
+    // 3. Format & bulatkan detik menggunakan toStringAsFixed
+    final secStrFixed = absDecSec.toStringAsFixed(places);
+    double absSec = double.parse(secStrFixed);
+
+    // 4. Koreksi rollover (60 detik -> 1 menit, 60 menit -> 1 derajat)
+    if (absSec == 60.0) {
+      absSec = 0.0;
+      absMin += 1;
+    }
+    if (absMin == 60.0) {
+      absMin = 0.0;
+      absDeg += 1;
     }
 
-    if (uMin == 60.0) {
-      uMin = 0.0;
-      uDeg = uDeg + 1.0;
-    }
+    // 5. Tentukan tanda prefix (PNS) & label suffix (LLS)
+    String pns = '';
+    String lls = '';
+    final cleanPosNeg = posNegSign.replaceAll(' ', '').toUpperCase();
 
-    final String sDeg = (uDeg.toInt() < 10)
-        ? "00${uDeg.toInt()}"
-        : (uDeg.toInt() < 100)
-        ? "0${uDeg.toInt()}"
-        : "${uDeg.toInt()}";
-
-    final String sMin = (uMin.toInt() < 10)
-        ? "0${uMin.toInt()}"
-        : "${uMin.toInt()}";
-
-    final String sSec = (double.parse(uSec) < 10.0) ? "0$uSec" : uSec;
-
-    // --- PNS sesuai aturan PosNegSign ---
-    final String pns;
-    if (posNegSign == "+-") {
-      if (dDeg > 0.0) {
-        pns = "+";
-      } else if (dDeg < 0.0) {
-        pns = "-";
-      } else {
-        pns = "";
-      }
-    } else {
-      if (dDeg > 0.0) {
-        pns = "";
-      } else if (dDeg < 0.0) {
-        pns = "-";
-      } else {
-        pns = "";
-      }
-    }
-
-    final String bbbt;
-    final String luls;
-
-    if (dDeg > 0.0) {
-      bbbt = "BT";
-      luls = "LU";
-    } else {
-      bbbt = "BB";
-      luls = "LS";
-    }
-
-    switch (optResult) {
-      case "DDMMSS":
-        return "$pns$sDeg° $sMin’ $sSec”";
-      case "MMSS":
-        return "$pns$sMin’ $sSec”";
-      case "SS":
-        return "$pns$sSec”";
-      case "BBBT":
-        return "$pns$sDeg° $sMin’ $sSec” $bbbt";
-      case "LULS":
-        return "$pns$sDeg° $sMin’ $sSec” $luls";
+    switch (cleanPosNeg) {
+      case '':
+        pns = xDecDeg >= 0 ? '' : '-';
+      case '+/-' || '-/+' || '+-' || '-+':
+        pns = xDecDeg >= 0 ? '+' : '-';
+      case 'B' || 'BUJUR':
+        lls = xDecDeg >= 0 ? ' BT' : ' BB';
+      case 'L' || 'LINTANG':
+        lls = xDecDeg >= 0 ? ' LU' : ' LS';
+      case 'LON' || 'LONG' || 'LONGITUDE':
+        lls = xDecDeg >= 0 ? 'E' : 'W';
+      case 'LAT' || 'LATITUDE':
+        lls = xDecDeg >= 0 ? 'N' : 'S';
       default:
-        return "$pns$sDeg° $sMin’ $sSec”";
+        pns = xDecDeg >= 0 ? '' : '-';
     }
+
+    // Pre-compute string formatting untuk efisiensi & kerapian kode
+    final deg0 = absDeg.toInt().toString();
+    final deg00 = deg0.padLeft(2, '0');
+    final deg000 = deg0.padLeft(3, '0');
+    final min0 = absMin.toInt().toString();
+    final min00 = min0.padLeft(2, '0');
+
+    // Padding detik: 0.xxx (format SDFormat) atau 00.xxx (format "0" & SDFormat)
+    //final sec0x = secStrFixed.padLeft(places + 2, '0');
+    final sec00x = secStrFixed.padLeft(places + 3, '0');
+
+    // 6. Mapping format hasil akhir menggunakan Switch Expression (Dart 3+)
+    final cleanOpt = optResult.replaceAll(' ', '').toUpperCase();
+
+    final result = switch (cleanOpt) {
+      '' || 'DMMSS' => '$pns$deg0° $min00’ $sec00x”$lls',
+      'DDMMSS' => '$pns$deg00° $min00’ $sec00x”$lls',
+      'DDDMMSS' => '$pns$deg000° $min00’ $sec00x”$lls',
+      '[D]' => '$pns$deg0',
+      '[M]' => '$pns$min0',
+      '[S]' => '$pns$secStrFixed',
+      'D' => '$pns$deg0° $lls',
+      'M' => '$pns$min0’ $lls',
+      'S' => '$pns$secStrFixed”$lls',
+      'MSS' => '$pns$min0’ $sec00x”$lls',
+      'DMM' => '$pns$deg0° $min00’ $lls',
+      'DDMM' => '$pns$deg00° $min00’ $lls',
+      'DDDMM' => '$pns$deg000° $min00’ $lls',
+      'DD' => '$pns$deg00° $lls',
+      'DDD' => '$pns$deg000° $lls',
+      'MM' => '$pns$min00’ $lls',
+      'MMSS' => '$pns$min00’ $sec00x”$lls',
+      'MS' => '$pns$min0’ $secStrFixed”$lls',
+      'SS' => '$pns$sec00x”$lls',
+      'DM' => '$pns$deg0° $min0’ $lls',
+      'DMS' => '$pns$deg0° $min0’ $secStrFixed”$lls',
+      _ => '$pns$deg0° $min00’ $sec00x”$lls', // Fallback default
+    };
+
+    return result;
   }
 
   // Format derajat versi 2 (DDDMS2)
