@@ -335,6 +335,23 @@ void main() {
     "Sun-Moon Elongation : ${mf.dddms(res.topoSunElongationApparent, optResult: "DDDMMSS", sdp: 2, posNegSign: "+-")}",
   );
 
+  //terbit-transit-terbenam Bulan
+  final tmZn5 = 7.0;
+  print(
+    "Bulan Terbit       : "
+    "${res.jdMoonRise == null ? "Tidak Terbit" : mf.dhhms(double.parse(jd.jdkm(res.jdMoonRise!, tmZn5, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+  );
+
+  print(
+    "Bulan Transit      : "
+    "${res.jdMoonTransit == null ? "Tidak Transit" : mf.dhhms(double.parse(jd.jdkm(res.jdMoonTransit!, tmZn5, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+  );
+
+  print(
+    "Bulan Terbenam     : "
+    "${res.jdMoonSet == null ? "Tidak Terbenam" : mf.dhhms(double.parse(jd.jdkm(res.jdMoonSet!, tmZn5, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+  );
+
   print("");
 
   print("========================================");
@@ -782,10 +799,12 @@ void main() {
   print(
     "Ghurub Matahari            : ${mf.dhhms(double.parse(jd.jdkm(rs.sunsetJD, tmZn, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
   );
+
   print(
     "Ghurub Bulan               : "
     "${rs.moonsetJD == null ? "Tidak terbenam" : mf.dhhms(double.parse(jd.jdkm(rs.moonsetJD!, tmZn, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
   );
+
   print(
     "Imkan Rukyat MABIMS        : ${rs.imkanMabimsStatus == 1 ? "Visible" : "Not Visible"}",
   );

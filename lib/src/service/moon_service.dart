@@ -33,6 +33,55 @@ class MoonService {
     final jd = _julianDay.kmjd(tglM, blnM, thnM, jamDes, tmZn);
     final dt = _dynamicalTime.deltaT(jd);
 
+    double? moonSet = _moonData.moonTransitRiseSet(
+      tglM,
+      blnM,
+      thnM,
+      gLon,
+      gLat,
+      elev,
+      tmZn,
+      "SET",
+      2,
+    );
+
+    double? moonRise = _moonData.moonTransitRiseSet(
+      tglM,
+      blnM,
+      thnM,
+      gLon,
+      gLat,
+      elev,
+      tmZn,
+      "RISE",
+      2,
+    );
+
+    double? moonTransit = _moonData.moonTransitRiseSet(
+      tglM,
+      blnM,
+      thnM,
+      gLon,
+      gLat,
+      elev,
+      tmZn,
+      "TRANSIT",
+      2,
+    );
+
+    final double? moonRiseJD = (moonRise != 0.0)
+        ? _julianDay.kmjd(tglM, blnM, thnM, 0.0, 0.0) + (moonRise - tmZn) / 24.0
+        : null;
+
+    final double? moonTransitJD = (moonTransit != 0.0)
+        ? _julianDay.kmjd(tglM, blnM, thnM, 0.0, 0.0) +
+              (moonTransit - tmZn) / 24.0
+        : null;
+
+    final double? moonSetJD = (moonSet != 0.0)
+        ? _julianDay.kmjd(tglM, blnM, thnM, 0.0, 0.0) + (moonSet - tmZn) / 24.0
+        : null;
+
     return MoonResult(
       jd: jd,
       deltaT: dt,
@@ -278,6 +327,10 @@ class MoonService {
         gLat,
         elev,
       ),
+
+      jdMoonRise: moonRiseJD,
+      jdMoonTransit: moonTransitJD,
+      jdMoonSet: moonSetJD,
     );
   }
 }

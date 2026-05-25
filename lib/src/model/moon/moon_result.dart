@@ -75,6 +75,11 @@ class MoonResult {
   // === Sun-Moon Apparent Elongation (Topocentric) ===
   final double topoSunElongationApparent;
 
+  // === Moon Rise-Transit-Set ===
+  final double? jdMoonRise;
+  final double? jdMoonTransit;
+  final double? jdMoonSet;
+
   MoonResult({
     required this.jd,
     required this.deltaT,
@@ -131,5 +136,9 @@ class MoonResult {
     required this.topoAltitudeLowerObserved,
 
     required this.topoSunElongationApparent,
+
+    this.jdMoonRise,
+    this.jdMoonTransit,
+    this.jdMoonSet,
   });
 }

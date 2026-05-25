@@ -1,3 +1,7 @@
+## 1.0.15
+
+- penambahan moon rise-transit-set pada sun service
+
 ## 1.0.14
 
 - penambahan eqaution of time pada sun service
