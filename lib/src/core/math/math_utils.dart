@@ -236,7 +236,7 @@ class MathFunction {
     int? sdp,
     String posNegSign = '',
   }) {
-    // 1. Hitung komponen absolut (Degrees, Minutes, Seconds)
+    // 1. Hitung komponen absolut
     final absDecDeg = xDecDeg.abs();
     double absDeg = absDecDeg.floorToDouble();
     double absDecMin = (absDecDeg - absDeg) * 60.0;
@@ -248,11 +248,11 @@ class MathFunction {
     if (places.abs() > 16) places = 3;
     places = places.abs();
 
-    // 3. Format & bulatkan detik menggunakan toStringAsFixed
+    // 3. Format & bulatkan detik
     final secStrFixed = absDecSec.toStringAsFixed(places);
     double absSec = double.parse(secStrFixed);
 
-    // 4. Koreksi rollover (60 detik -> 1 menit, 60 menit -> 1 derajat)
+    // 4. Koreksi rollover
     if (absSec == 60.0) {
       absSec = 0.0;
       absMin += 1;
@@ -262,7 +262,7 @@ class MathFunction {
       absDeg += 1;
     }
 
-    // 5. Tentukan tanda prefix (PNS) & label suffix (LLS)
+    // 5. Tentukan prefix & suffix
     String pns = '';
     String lls = '';
     final cleanPosNeg = posNegSign.replaceAll(' ', '').toUpperCase();
@@ -284,18 +284,18 @@ class MathFunction {
         pns = xDecDeg >= 0 ? '' : '-';
     }
 
-    // Pre-compute string formatting untuk efisiensi & kerapian kode
+    // Pre-compute formatting
     final deg0 = absDeg.toInt().toString();
     final deg00 = deg0.padLeft(2, '0');
     final deg000 = deg0.padLeft(3, '0');
     final min0 = absMin.toInt().toString();
     final min00 = min0.padLeft(2, '0');
 
-    // Padding detik: 0.xxx (format SDFormat) atau 00.xxx (format "0" & SDFormat)
-    //final sec0x = secStrFixed.padLeft(places + 2, '0');
-    final sec00x = secStrFixed.padLeft(places + 3, '0');
+    //lebar padding dinamis
+    final secWidth = places == 0 ? 2 : places + 3;
+    final sec00x = secStrFixed.padLeft(secWidth, '0');
 
-    // 6. Mapping format hasil akhir menggunakan Switch Expression (Dart 3+)
+    // 6. Mapping format hasil
     final cleanOpt = optResult.replaceAll(' ', '').toUpperCase();
 
     final result = switch (cleanOpt) {
@@ -320,7 +320,7 @@ class MathFunction {
       'SS' => '$pns$sec00x”$lls',
       'DM' => '$pns$deg0° $min0’ $lls',
       'DMS' => '$pns$deg0° $min0’ $secStrFixed”$lls',
-      _ => '$pns$deg0° $min00’ $sec00x”$lls', // Fallback default
+      _ => '$pns$deg0° $min00’ $sec00x”$lls',
     };
 
     return result;
