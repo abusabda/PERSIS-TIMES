@@ -172,15 +172,15 @@ void main() {
   print("======================");
 
   final res = moonService.calculate(
-    tglM: 20,
-    blnM: 4,
-    thnM: 2023,
-    jam: 17,
-    menit: 51,
-    detik: 27,
-    gLon: (106 + 33 / 60.0 + 27.8 / 3600.0),
-    gLat: -(7 + 1 / 60.0 + 44.6 / 3600.0),
-    elev: 52.685,
+    tglM: 3,
+    blnM: 3,
+    thnM: 2026,
+    jam: 6,
+    menit: 32,
+    detik: 5,
+    gLon: (107 + 31 / 60.0 + 2.73 / 3600.0),
+    gLat: -(6 + 58 / 60.0 + 15.83 / 3600.0),
+    elev: 738.0,
     tmZn: 7.0,
     temp: 10.0,
     pres: 1010.0,
@@ -343,17 +343,17 @@ void main() {
   final tmZn5 = 7.0;
   print(
     "Bulan Terbit       : "
-    "${res.jdMoonRise == null ? "Tidak Terbit" : mf.dhhms(double.parse(jd.jdkm(res.jdMoonRise!, tmZn5, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+    "${res.jdMoonRise == null ? "-" : mf.dhhms(double.parse(jd.jdkm(res.jdMoonRise!, tmZn5, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
   );
 
   print(
     "Bulan Transit      : "
-    "${res.jdMoonTransit == null ? "Tidak Transit" : mf.dhhms(double.parse(jd.jdkm(res.jdMoonTransit!, tmZn5, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+    "${res.jdMoonTransit == null ? "-" : mf.dhhms(double.parse(jd.jdkm(res.jdMoonTransit!, tmZn5, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
   );
 
   print(
     "Bulan Terbenam     : "
-    "${res.jdMoonSet == null ? "Tidak Terbenam" : mf.dhhms(double.parse(jd.jdkm(res.jdMoonSet!, tmZn5, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
+    "${res.jdMoonSet == null ? "-" : mf.dhhms(double.parse(jd.jdkm(res.jdMoonSet!, tmZn5, "JAMDES")), optResult: "HH:MM:SS", secDecPlaces: 0, posNegSign: "")}",
   );
 
   print("");

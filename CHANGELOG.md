@@ -1,3 +1,7 @@
+## 1.0.20
+
+- Kode Moon Rise, Transit, Set, tidak menggunakan koreksi DIP.
+
 ## 1.0.19
 
 - export method dynamical time

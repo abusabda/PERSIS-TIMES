@@ -1,6 +1,6 @@
 name: persis_times
 description: Astronomical calculations for Islamic prayer times, qibla direction, hijri calendar, and eclipses.
-version: 1.0.19
+version: 1.0.20
 repository: https://github.com/abusabda/PERSIS-TIMES
 homepage: https://github.com/abusabda/PERSIS-TIMES
 
