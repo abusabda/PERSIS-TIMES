@@ -764,10 +764,8 @@ class LunarEclipseService {
         // ============================
         // Tentukan JD sesuai TimeScale
         // ============================
-
         double? convert(double? jd) {
           if (jd == null) return null;
-
           switch (timeScale) {
             case TimeScale.jdTD:
               return jd; // sudah TD
@@ -788,6 +786,8 @@ class LunarEclipseService {
           LunarEclipseLocalSummary(
             tahunHijri: thn,
             bulanHijri: bln,
+
+            // Kontak (JD) - sudah dikonversi TimeScale
             p1: p1,
             u1: u1,
             u2: u2,
@@ -796,23 +796,46 @@ class LunarEclipseService {
             u4: u4,
             p4: p4,
 
-            // altitude TIDAK ikut timeScale
-            altP1: eclipse.p1,
-            altU1: eclipse.u1,
-            altU2: eclipse.u2,
-            altMx: eclipse.mx,
-            altU3: eclipse.u3,
-            altU4: eclipse.u4,
-            altP4: eclipse.p4,
+            // Altitude (nilai sebenarnya, TIDAK ikut TimeScale)
+            altP1: eclipse.altP1,
+            altU1: eclipse.altU1,
+            altU2: eclipse.altU2,
+            altMx: eclipse.altMx,
+            altU3: eclipse.altU3,
+            altU4: eclipse.altU4,
+            altP4: eclipse.altP4,
 
+            // Azimuth (nilai sebenarnya, TIDAK ikut TimeScale)
+            azmP1: eclipse.azmP1,
+            azmU1: eclipse.azmU1,
+            azmU2: eclipse.azmU2,
+            azmMx: eclipse.azmMx,
+            azmU3: eclipse.azmU3,
+            azmU4: eclipse.azmU4,
+            azmP4: eclipse.azmP4,
+
+            // ✅ Durasi (LENGKAP)
             durasiUmbral: eclipse.durasiUmbral,
             durasiPenumbral: eclipse.durasiPenumbral,
+            durasiTotal: eclipse.durasiTotal, // ✅ TAMBAHKAN INI
+            // ✅ Magnitude (BARU)
+            magnitudeUmbral: eclipse.magnitudeUmbral, // ✅ TAMBAHKAN INI
+            magnitudePenumbral: eclipse.magnitudePenumbral, // ✅ TAMBAHKAN INI
+            // ✅ Radius
+            radiusUmbral: eclipse.radiusUmbral,
+            radiusPenumbral: eclipse.radiusPenumbral,
+
+            // ✅ Delta T (BARU)
+            deltaT: eclipse.deltaT, // ✅ TAMBAHKAN INI
+            // ✅ Ephemeris Data Saat Puncak (BARU)
+            sunData: eclipse.sun, // ✅ TAMBAHKAN INI
+            moonData: eclipse.moon, // ✅ TAMBAHKAN INI
+            // Jenis Gerhana
             jenis: eclipse.jenis,
           ),
         );
       }
     }
-
     return hasil;
   }
 }
