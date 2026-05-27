@@ -489,6 +489,9 @@ class LunarEclipseService {
       sun: sunData,
       moon: moonData,
 
+      besselian: bessel,
+      deltaT: dt,
+
       jenis: jenis,
     );
   }
@@ -688,6 +691,8 @@ class LunarEclipseService {
       radiusPenumbral: radPen,
       radiusUmbral: radUmb,
 
+      besselian: bessel,
+
       sun: sunData,
       moon: moonData,
 
@@ -723,6 +728,12 @@ class LunarEclipseService {
 
             durasiUmbral: eclipse.durasiUmbral,
             durasiPenumbral: eclipse.durasiPenumbral,
+            durasiTotal: eclipse.durasiTotal,
+
+            besselian: eclipse.besselian,
+
+            sun: eclipse.sun,
+            moon: eclipse.moon,
 
             jenis: eclipse.jenis,
           ),
@@ -732,6 +743,8 @@ class LunarEclipseService {
 
     return hasil;
   }
+
+  //GERHANA BULAN LOKAL PER RENTANG TAHUN
 
   List<LunarEclipseLocalSummary> lunarEclipseLocalRangeHijri({
     required int tahunAwalH,
@@ -814,22 +827,29 @@ class LunarEclipseService {
             azmU4: eclipse.azmU4,
             azmP4: eclipse.azmP4,
 
-            // ✅ Durasi (LENGKAP)
+            // Durasi (LENGKAP)
             durasiUmbral: eclipse.durasiUmbral,
             durasiPenumbral: eclipse.durasiPenumbral,
-            durasiTotal: eclipse.durasiTotal, // ✅ TAMBAHKAN INI
-            // ✅ Magnitude (BARU)
-            magnitudeUmbral: eclipse.magnitudeUmbral, // ✅ TAMBAHKAN INI
-            magnitudePenumbral: eclipse.magnitudePenumbral, // ✅ TAMBAHKAN INI
-            // ✅ Radius
+            durasiTotal: eclipse.durasiTotal,
+
+            // Magnitude (BARU)
+            magnitudeUmbral: eclipse.magnitudeUmbral,
+            magnitudePenumbral: eclipse.magnitudePenumbral,
+
+            // Radius
             radiusUmbral: eclipse.radiusUmbral,
             radiusPenumbral: eclipse.radiusPenumbral,
 
-            // ✅ Delta T (BARU)
-            deltaT: eclipse.deltaT, // ✅ TAMBAHKAN INI
-            // ✅ Ephemeris Data Saat Puncak (BARU)
-            sunData: eclipse.sun, // ✅ TAMBAHKAN INI
-            moonData: eclipse.moon, // ✅ TAMBAHKAN INI
+            // Delta T (BARU)
+            deltaT: eclipse.deltaT,
+
+            // ✅ Besselian Element (BARU - tambahkan ini)
+            besselian: eclipse.besselian,
+
+            // Ephemeris Data Saat Puncak (BARU)
+            sunData: eclipse.sun,
+            moonData: eclipse.moon,
+
             // Jenis Gerhana
             jenis: eclipse.jenis,
           ),

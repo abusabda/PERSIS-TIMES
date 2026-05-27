@@ -1,4 +1,4 @@
-//import '../../model/lunar_eclipse/lunar_besselian_result.dart';
+import '../../model/lunar_eclipse/lunar_besselian_result.dart';
 import '../../model/helper_eclipse/helper_eclipse.dart';
 
 class LunarEclipseLocalSummary {
@@ -48,6 +48,9 @@ class LunarEclipseLocalSummary {
   // Delta T
   final double? deltaT; // ✅ TAMBAHKAN INI
 
+  //Besselian element
+  final LunarBesselianResult? besselian;
+
   // Ephemeris Data Saat Puncak
   final EclipseEphemerisBody? sunData;
   final EclipseEphemerisBody? moonData;
@@ -89,6 +92,7 @@ class LunarEclipseLocalSummary {
     this.radiusPenumbral,
     this.radiusUmbral,
     this.deltaT,
+    this.besselian,
     this.sunData,
     this.moonData,
 

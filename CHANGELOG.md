@@ -1,3 +1,7 @@
+## 1.0.22
+
+- Perbaikan kode gerhana bulan lokal dan global per range
+
 ## 1.0.21
 
 - Perbaikan kode gerhana bulan lokal per range
