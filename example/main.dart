@@ -2017,8 +2017,8 @@ void main() {
   print("");
 
   // INPUT GERHANA MATAHARI GLOBAL
-  final blnH4 = 11;
-  final thnH4 = 1439;
+  final blnH4 = 5;
+  final thnH4 = 1437;
 
   final resSEG = se.solarEclipseGlobal(blnH: blnH4, thnH: thnH4);
 
@@ -2047,26 +2047,26 @@ void main() {
     }
 
     // tampilkan jde, deltaT, t0
-    print("JDE     : ${bs.jde}");
-    print("Delta T : ${bs.deltaT}");
-    print("T0      : ${bs.t0}");
+    print("JDE     : ${bs?.jde ?? '-'}");
+    print("Delta T : ${bs?.deltaT ?? '-'}");
+    print("T0      : ${bs?.t0 ?? '-'}");
     print("");
 
-    printList2("x", bs.x);
+    printList2("x", bs?.x);
     print("");
-    printList2("y", bs.y);
+    printList2("y", bs?.y);
     print("");
-    printList2("d", bs.d);
+    printList2("d", bs?.d);
     print("");
-    printList2("mu", bs.mu);
+    printList2("mu", bs?.mu);
     print("");
-    printList2("l1", bs.l1);
+    printList2("l1", bs?.l1);
     print("");
-    printList2("l2", bs.l2);
+    printList2("l2", bs?.l2);
     print("");
 
-    print("tanf1 : ${bs.tanf1}");
-    print("tanf2 : ${bs.tanf2}");
+    print("tanf1 : ${bs?.tanf1 ?? '-'}");
+    print("tanf2 : ${bs?.tanf2 ?? '-'}");
     print("");
 
     print("----------------------------------");
@@ -2080,74 +2080,161 @@ void main() {
     if (resSEG.lebar != null) {
       print("Lebar            : ${resSEG.lebar}");
     }
-    if (resSEG.durasiGerhana != null) {
-      print("Durasi Gerhana   : ${resSEG.durasiGerhana}");
-    }
     if (resSEG.durasiTotalitas != null) {
       print("Durasi Totalitas : ${resSEG.durasiTotalitas}");
     }
     print("");
 
-    // helper untuk kontak gerhana
-    void printContactGlobal(String label, EclipseContactGlobal? c) {
-      if (c == null) return;
-
-      if (c.jd == null &&
-          c.jd2 == null &&
-          c.longitude == null &&
-          c.latitude == null &&
-          c.azimuth == null &&
-          c.altitude == null) {
+    // ✅ HELPER BARU: Print kontak dengan struktur flat
+    void printContactFlat(
+      String label, {
+      double? td,
+      double? ut,
+      double? lon,
+      double? lat,
+      double? azm,
+      double? alt,
+    }) {
+      // Skip jika semua null
+      if (td == null &&
+          ut == null &&
+          lon == null &&
+          lat == null &&
+          azm == null &&
+          alt == null) {
         return;
       }
 
       print(label);
-
-      if (c.jd != null) print("  JDTD : ${c.jd}");
-      if (c.jd2 != null) print("  JDUT : ${c.jd2}");
-      if (c.longitude != null) print("  lon  : ${c.longitude}");
-      if (c.latitude != null) print("  lat  : ${c.latitude}");
-      if (c.azimuth != null) print("  Azm  : ${c.azimuth}");
-      if (c.altitude != null) print("  Alt  : ${c.altitude}");
-
+      if (td != null) print("  JDTD : $td");
+      if (ut != null) print("  JDUT : $ut");
+      if (lon != null) print("  lon  : $lon");
+      if (lat != null) print("  lat  : $lat");
+      if (azm != null) print("  Azm  : $azm");
+      if (alt != null) print("  Alt  : $alt");
       print("");
     }
 
     print("KONTAK GERHANA");
     print("----------------------------------------");
 
-    printContactGlobal("P1 (Kontak Awal Umbra)", resSEG.p1);
-    printContactGlobal("U1 (Kontak Awal Umbra)", resSEG.u1);
-    printContactGlobal("C1 (Kontak Awal Umbra)", resSEG.c1);
-    printContactGlobal("U2 (Totalitas Mulai)", resSEG.u2);
-    printContactGlobal("P2 (Kontak Awal Umbra)", resSEG.p2);
-    printContactGlobal("MX (Puncak Gerhana)", resSEG.mx);
-    printContactGlobal("P3 (Kontak Awal Umbra)", resSEG.p3);
-    printContactGlobal("U3 (Totalitas Akhir)", resSEG.u3);
-    printContactGlobal("C2 (Kontak Awal Umbra)", resSEG.c2);
-    printContactGlobal("U4 (Kontak Akhir Umbra)", resSEG.u4);
-    printContactGlobal("P4 (Kontak Awal Umbra)", resSEG.p4);
+    printContactFlat(
+      "P1 (Penumbral First External)",
+      td: resSEG.p1,
+      ut: resSEG.p1UT,
+      lon: resSEG.lonP1,
+      lat: resSEG.latP1,
+      azm: resSEG.azmP1,
+      alt: resSEG.altP1,
+    );
+    printContactFlat(
+      "U1 (Umbral First External)",
+      td: resSEG.u1,
+      ut: resSEG.u1UT,
+      lon: resSEG.lonU1,
+      lat: resSEG.latU1,
+      azm: resSEG.azmU1,
+      alt: resSEG.altU1,
+    );
+    printContactFlat(
+      "C1 (Central First)",
+      td: resSEG.c1,
+      ut: resSEG.c1UT,
+      lon: resSEG.lonC1,
+      lat: resSEG.latC1,
+      azm: resSEG.azmC1,
+      alt: resSEG.altC1,
+    );
+    printContactFlat(
+      "U2 (Umbral First Internal)",
+      td: resSEG.u2,
+      ut: resSEG.u2UT,
+      lon: resSEG.lonU2,
+      lat: resSEG.latU2,
+      azm: resSEG.azmU2,
+      alt: resSEG.altU2,
+    );
+    printContactFlat(
+      "P2 (Penumbral First Internal)",
+      td: resSEG.p2,
+      ut: resSEG.p2UT,
+      lon: resSEG.lonP2,
+      lat: resSEG.latP2,
+      azm: resSEG.azmP2,
+      alt: resSEG.altP2,
+    );
+    printContactFlat(
+      "MX (Puncak Gerhana)",
+      td: resSEG.mx,
+      ut: resSEG.mxUT,
+      lon: resSEG.lonMx,
+      lat: resSEG.latMx,
+      azm: resSEG.azmMx,
+      alt: resSEG.altMx,
+    );
+    printContactFlat(
+      "P3 (Penumbral Last Internal)",
+      td: resSEG.p3,
+      ut: resSEG.p3UT,
+      lon: resSEG.lonP3,
+      lat: resSEG.latP3,
+      azm: resSEG.azmP3,
+      alt: resSEG.altP3,
+    );
+    printContactFlat(
+      "U3 (Umbral Last Internal)",
+      td: resSEG.u3,
+      ut: resSEG.u3UT,
+      lon: resSEG.lonU3,
+      lat: resSEG.latU3,
+      azm: resSEG.azmU3,
+      alt: resSEG.altU3,
+    );
+    printContactFlat(
+      "C2 (Central Last)",
+      td: resSEG.c2,
+      ut: resSEG.c2UT,
+      lon: resSEG.lonC2,
+      lat: resSEG.latC2,
+      azm: resSEG.azmC2,
+      alt: resSEG.altC2,
+    );
+    printContactFlat(
+      "U4 (Umbral Last External)",
+      td: resSEG.u4,
+      ut: resSEG.u4UT,
+      lon: resSEG.lonU4,
+      lat: resSEG.latU4,
+      azm: resSEG.azmU4,
+      alt: resSEG.altU4,
+    );
+    printContactFlat(
+      "P4 (Penumbral Last External)",
+      td: resSEG.p4,
+      ut: resSEG.p4UT,
+      lon: resSEG.lonP4,
+      lat: resSEG.latP4,
+      azm: resSEG.azmP4,
+      alt: resSEG.altP4,
+    );
 
     print("========================================");
     print("DATA MATAHARI & BULAN SAAT PUNCAK");
     print("========================================");
 
-    final eph2 = resSEG.ephemerisMaximum;
+    // ✅ Ephemeris diakses langsung (sudah dipisah)
+    print("MATAHARI");
+    print("  RA  : ${resSEG.sunEphemeris?.ra ?? '-'}");
+    print("  DEC : ${resSEG.sunEphemeris?.dec ?? '-'}");
+    print("  SD  : ${resSEG.sunEphemeris?.sd ?? '-'}");
+    print("  HP  : ${resSEG.sunEphemeris?.hp ?? '-'}");
+    print("");
 
-    if (eph2 != null) {
-      print("MATAHARI");
-      print("  RA  : ${eph2.sun?.ra}");
-      print("  DEC : ${eph2.sun?.dec}");
-      print("  SD  : ${eph2.sun?.sd}");
-      print("  HP  : ${eph2.sun?.hp}");
-      print("");
-
-      print("BULAN");
-      print("  RA  : ${eph2.moon?.ra}");
-      print("  DEC : ${eph2.moon?.dec}");
-      print("  SD  : ${eph2.moon?.sd}");
-      print("  HP  : ${eph2.moon?.hp}");
-    }
+    print("BULAN");
+    print("  RA  : ${resSEG.moonEphemeris?.ra ?? '-'}");
+    print("  DEC : ${resSEG.moonEphemeris?.dec ?? '-'}");
+    print("  SD  : ${resSEG.moonEphemeris?.sd ?? '-'}");
+    print("  HP  : ${resSEG.moonEphemeris?.hp ?? '-'}");
   }
 
   print("");
@@ -2156,8 +2243,8 @@ void main() {
   print("DATA GERHANA MATAHARI LOKAL PER RENTANG TAHUN");
   print("=============================================");
 
-  final thnAwwalHijri = 1440;
-  final thnAkhirHijri = 1450;
+  final thnAwwalHijri = 1437;
+  final thnAkhirHijri = 1438;
   final gLon6 = (108 + 17 / 60.0 + 50 / 3600.0);
   final gLat6 = -(2 + 51 / 60.0 + 25 / 3600.0);
   final elev6 = 2.0;
@@ -2257,7 +2344,157 @@ void main() {
       print("SD  : ${e.ephemerisMaximum?.moon?.sd ?? '-'}");
       print("HP  : ${e.ephemerisMaximum?.moon?.hp ?? '-'}");
 
-      // ─── BESSELIAN ELEMENTS (VERTIKAL) ──────────
+      // ─── BESSELIAN ELEMENTS ──────────
+      print("\n--- BESSELIAN ELEMENTS ---");
+      final b = e.besselian;
+      print("JDE     : ${b.jde ?? '-'}");
+      print("DeltaT  : ${b.deltaT ?? '-'}");
+      print("t0      : ${b.t0 ?? '-'}");
+      print("isValid : ${b.isValid}");
+
+      if (b.x != null) {
+        print("x:");
+        for (int i = 0; i < b.x!.length; i++) {
+          print("   [$i] = ${b.x![i]}");
+        }
+      }
+      if (b.y != null) {
+        print("y:");
+        for (int i = 0; i < b.y!.length; i++) {
+          print("   [$i] = ${b.y![i]}");
+        }
+      }
+      if (b.d != null) {
+        print("d:");
+        for (int i = 0; i < b.d!.length; i++) {
+          print("   [$i] = ${b.d![i]}");
+        }
+      }
+      if (b.mu != null) {
+        print("mu:");
+        for (int i = 0; i < b.mu!.length; i++) {
+          print("   [$i] = ${b.mu![i]}");
+        }
+      }
+      if (b.l1 != null) {
+        print("l1:");
+        for (int i = 0; i < b.l1!.length; i++) {
+          print("   [$i] = ${b.l1![i]}");
+        }
+      }
+      if (b.l2 != null) {
+        print("l2:");
+        for (int i = 0; i < b.l2!.length; i++) {
+          print("   [$i] = ${b.l2![i]}");
+        }
+      }
+      print("tanf1: ${b.tanf1 ?? '-'}");
+      print("tanf2: ${b.tanf2 ?? '-'}");
+
+      print(""); // Spasi antar gerhana
+    }
+  }
+
+  print("==============================================");
+  print("SELESAI");
+  print("==============================================");
+
+  print("");
+
+  print("==============================================");
+  print("DATA GERHANA MATAHARI GLOBAL PER RENTANG TAHUN");
+  print("==============================================");
+
+  final thnAwwalHijri4 = 1437;
+  final thnAkhirHijri4 = 1438;
+
+  for (int thn = thnAwwalHijri4; thn <= thnAkhirHijri4; thn++) {
+    for (int bln = 1; bln <= 12; bln++) {
+      final e = se.solarEclipseGlobal(blnH: bln, thnH: thn);
+      if (e == null || e.ada != true) continue;
+
+      print("=================================");
+      print("Tahun H  : $thn");
+      print("Bulan H  : $bln");
+      print("Jenis    : ${e.jenis}");
+
+      // ─── WAKTU DALAM TD ──────────────────────────
+      print("\n--- WAKTU DALAM TD ---");
+      print("P1 : ${e.p1 ?? '-'}");
+      print("U1 : ${e.u1 ?? '-'}");
+      print("C1 : ${e.c1 ?? '-'}");
+      print("U2 : ${e.u2 ?? '-'}");
+      print("P2 : ${e.p2 ?? '-'}");
+      print("MX : ${e.mx ?? '-'}");
+      print("P3 : ${e.p3 ?? '-'}");
+      print("U3 : ${e.u3 ?? '-'}");
+      print("C2 : ${e.c2 ?? '-'}");
+      print("U4 : ${e.u4 ?? '-'}");
+      print("P4 : ${e.p4 ?? '-'}");
+
+      // ─── WAKTU DALAM UT ─────────────────────────
+      print("\n--- WAKTU DALAM UT ---");
+      print("P1 : ${e.p1UT ?? '-'}");
+      print("U1 : ${e.u1UT ?? '-'}");
+      print("C1 : ${e.c1UT ?? '-'}");
+      print("U2 : ${e.u2UT ?? '-'}");
+      print("P2 : ${e.p2UT ?? '-'}");
+      print("MX : ${e.mxUT ?? '-'}");
+      print("P3 : ${e.p3UT ?? '-'}");
+      print("U3 : ${e.u3UT ?? '-'}");
+      print("C2 : ${e.c2UT ?? '-'}");
+      print("U4 : ${e.u4UT ?? '-'}");
+      print("P4 : ${e.p4UT ?? '-'}");
+
+      // ─── LONGITUDE & LATITUDE ──────────────────
+      print("\n--- LONGITUDE & LATITUDE ---");
+      print("P1 : Lon ${e.lonP1 ?? '-'}, Lat ${e.latP1 ?? '-'}");
+      print("U1 : Lon ${e.lonU1 ?? '-'}, Lat ${e.latU1 ?? '-'}");
+      print("C1 : Lon ${e.lonC1 ?? '-'}, Lat ${e.latC1 ?? '-'}");
+      print("U2 : Lon ${e.lonU2 ?? '-'}, Lat ${e.latU2 ?? '-'}");
+      print("P2 : Lon ${e.lonP2 ?? '-'}, Lat ${e.latP2 ?? '-'}");
+      print("MX : Lon ${e.lonMx ?? '-'}, Lat ${e.latMx ?? '-'}");
+      print("P3 : Lon ${e.lonP3 ?? '-'}, Lat ${e.latP3 ?? '-'}");
+      print("U3 : Lon ${e.lonU3 ?? '-'}, Lat ${e.latU3 ?? '-'}");
+      print("C2 : Lon ${e.lonC2 ?? '-'}, Lat ${e.latC2 ?? '-'}");
+      print("U4 : Lon ${e.lonU4 ?? '-'}, Lat ${e.latU4 ?? '-'}");
+      print("P4 : Lon ${e.lonP4 ?? '-'}, Lat ${e.latP4 ?? '-'}");
+
+      // ─── AZIMUTH & ALTITUDE ────────────────────
+      print("\n--- AZIMUTH & ALTITUDE ---");
+      print("P1 : Azm ${e.azmP1 ?? '-'}, Alt ${e.altP1 ?? '-'}");
+      print("U1 : Azm ${e.azmU1 ?? '-'}, Alt ${e.altU1 ?? '-'}");
+      print("C1 : Azm ${e.azmC1 ?? '-'}, Alt ${e.altC1 ?? '-'}");
+      print("U2 : Azm ${e.azmU2 ?? '-'}, Alt ${e.altU2 ?? '-'}");
+      print("P2 : Azm ${e.azmP2 ?? '-'}, Alt ${e.altP2 ?? '-'}");
+      print("MX : Azm ${e.azmMx ?? '-'}, Alt ${e.altMx ?? '-'}");
+      print("P3 : Azm ${e.azmP3 ?? '-'}, Alt ${e.altP3 ?? '-'}");
+      print("U3 : Azm ${e.azmU3 ?? '-'}, Alt ${e.altU3 ?? '-'}");
+      print("C2 : Azm ${e.azmC2 ?? '-'}, Alt ${e.altC2 ?? '-'}");
+      print("U4 : Azm ${e.azmU4 ?? '-'}, Alt ${e.altU4 ?? '-'}");
+      print("P4 : Azm ${e.azmP4 ?? '-'}, Alt ${e.altP4 ?? '-'}");
+
+      // ─── PARAMETER GERHANA ─────────────────────
+      print("\n--- PARAMETER ---");
+      print("Magnitude        : ${e.magnitude ?? '-'}");
+      print("Durasi Totalitas : ${e.durasiTotalitas ?? '-'}");
+      print("Lebar Jalur      : ${e.lebar ?? '-'}");
+
+      // ─── EPHEMERIS MATAHARI ────────────────────
+      print("\n--- EPHEMERIS MATAHARI ---");
+      print("RA  : ${e.sunEphemeris?.ra ?? '-'}");
+      print("Dec : ${e.sunEphemeris?.dec ?? '-'}");
+      print("SD  : ${e.sunEphemeris?.sd ?? '-'}");
+      print("HP  : ${e.sunEphemeris?.hp ?? '-'}");
+
+      // ─── EPHEMERIS BULAN ───────────────────────
+      print("\n--- EPHEMERIS BULAN ---");
+      print("RA  : ${e.moonEphemeris?.ra ?? '-'}");
+      print("Dec : ${e.moonEphemeris?.dec ?? '-'}");
+      print("SD  : ${e.moonEphemeris?.sd ?? '-'}");
+      print("HP  : ${e.moonEphemeris?.hp ?? '-'}");
+
+      // ─── BESSELIAN ELEMENTS ────────────────────
       print("\n--- BESSELIAN ELEMENTS ---");
       final b = e.besselian;
       if (b != null) {
@@ -2266,6 +2503,7 @@ void main() {
         print("t0      : ${b.t0 ?? '-'}");
         print("isValid : ${b.isValid}");
 
+        // Print array vertikal
         if (b.x != null) {
           print("x:");
           for (int i = 0; i < b.x!.length; i++) {
@@ -2307,100 +2545,6 @@ void main() {
       } else {
         print("Besselian: tidak tersedia");
       }
-
-      print(""); // Spasi antar gerhana
-    }
-  }
-
-  print("==============================================");
-  print("SELESAI");
-  print("==============================================");
-
-  print("");
-  print("==============================================");
-  print("DATA GERHANA MATAHARI GLOBAL PER RENTANG TAHUN");
-  print("==============================================");
-
-  final thnAwwalHijri4 = 1440;
-  final thnAkhirHijri4 = 1450;
-
-  for (int thn = thnAwwalHijri4; thn <= thnAkhirHijri4; thn++) {
-    for (int bln = 1; bln <= 12; bln++) {
-      // Panggil langsung ke solarEclipseGlobal (bukan via summary)
-      final e = se.solarEclipseGlobal(blnH: bln, thnH: thn);
-      if (e == null || e.ada != true) continue;
-
-      print("=================================");
-      print("Tahun H  : $thn");
-      print("Bulan H  : $bln");
-      print("Jenis    : ${e.jenis ?? '-'}");
-
-      // ─── KONTAK DALAM TD (.jd) ─────────────
-      print("\n--- WAKTU DALAM TD ---");
-      print("P1 : ${e.p1?.jd ?? '-'}");
-      print("U1 : ${e.u1?.jd ?? '-'}");
-      print("C1 : ${e.c1?.jd ?? '-'}");
-      print("U2 : ${e.u2?.jd ?? '-'}");
-      print("P2 : ${e.p2?.jd ?? '-'}");
-      print("MX : ${e.mx?.jd ?? '-'}");
-      print("P3 : ${e.p3?.jd ?? '-'}");
-      print("U3 : ${e.u3?.jd ?? '-'}");
-      print("C2 : ${e.c2?.jd ?? '-'}");
-      print("U4 : ${e.u4?.jd ?? '-'}");
-      print("P4 : ${e.p4?.jd ?? '-'}");
-
-      // ─── KONTAK DALAM UT (.jd2) ────────────
-      print("\n--- WAKTU DALAM UT ---");
-      print("P1 : ${e.p1?.jd2 ?? '-'}");
-      print("U1 : ${e.u1?.jd2 ?? '-'}");
-      print("C1 : ${e.c1?.jd2 ?? '-'}");
-      print("U2 : ${e.u2?.jd2 ?? '-'}");
-      print("P2 : ${e.p2?.jd2 ?? '-'}");
-      print("MX : ${e.mx?.jd2 ?? '-'}");
-      print("P3 : ${e.p3?.jd2 ?? '-'}");
-      print("U3 : ${e.u3?.jd2 ?? '-'}");
-      print("C2 : ${e.c2?.jd2 ?? '-'}");
-      print("U4 : ${e.u4?.jd2 ?? '-'}");
-      print("P4 : ${e.p4?.jd2 ?? '-'}");
-
-      // ─── PARAMETER GERHANA ─────────────────
-      print("\n--- PARAMETER ---");
-      print("Magnitude        : ${e.magnitude ?? '-'}");
-      print("Durasi Gerhana   : ${e.durasiGerhana ?? '-'}");
-      print("Durasi Totalitas : ${e.durasiTotalitas ?? '-'}");
-      print("Lebar Jalur      : ${e.lebar ?? '-'}");
-
-      // ─── EPHEMERIS MATAHARI ────────────────
-      print("\n--- EPHEMERIS MATAHARI ---");
-      print("RA  : ${e.ephemerisMaximum?.sun?.ra ?? '-'}");
-      print("Dec : ${e.ephemerisMaximum?.sun?.dec ?? '-'}");
-      print("SD  : ${e.ephemerisMaximum?.sun?.sd ?? '-'}");
-      print("HP  : ${e.ephemerisMaximum?.sun?.hp ?? '-'}");
-
-      // ─── EPHEMERIS BULAN ───────────────────
-      print("\n--- EPHEMERIS BULAN ---");
-      print("RA  : ${e.ephemerisMaximum?.moon?.ra ?? '-'}");
-      print("Dec : ${e.ephemerisMaximum?.moon?.dec ?? '-'}");
-      print("SD  : ${e.ephemerisMaximum?.moon?.sd ?? '-'}");
-      print("HP  : ${e.ephemerisMaximum?.moon?.hp ?? '-'}");
-
-      // ─── BESSELIAN ELEMENTS ────────────────
-      print("\n--- BESSELIAN ELEMENTS ---");
-
-      final b = e.besselian;
-
-      print("JDE     : ${b.jde ?? '-'}");
-      print("DeltaT  : ${b.deltaT ?? '-'}");
-      print("t0      : ${b.t0 ?? '-'}");
-      print("isValid : ${b.isValid}");
-      print("x  : ${b.x ?? '-'}");
-      print("y  : ${b.y ?? '-'}");
-      print("d  : ${b.d ?? '-'}");
-      print("mu : ${b.mu ?? '-'}");
-      print("l1 : ${b.l1 ?? '-'}");
-      print("l2 : ${b.l2 ?? '-'}");
-      print("tanf1: ${b.tanf1 ?? '-'}");
-      print("tanf2: ${b.tanf2 ?? '-'}");
 
       print(""); // Spasi antar gerhana
     }
