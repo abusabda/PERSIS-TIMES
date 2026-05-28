@@ -1,5 +1,9 @@
 ## 1.0.23
 
+- perbaikan kode gerhana matahari global dan gerhana matahari global per range
+
+## 1.0.23
+
 - Perbaikan kode gerhana Matahari lokal dan global per range
 
 ## 1.0.22
