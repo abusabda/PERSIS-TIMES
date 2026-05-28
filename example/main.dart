@@ -1441,7 +1441,7 @@ void main() {
               : i == 3
               ? '₃'
               : '₄';
-          print("  ${label}$sub : ${list[i].toStringAsFixed(5).padLeft(10)}");
+          print("  $label$sub : ${list[i].toStringAsFixed(5).padLeft(10)}");
         }
         print("");
       }
@@ -1973,128 +1973,42 @@ void main() {
     print("");
 
     print("KONTAK GERHANA");
-    print("----------------------------------------");
+    print("---------------------------------");
 
-    // helper kontak lokal
-    void printContact(String label, EclipseContact? c) {
-      if (c == null) return;
+    // U1
+    print("U1 (Kontak Awal Umbra)");
+    print("   JD  : ${resSEL.u1 ?? '-'}");
+    print("   Azm : ${resSEL.azmU1 ?? '-'}");
+    print("   Alt : ${resSEL.altU1 ?? '-'}");
+    print("");
 
-      if (c.jd == null && c.azimuth == null && c.altitude == null) {
-        return;
-      }
+    // U2
+    print("U2 (Totalitas Mulai)");
+    print("   JD  : ${resSEL.u2 ?? '-'}");
+    print("   Azm : ${resSEL.azmU2 ?? '-'}");
+    print("   Alt : ${resSEL.altU2 ?? '-'}");
+    print("");
 
-      print(label);
+    // MX
+    print("MX (Puncak Gerhana)");
+    print("   JD  : ${resSEL.mx ?? '-'}");
+    print("   Azm : ${resSEL.azmMx ?? '-'}");
+    print("   Alt : ${resSEL.altMx ?? '-'}");
+    print("");
 
-      if (c.jd != null) print("  JD   : ${c.jd}");
-      if (c.azimuth != null) print("  Azm  : ${c.azimuth}");
-      if (c.altitude != null) print("  Alt  : ${c.altitude}");
+    // U3
+    print("U3 (Totalitas Akhir)");
+    print("   JD  : ${resSEL.u3 ?? '-'}");
+    print("   Azm : ${resSEL.azmU3 ?? '-'}");
+    print("   Alt : ${resSEL.altU3 ?? '-'}");
+    print("");
 
-      print("");
-    }
-
-    printContact("U1 (Kontak Awal Umbra)", resSEL.u1);
-    printContact("U2 (Totalitas Mulai)", resSEL.u2);
-    printContact("MX (Puncak Gerhana)", resSEL.mx);
-    printContact("U3 (Totalitas Akhir)", resSEL.u3);
-    printContact("U4 (Kontak Akhir Umbra)", resSEL.u4);
-
-    // print("KONTAK GERHANA");
-    // print("----------------------------------------");
-
-    // // U1
-    // if (resSEL.u1 != null) {
-    //   final c = resSEL.u1!;
-    //   if (c.jd != null || c.azimuth != null || c.altitude != null) {
-    //     print("U1 (Kontak Awal Umbra)");
-
-    //     if (c.jd != null) print("  JD   : ${c.jd}");
-    //     if (c.azimuth != null) print("  Azm  : ${c.azimuth}");
-    //     if (c.altitude != null) print("  Alt  : ${c.altitude}");
-
-    //     print("");
-    //   }
-    // }
-
-    // // U2
-    // if (resSEL.u2 != null) {
-    //   final c = resSEL.u2!;
-    //   if (c.jd != null || c.azimuth != null || c.altitude != null) {
-    //     print("U2 (Totalitas Mulai)");
-
-    //     if (c.jd != null) print("  JD   : ${c.jd}");
-    //     if (c.azimuth != null) print("  Azm  : ${c.azimuth}");
-    //     if (c.altitude != null) print("  Alt  : ${c.altitude}");
-
-    //     print("");
-    //   }
-    // }
-
-    // // MX
-    // if (resSEL.mx != null) {
-    //   final c = resSEL.mx!;
-    //   if (c.jd != null || c.azimuth != null || c.altitude != null) {
-    //     print("MX (Puncak Gerhana)");
-
-    //     if (c.jd != null) print("  JD   : ${c.jd}");
-    //     if (c.azimuth != null) print("  Azm  : ${c.azimuth}");
-    //     if (c.altitude != null) print("  Alt  : ${c.altitude}");
-
-    //     print("");
-    //   }
-    // }
-
-    // // U3
-    // if (resSEL.u3 != null) {
-    //   final c = resSEL.u3!;
-    //   if (c.jd != null || c.azimuth != null || c.altitude != null) {
-    //     print("U3 (Totalitas Akhir)");
-
-    //     if (c.jd != null) print("  JD   : ${c.jd}");
-    //     if (c.azimuth != null) print("  Azm  : ${c.azimuth}");
-    //     if (c.altitude != null) print("  Alt  : ${c.altitude}");
-
-    //     print("");
-    //   }
-    // }
-
-    // // U4
-    // if (resSEL.u4 != null) {
-    //   final c = resSEL.u4!;
-    //   if (c.jd != null || c.azimuth != null || c.altitude != null) {
-    //     print("U4 (Kontak Akhir Umbra)");
-
-    //     if (c.jd != null) print("  JD   : ${c.jd}");
-    //     if (c.azimuth != null) print("  Azm  : ${c.azimuth}");
-    //     if (c.altitude != null) print("  Alt  : ${c.altitude}");
-
-    //     print("");
-    //   }
-    // }
-
-    // print("========================================");
-    // print("DATA MATAHARI & BULAN SAAT PUNCAK");
-    // print("========================================");
-
-    // final eph = resSEL.ephemerisMaximum;
-
-    // if (eph != null) {
-    //   if (eph.sun != null) {
-    //     if (eph.sun!.ra != null) print("MATAHARI");
-    //     if (eph.sun!.ra != null) print("  RA  : ${eph.sun!.ra}");
-    //     if (eph.sun!.dec != null) print("  DEC : ${eph.sun!.dec}");
-    //     if (eph.sun!.sd != null) print("  SD  : ${eph.sun!.sd}");
-    //     if (eph.sun!.hp != null) print("  HP  : ${eph.sun!.hp}");
-    //     print("");
-    //   }
-
-    //   if (eph.moon != null) {
-    //     if (eph.moon!.ra != null) print("BULAN");
-    //     if (eph.moon!.ra != null) print("  RA  : ${eph.moon!.ra}");
-    //     if (eph.moon!.dec != null) print("  DEC : ${eph.moon!.dec}");
-    //     if (eph.moon!.sd != null) print("  SD  : ${eph.moon!.sd}");
-    //     if (eph.moon!.hp != null) print("  HP  : ${eph.moon!.hp}");
-    //   }
-    // }
+    // U4
+    print("U4 (Kontak Akhir Umbra)");
+    print("   JD  : ${resSEL.u4 ?? '-'}");
+    print("   Azm : ${resSEL.azmU4 ?? '-'}");
+    print("   Alt : ${resSEL.altU4 ?? '-'}");
+    print("");
   }
 
   print("========================================");
@@ -2242,7 +2156,6 @@ void main() {
   print("DATA GERHANA MATAHARI LOKAL PER RENTANG TAHUN");
   print("=============================================");
 
-  //GERHANA PER RENTANG TAHUN
   final thnAwwalHijri = 1440;
   final thnAkhirHijri = 1450;
   final gLon6 = (108 + 17 / 60.0 + 50 / 3600.0);
@@ -2252,64 +2165,248 @@ void main() {
   final temp6 = 10.0;
   double tmZn6 = 7.0;
 
-  final selRange = se.solarEclipseLocalRangeHijri(
-    tahunAwalH: thnAwwalHijri,
-    tahunAkhirH: thnAkhirHijri,
-    gLon: gLon6,
-    gLat: gLat6,
-    elev: elev6,
-    pres: pres6,
-    temp: temp6,
-    tmZn: tmZn6,
-    timeScale: TimeScale.jdTD,
-  );
+  for (int thn = thnAwwalHijri; thn <= thnAkhirHijri; thn++) {
+    for (int bln = 1; bln <= 12; bln++) {
+      final e = se.solarEclipseLocal(
+        blnH: bln,
+        thnH: thn,
+        gLon: gLon6,
+        gLat: gLat6,
+        elev: elev6,
+        pres: pres6,
+        temp: temp6,
+        tmZn: tmZn6,
+      );
 
-  for (final e in selRange) {
-    print("=================================");
-    print("Tahun H          : ${e.tahunHijri}");
-    print("Bulan H          : ${e.bulanHijri}");
+      if (e == null || e.ada != true) continue;
 
-    List<double?> altitudes = [e.altU1, e.altU2, e.altMx, e.altU3, e.altU4];
-    bool terlihat = altitudes.any((alt) => alt != null && alt > 0);
+      print("=================================");
+      print("Tahun H          : $thn");
+      print("Bulan H          : $bln");
 
-    if (!terlihat) {
-      print("Gerhana tidak terlihat di lokasi");
-      continue;
+      // Cek visibility: minimal satu altitude > 0
+      bool terlihat = [
+        e.altU1,
+        e.altU2,
+        e.altMx,
+        e.altU3,
+        e.altU4,
+      ].any((alt) => alt != null && alt > 0);
+
+      if (!terlihat) {
+        print("Gerhana tidak terlihat di lokasi");
+        print("");
+        continue;
+      }
+
+      print("Jenis            : ${e.jenis}");
+
+      // Hitung deltaT dalam hari untuk konversi TD -> UT
+      final deltaT = e.deltaT ?? 0;
+      final deltaTDays = deltaT / 86400.0;
+
+      // ─── WAKTU DALAM TD ──────────────────────────
+      print("\n--- WAKTU DALAM TD ---");
+      print("U1 : ${e.u1 ?? '-'}");
+      print("U2 : ${e.u2 ?? '-'}");
+      print("MX : ${e.mx ?? '-'}");
+      print("U3 : ${e.u3 ?? '-'}");
+      print("U4 : ${e.u4 ?? '-'}");
+
+      // ─── WAKTU DALAM UT ─────────────────────────
+      print("\n--- WAKTU DALAM UT ---");
+      print("U1 : ${e.u1 != null ? e.u1! - deltaTDays : '-'}");
+      print("U2 : ${e.u2 != null ? e.u2! - deltaTDays : '-'}");
+      print("MX : ${e.mx != null ? e.mx! - deltaTDays : '-'}");
+      print("U3 : ${e.u3 != null ? e.u3! - deltaTDays : '-'}");
+      print("U4 : ${e.u4 != null ? e.u4! - deltaTDays : '-'}");
+
+      // ─── ALTITUDE ────────────────────────────────
+      print("\n--- ALTITUDE ---");
+      print("U1 : ${e.altU1 ?? '-'}");
+      print("U2 : ${e.altU2 ?? '-'}");
+      print("MX : ${e.altMx ?? '-'}");
+      print("U3 : ${e.altU3 ?? '-'}");
+      print("U4 : ${e.altU4 ?? '-'}");
+
+      // ─── AZIMUTH ─────────────────────────────────
+      print("\n--- AZIMUTH ---");
+      print("U1 : ${e.azmU1 ?? '-'}");
+      print("U2 : ${e.azmU2 ?? '-'}");
+      print("MX : ${e.azmMx ?? '-'}");
+      print("U3 : ${e.azmU3 ?? '-'}");
+      print("U4 : ${e.azmU4 ?? '-'}");
+
+      // ── PARAMETER GERHANA ──────────────────────
+      print("\n--- PARAMETER GERHANA ---");
+      print("Magnitude        : ${e.magnitude ?? '-'}");
+      print("Obscuration      : ${e.obscuration ?? '-'}");
+      print("Durasi Total     : ${e.durasiTotalitas ?? '-'}");
+      print("Durasi Gerhana   : ${e.durasiGerhana ?? '-'}");
+
+      // ─── EPHEMERIS PUNCAK ───────────────────────
+      print("\n--- EPHEMERIS MATAHARI ---");
+      print("RA  : ${e.ephemerisMaximum?.sun?.ra ?? '-'}");
+      print("Dec : ${e.ephemerisMaximum?.sun?.dec ?? '-'}");
+      print("SD  : ${e.ephemerisMaximum?.sun?.sd ?? '-'}");
+      print("HP  : ${e.ephemerisMaximum?.sun?.hp ?? '-'}");
+
+      print("\n--- EPHEMERIS BULAN ---");
+      print("RA  : ${e.ephemerisMaximum?.moon?.ra ?? '-'}");
+      print("Dec : ${e.ephemerisMaximum?.moon?.dec ?? '-'}");
+      print("SD  : ${e.ephemerisMaximum?.moon?.sd ?? '-'}");
+      print("HP  : ${e.ephemerisMaximum?.moon?.hp ?? '-'}");
+
+      // ─── BESSELIAN ELEMENTS (VERTIKAL) ──────────
+      print("\n--- BESSELIAN ELEMENTS ---");
+      final b = e.besselian;
+      if (b != null) {
+        print("JDE     : ${b.jde ?? '-'}");
+        print("DeltaT  : ${b.deltaT ?? '-'}");
+        print("t0      : ${b.t0 ?? '-'}");
+        print("isValid : ${b.isValid}");
+
+        if (b.x != null) {
+          print("x:");
+          for (int i = 0; i < b.x!.length; i++) {
+            print("   [$i] = ${b.x![i]}");
+          }
+        }
+        if (b.y != null) {
+          print("y:");
+          for (int i = 0; i < b.y!.length; i++) {
+            print("   [$i] = ${b.y![i]}");
+          }
+        }
+        if (b.d != null) {
+          print("d:");
+          for (int i = 0; i < b.d!.length; i++) {
+            print("   [$i] = ${b.d![i]}");
+          }
+        }
+        if (b.mu != null) {
+          print("mu:");
+          for (int i = 0; i < b.mu!.length; i++) {
+            print("   [$i] = ${b.mu![i]}");
+          }
+        }
+        if (b.l1 != null) {
+          print("l1:");
+          for (int i = 0; i < b.l1!.length; i++) {
+            print("   [$i] = ${b.l1![i]}");
+          }
+        }
+        if (b.l2 != null) {
+          print("l2:");
+          for (int i = 0; i < b.l2!.length; i++) {
+            print("   [$i] = ${b.l2![i]}");
+          }
+        }
+        print("tanf1: ${b.tanf1 ?? '-'}");
+        print("tanf2: ${b.tanf2 ?? '-'}");
+      } else {
+        print("Besselian: tidak tersedia");
+      }
+
+      print(""); // Spasi antar gerhana
     }
-
-    print("Jenis            : ${e.jenis}");
-    print("U1               : ${e.u1 ?? "-"}");
-    print("U2               : ${e.u2 ?? "-"}");
-    print("Max              : ${e.mx ?? "-"}");
-    print("U3               : ${e.u3 ?? "-"}");
-    print("U4               : ${e.u4 ?? "-"}");
-    print("Durasi Totalitas : ${e.durasiTotal ?? "-"}");
-    print("Durasi Gerhana   : ${e.durasiGerhana ?? "-"}");
   }
+
+  print("==============================================");
+  print("SELESAI");
+  print("==============================================");
 
   print("");
   print("==============================================");
   print("DATA GERHANA MATAHARI GLOBAL PER RENTANG TAHUN");
-  print("=============================================");
+  print("==============================================");
 
-  //GERHANA PER RENTANG TAHUN
   final thnAwwalHijri4 = 1440;
   final thnAkhirHijri4 = 1450;
 
-  final segRange = se.solarEclipseGlobalRangeHijri(
-    tahunAwalH: thnAwwalHijri4,
-    tahunAkhirH: thnAkhirHijri4,
-    timeScale: TimeScale.jdUT,
-  );
+  for (int thn = thnAwwalHijri4; thn <= thnAkhirHijri4; thn++) {
+    for (int bln = 1; bln <= 12; bln++) {
+      // Panggil langsung ke solarEclipseGlobal (bukan via summary)
+      final e = se.solarEclipseGlobal(blnH: bln, thnH: thn);
+      if (e == null || e.ada != true) continue;
 
-  for (final e in segRange) {
-    print("=================================");
-    print("Tahun H  : ${e.tahunHijri}");
-    print("Bulan H  : ${e.bulanHijri}");
-    print("Jenis    : ${e.jenis}");
-    print("P1       : ${e.p1}");
-    print("Max      : ${e.max}");
-    print("P4       : ${e.p4}");
-    print("Durasi   : ${e.durasi}");
+      print("=================================");
+      print("Tahun H  : $thn");
+      print("Bulan H  : $bln");
+      print("Jenis    : ${e.jenis ?? '-'}");
+
+      // ─── KONTAK DALAM TD (.jd) ─────────────
+      print("\n--- WAKTU DALAM TD ---");
+      print("P1 : ${e.p1?.jd ?? '-'}");
+      print("U1 : ${e.u1?.jd ?? '-'}");
+      print("C1 : ${e.c1?.jd ?? '-'}");
+      print("U2 : ${e.u2?.jd ?? '-'}");
+      print("P2 : ${e.p2?.jd ?? '-'}");
+      print("MX : ${e.mx?.jd ?? '-'}");
+      print("P3 : ${e.p3?.jd ?? '-'}");
+      print("U3 : ${e.u3?.jd ?? '-'}");
+      print("C2 : ${e.c2?.jd ?? '-'}");
+      print("U4 : ${e.u4?.jd ?? '-'}");
+      print("P4 : ${e.p4?.jd ?? '-'}");
+
+      // ─── KONTAK DALAM UT (.jd2) ────────────
+      print("\n--- WAKTU DALAM UT ---");
+      print("P1 : ${e.p1?.jd2 ?? '-'}");
+      print("U1 : ${e.u1?.jd2 ?? '-'}");
+      print("C1 : ${e.c1?.jd2 ?? '-'}");
+      print("U2 : ${e.u2?.jd2 ?? '-'}");
+      print("P2 : ${e.p2?.jd2 ?? '-'}");
+      print("MX : ${e.mx?.jd2 ?? '-'}");
+      print("P3 : ${e.p3?.jd2 ?? '-'}");
+      print("U3 : ${e.u3?.jd2 ?? '-'}");
+      print("C2 : ${e.c2?.jd2 ?? '-'}");
+      print("U4 : ${e.u4?.jd2 ?? '-'}");
+      print("P4 : ${e.p4?.jd2 ?? '-'}");
+
+      // ─── PARAMETER GERHANA ─────────────────
+      print("\n--- PARAMETER ---");
+      print("Magnitude        : ${e.magnitude ?? '-'}");
+      print("Durasi Gerhana   : ${e.durasiGerhana ?? '-'}");
+      print("Durasi Totalitas : ${e.durasiTotalitas ?? '-'}");
+      print("Lebar Jalur      : ${e.lebar ?? '-'}");
+
+      // ─── EPHEMERIS MATAHARI ────────────────
+      print("\n--- EPHEMERIS MATAHARI ---");
+      print("RA  : ${e.ephemerisMaximum?.sun?.ra ?? '-'}");
+      print("Dec : ${e.ephemerisMaximum?.sun?.dec ?? '-'}");
+      print("SD  : ${e.ephemerisMaximum?.sun?.sd ?? '-'}");
+      print("HP  : ${e.ephemerisMaximum?.sun?.hp ?? '-'}");
+
+      // ─── EPHEMERIS BULAN ───────────────────
+      print("\n--- EPHEMERIS BULAN ---");
+      print("RA  : ${e.ephemerisMaximum?.moon?.ra ?? '-'}");
+      print("Dec : ${e.ephemerisMaximum?.moon?.dec ?? '-'}");
+      print("SD  : ${e.ephemerisMaximum?.moon?.sd ?? '-'}");
+      print("HP  : ${e.ephemerisMaximum?.moon?.hp ?? '-'}");
+
+      // ─── BESSELIAN ELEMENTS ────────────────
+      print("\n--- BESSELIAN ELEMENTS ---");
+
+      final b = e.besselian;
+
+      print("JDE     : ${b.jde ?? '-'}");
+      print("DeltaT  : ${b.deltaT ?? '-'}");
+      print("t0      : ${b.t0 ?? '-'}");
+      print("isValid : ${b.isValid}");
+      print("x  : ${b.x ?? '-'}");
+      print("y  : ${b.y ?? '-'}");
+      print("d  : ${b.d ?? '-'}");
+      print("mu : ${b.mu ?? '-'}");
+      print("l1 : ${b.l1 ?? '-'}");
+      print("l2 : ${b.l2 ?? '-'}");
+      print("tanf1: ${b.tanf1 ?? '-'}");
+      print("tanf2: ${b.tanf2 ?? '-'}");
+
+      print(""); // Spasi antar gerhana
+    }
   }
+
+  print("==============================================");
+  print("SELESAI");
+  print("==============================================");
 }
