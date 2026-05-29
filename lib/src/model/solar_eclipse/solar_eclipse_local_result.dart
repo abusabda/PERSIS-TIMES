@@ -5,14 +5,24 @@ class SolarEclipseLocalResult {
   final bool ada;
   final String? keterangan;
 
-  final SolarBesselianResult besselian;
+  // === BESSELIAN ===
+  final SolarBesselianResult? besselian;
 
-  final double? u1;
-  final double? u2;
-  final double? mx;
-  final double? u3;
-  final double? u4;
+  // === WAKTU KONTAK (TD) ===
+  final double? u1TD;
+  final double? u2TD;
+  final double? mxTD;
+  final double? u3TD;
+  final double? u4TD;
 
+  // === WAKTU KONTAK (UT) ===
+  final double? u1UT;
+  final double? u2UT;
+  final double? mxUT;
+  final double? u3UT;
+  final double? u4UT;
+
+  // === ALTITUDE & AZIMUTH ===
   final double? altU1;
   final double? altU2;
   final double? altMx;
@@ -25,26 +35,37 @@ class SolarEclipseLocalResult {
   final double? azmU3;
   final double? azmU4;
 
-  final EclipseEphemeris? ephemerisMaximum;
+  // === EPHEMERIS PUNCAK (DIPISAH) ===
+  final EclipseEphemerisBody? sunEphemeris;
+  final EclipseEphemerisBody? moonEphemeris;
 
+  // === PARAMETER GERHANA ===
   final double? magnitude;
   final double? obscuration;
   final String jenis;
-
-  final double? deltaT; // ← TAMBAHKAN INI
-
   final double? durasiGerhana;
   final double? durasiTotalitas;
 
   const SolarEclipseLocalResult({
     required this.ada,
-    required this.besselian,
     this.keterangan,
-    this.u1,
-    this.u2,
-    this.mx,
-    this.u3,
-    this.u4,
+    this.besselian,
+
+    // Waktu TD
+    this.u1TD,
+    this.u2TD,
+    this.mxTD,
+    this.u3TD,
+    this.u4TD,
+
+    // Waktu UT
+    this.u1UT,
+    this.u2UT,
+    this.mxUT,
+    this.u3UT,
+    this.u4UT,
+
+    // Altitude & Azimuth
     this.altU1,
     this.altU2,
     this.altMx,
@@ -55,12 +76,16 @@ class SolarEclipseLocalResult {
     this.azmMx,
     this.azmU3,
     this.azmU4,
-    this.ephemerisMaximum,
+
+    // Ephemeris (dipisah)
+    this.sunEphemeris,
+    this.moonEphemeris,
+
+    // Parameter
     this.magnitude,
     this.obscuration,
+    required this.jenis,
     this.durasiGerhana,
     this.durasiTotalitas,
-    this.deltaT,
-    required this.jenis,
   });
 }

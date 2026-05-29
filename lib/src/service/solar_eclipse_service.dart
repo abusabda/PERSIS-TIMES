@@ -939,35 +939,55 @@ class SolarEclipseService {
     double sdM = mo.moonGeocentricSemidiameter(jdSolarMx, 0);
     double hpM = mo.moonEquatorialHorizontalParallax(jdSolarMx, 0);
 
+    // Hitung deltaT dalam hari untuk konversi TD -> UT
+    final deltaTDays = (bessel.deltaT ?? 0) / 86400.0;
+
     return SolarEclipseLocalResult(
       ada: true,
       keterangan: "Ada gerhana",
-
       besselian: bessel,
 
-      u1: jdSolarU1,
-      u2: jdSolarU2,
-      mx: jdSolarMx,
-      u3: jdSolarU3,
-      u4: jdSolarU4,
+      // === WAKTU UT (sudah terkoreksi deltaT) ===
+      u1UT: jdSolarU1,
+      u2UT: jdSolarU2,
+      mxUT: jdSolarMx,
+      u3UT: jdSolarU3,
+      u4UT: jdSolarU4,
 
+      // === WAKTU TD (UT + deltaT) ===
+      u1TD: jdSolarU1 + deltaTDays, // ✅ UT + deltaT = TD
+      u2TD: jdSolarU2 != null ? jdSolarU2 + deltaTDays : null,
+      mxTD: jdSolarMx + deltaTDays,
+      u3TD: jdSolarU3 != null ? jdSolarU3 + deltaTDays : null,
+      u4TD: jdSolarU4 + deltaTDays,
+
+      // === ALTITUDE & AZIMUTH ===
       altU1: altU1,
       altU2: altU2,
       altMx: altMx,
       altU3: altU3,
       altU4: altU4,
-
       azmU1: azmU1,
       azmU2: azmU2,
       azmMx: azmMx,
       azmU3: azmU3,
       azmU4: azmU4,
 
-      ephemerisMaximum: EclipseEphemeris(
-        sun: EclipseEphemerisBody(ra: raS / 15, dec: dcS, sd: sdS, hp: hpS),
-        moon: EclipseEphemerisBody(ra: raM / 15, dec: dcM, sd: sdM, hp: hpM),
+      // === EPHEMERIS (DIPISAH) ===
+      sunEphemeris: EclipseEphemerisBody(
+        ra: raS / 15,
+        dec: dcS,
+        sd: sdS,
+        hp: hpS,
+      ),
+      moonEphemeris: EclipseEphemerisBody(
+        ra: raM / 15,
+        dec: dcM,
+        sd: sdM,
+        hp: hpM,
       ),
 
+      // === PARAMETER ===
       magnitude: mag3,
       obscuration: obs,
       jenis: jSE,
@@ -3383,17 +3403,17 @@ class SolarEclipseService {
       besselian: bessel,
 
       // === WAKTU TD ===
-      p1: jdSolarEclipseP1TD,
-      u1: jdSolarEclipseU1TD,
-      c1: jdSolarEclipseC1TD,
-      u2: jdSolarEclipseU2TD,
-      p2: jdSolarEclipseP2TD,
-      mx: jdSolarEclipseMxTD,
-      p3: jdSolarEclipseP3TD,
-      u3: jdSolarEclipseU3TD,
-      c2: jdSolarEclipseC2TD,
-      u4: jdSolarEclipseU4TD,
-      p4: jdSolarEclipseP4TD,
+      p1TD: jdSolarEclipseP1TD,
+      u1TD: jdSolarEclipseU1TD,
+      c1TD: jdSolarEclipseC1TD,
+      u2TD: jdSolarEclipseU2TD,
+      p2TD: jdSolarEclipseP2TD,
+      mxTD: jdSolarEclipseMxTD,
+      p3TD: jdSolarEclipseP3TD,
+      u3TD: jdSolarEclipseU3TD,
+      c2TD: jdSolarEclipseC2TD,
+      u4TD: jdSolarEclipseU4TD,
+      p4TD: jdSolarEclipseP4TD,
 
       // === WAKTU UT ===
       p1UT: jdSolarEclipseP1UT,
@@ -3499,17 +3519,17 @@ class SolarEclipseService {
         double? p1, u1, c1, u2, p2, mx, p3, u3, c2, u4, p4;
 
         if (timeScale == TimeScale.jdTD) {
-          p1 = e.p1;
-          u1 = e.u1;
-          c1 = e.c1;
-          u2 = e.u2;
-          p2 = e.p2;
-          mx = e.mx;
-          p3 = e.p3;
-          u3 = e.u3;
-          c2 = e.c2;
-          u4 = e.u4;
-          p4 = e.p4;
+          p1 = e.p1TD;
+          u1 = e.u1TD;
+          c1 = e.c1TD;
+          u2 = e.u2TD;
+          p2 = e.p2TD;
+          mx = e.mxTD;
+          p3 = e.p3TD;
+          u3 = e.u3TD;
+          c2 = e.c2TD;
+          u4 = e.u4TD;
+          p4 = e.p4TD;
         } else {
           p1 = e.p1UT;
           u1 = e.u1UT;
@@ -3541,7 +3561,7 @@ class SolarEclipseService {
         double? lonP1 = e.lonP1;
         double? lonU1 = e.lonU1;
         double? lonC1 = e.lonC1;
-        double? lonU2 = e.lonU2; // ✅ Diperbaiki: sebelumnya e.u1
+        double? lonU2 = e.lonU2;
         double? lonP2 = e.lonP2;
         double? lonMx = e.lonMx;
         double? lonP3 = e.lonP3;
@@ -3553,7 +3573,7 @@ class SolarEclipseService {
         double? latP1 = e.latP1;
         double? latU1 = e.latU1;
         double? latC1 = e.latC1;
-        double? latU2 = e.latU2; // ✅ Diperbaiki: sebelumnya e.u1
+        double? latU2 = e.latU2;
         double? latP2 = e.latP2;
         double? latMx = e.latMx;
         double? latP3 = e.latP3;
@@ -3566,7 +3586,7 @@ class SolarEclipseService {
         double? azmP1 = e.azmP1;
         double? azmU1 = e.azmU1;
         double? azmC1 = e.azmC1;
-        double? azmU2 = e.azmU2; // ✅ Diperbaiki: sebelumnya e.u1
+        double? azmU2 = e.azmU2;
         double? azmP2 = e.azmP2;
         double? azmMx = e.azmMx;
         double? azmP3 = e.azmP3;
@@ -3578,7 +3598,7 @@ class SolarEclipseService {
         double? altP1 = e.altP1;
         double? altU1 = e.altU1;
         double? altC1 = e.altC1;
-        double? altU2 = e.altU2; // ✅ Diperbaiki: sebelumnya e.u1
+        double? altU2 = e.altU2;
         double? altP2 = e.altP2;
         double? altMx = e.altMx;
         double? altP3 = e.altP3;
@@ -3719,70 +3739,89 @@ class SolarEclipseService {
 
         if (e == null || e.ada != true) continue;
 
-        // Hitung deltaT dalam hari
-        final deltaT = e.deltaT ?? 0;
-        final deltaTDays = deltaT / 86400.0;
+        // === WAKTU TD (langsung dari field baru) ===
+        final u1TD = e.u1TD;
+        final u2TD = e.u2TD;
+        final mxTD = e.mxTD;
+        final u3TD = e.u3TD;
+        final u4TD = e.u4TD;
 
-        // TD: langsung dari e.u1 (sudah dalam TD)
-        final u1TD = e.u1;
-        final u2TD = e.u2;
-        final mxTD = e.mx;
-        final u3TD = e.u3;
-        final u4TD = e.u4;
+        // === WAKTU UT (langsung dari field baru) ===
+        final u1UT = e.u1UT;
+        final u2UT = e.u2UT;
+        final mxUT = e.mxUT;
+        final u3UT = e.u3UT;
+        final u4UT = e.u4UT;
 
-        // UT: hitung manual TD - deltaT
-        final u1UT = u1TD != null ? u1TD - deltaTDays : null;
-        final u2UT = u2TD != null ? u2TD - deltaTDays : null;
-        final mxUT = mxTD != null ? mxTD - deltaTDays : null;
-        final u3UT = u3TD != null ? u3TD - deltaTDays : null;
-        final u4UT = u4TD != null ? u4TD - deltaTDays : null;
+        // === ALTITUDE & AZIMUTH ===
+        final altU1 = e.altU1;
+        final altU2 = e.altU2;
+        final altMx = e.altMx;
+        final altU3 = e.altU3;
+        final altU4 = e.altU4;
 
-        // Ephemeris
-        final sunEphe = e.ephemerisMaximum?.sun;
-        final moonEphe = e.ephemerisMaximum?.moon;
+        final azmU1 = e.azmU1;
+        final azmU2 = e.azmU2;
+        final azmMx = e.azmMx;
+        final azmU3 = e.azmU3;
+        final azmU4 = e.azmU4;
 
-        // ✅ TAMBAHKAN KE LIST HASIL
+        // === EPHEMERIS (langsung dari field terpisah) ===
+        final sunEphe = e.sunEphemeris;
+        final moonEphe = e.moonEphemeris;
+
+        // === PARAMETER ===
+        final jenis = e.jenis;
+        final magnitude = e.magnitude;
+        final obscuration = e.obscuration;
+        final durasiTotal = e.durasiTotalitas;
+        final durasiGerhana = e.durasiGerhana;
+        final besselian = e.besselian;
+
+        // === TAMBAHKAN KE LIST HASIL ===
         hasil.add(
           SolarEclipseLocalSummary(
             tahunHijri: thn,
             bulanHijri: bln,
 
-            // Waktu TD & UT
+            // Waktu TD
             u1TD: u1TD,
-            u1UT: u1UT,
             u2TD: u2TD,
-            u2UT: u2UT,
             mxTD: mxTD,
-            mxUT: mxUT,
             u3TD: u3TD,
-            u3UT: u3UT,
             u4TD: u4TD,
+
+            // Waktu UT
+            u1UT: u1UT,
+            u2UT: u2UT,
+            mxUT: mxUT,
+            u3UT: u3UT,
             u4UT: u4UT,
 
             // Altitude & Azimuth
-            altU1: e.altU1,
-            azmU1: e.azmU1,
-            altU2: e.altU2,
-            azmU2: e.azmU2,
-            altMx: e.altMx,
-            azmMx: e.azmMx,
-            altU3: e.altU3,
-            azmU3: e.azmU3,
-            altU4: e.altU4,
-            azmU4: e.azmU4,
+            altU1: altU1,
+            altU2: altU2,
+            altMx: altMx,
+            altU3: altU3,
+            altU4: altU4,
+            azmU1: azmU1,
+            azmU2: azmU2,
+            azmMx: azmMx,
+            azmU3: azmU3,
+            azmU4: azmU4,
 
             // Parameter
-            magnitude: e.magnitude,
-            obscuration: e.obscuration,
-            durasiTotal: e.durasiTotalitas,
-            durasiGerhana: e.durasiGerhana,
+            magnitude: magnitude,
+            obscuration: obscuration,
+            durasiTotal: durasiTotal,
+            durasiGerhana: durasiGerhana,
 
             // Ephemeris & Besselian
             sunEphemeris: sunEphe,
             moonEphemeris: moonEphe,
-            besselian: e.besselian,
+            besselian: besselian,
 
-            jenis: e.jenis,
+            jenis: jenis,
           ),
         );
       }

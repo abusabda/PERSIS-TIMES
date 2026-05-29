@@ -9,17 +9,17 @@ class SolarEclipseGlobalResult {
   final SolarBesselianResult? besselian;
 
   // === KONTAK WAKTU (JD TD) ===
-  final double? p1;
-  final double? u1;
-  final double? c1;
-  final double? u2;
-  final double? p2;
-  final double? mx;
-  final double? p3;
-  final double? u3;
-  final double? c2;
-  final double? u4;
-  final double? p4;
+  final double? p1TD;
+  final double? u1TD;
+  final double? c1TD;
+  final double? u2TD;
+  final double? p2TD;
+  final double? mxTD;
+  final double? p3TD;
+  final double? u3TD;
+  final double? c2TD;
+  final double? u4TD;
+  final double? p4TD;
 
   // === KONTAK WAKTU (JD UT) ===
   final double? p1UT;
@@ -102,17 +102,17 @@ class SolarEclipseGlobalResult {
     this.besselian,
 
     // Waktu TD
-    this.p1,
-    this.u1,
-    this.c1,
-    this.u2,
-    this.p2,
-    this.mx,
-    this.p3,
-    this.u3,
-    this.c2,
-    this.u4,
-    this.p4,
+    this.p1TD,
+    this.u1TD,
+    this.c1TD,
+    this.u2TD,
+    this.p2TD,
+    this.mxTD,
+    this.p3TD,
+    this.u3TD,
+    this.c2TD,
+    this.u4TD,
+    this.p4TD,
 
     // Waktu UT
     this.p1UT,
