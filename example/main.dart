@@ -2277,8 +2277,8 @@ void main() {
 
   final thnAwwalHijri = 1437;
   final thnAkhirHijri = 1440;
-  final gLon6 = (107 + 17 / 60.0 + 50 / 3600.0);
-  final gLat6 = -(7 + 51 / 60.0 + 25 / 3600.0);
+  final gLon6 = (108 + 17 / 60.0 + 50 / 3600.0);
+  final gLat6 = -(2 + 51 / 60.0 + 25 / 3600.0);
   final elev6 = 2.0;
   final pres6 = 1010.0;
   final temp6 = 10.0;
