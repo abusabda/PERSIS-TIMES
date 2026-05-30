@@ -1,3 +1,7 @@
+## 1.0.28
+
+- perbaikan class safe math.
+
 ## 1.0.27
 
 - perubahan istilah durasiTotal ke durasiTotalitas untuk konsistensi.

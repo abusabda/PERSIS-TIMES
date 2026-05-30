@@ -1,4 +1,5 @@
 import 'dart:math';
+import '../math/safe_math.dart';
 
 class MathFunction {
   // Konversi sudut
@@ -6,9 +7,23 @@ class MathFunction {
   double rad(double x) => x * pi / 180.0;
 
   // Modulus
-  double mod(double x, double y) => x - y * (x / y).floor();
+  double mod(double a, double m) {
+    // 🔴 GUARD: NaN/Infinity check
+    if (!SafeMath.isValid(a) || !SafeMath.isValid(m) || m == 0) {
+      return 0.0;
+    }
 
-  double floor(double x) => (x).floorToDouble();
+    // Original logic dengan SafeMath
+    final quotient = SafeMath.safeDiv(a, m);
+    return a - m * quotient.floor();
+  }
+
+  //double floor(double x) => (x).floorToDouble();
+  double floor(double value) {
+    if (!SafeMath.isValid(value)) return 0.0;
+    return value.floorToDouble();
+  }
+
   double abs(double x) => (x).abs();
 
   // Sign
