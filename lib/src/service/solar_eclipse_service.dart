@@ -1201,7 +1201,7 @@ class SolarEclipseService {
 
     final double ns1 = SafeMath.sqrt(cc * cc + aa * aa);
 
-    final double dur = SafeMath.safeDiv(mf.abs(7200 * l2pMx), ns1) / 60.0;
+    final double dur = SafeMath.safeDiv(mf.abs(7200 * l2pMx), ns1) / 3600.0;
 
     // ==========================
     // Azimuth & Altitude puncak gerhana

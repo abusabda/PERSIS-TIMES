@@ -2276,7 +2276,7 @@ void main() {
   print("=============================================");
 
   final thnAwwalHijri = 1437;
-  final thnAkhirHijri = 1438;
+  final thnAkhirHijri = 1440;
   final gLon6 = (108 + 17 / 60.0 + 50 / 3600.0);
   final gLat6 = -(2 + 51 / 60.0 + 25 / 3600.0);
   final elev6 = 2.0;
