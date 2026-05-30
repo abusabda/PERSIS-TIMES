@@ -35,7 +35,7 @@ class SolarEclipseLocalSummary {
   // === PARAMETER GERHANA ===
   final double? magnitude;
   final double? obscuration;
-  final double? durasiTotal;
+  final double? durasiTotalitas;
   final double? durasiGerhana;
 
   // === EPHEMERIS SAAT PUNCAK ===
@@ -80,7 +80,7 @@ class SolarEclipseLocalSummary {
     // Parameter
     this.magnitude,
     this.obscuration,
-    this.durasiTotal,
+    this.durasiTotalitas,
     this.durasiGerhana,
 
     // Ephemeris

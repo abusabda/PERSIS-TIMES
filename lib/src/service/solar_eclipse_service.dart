@@ -3813,7 +3813,7 @@ class SolarEclipseService {
             // Parameter
             magnitude: magnitude,
             obscuration: obscuration,
-            durasiTotal: durasiTotal,
+            durasiTotalitas: durasiTotal,
             durasiGerhana: durasiGerhana,
 
             // Ephemeris & Besselian
