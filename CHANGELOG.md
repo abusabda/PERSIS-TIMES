@@ -1,3 +1,7 @@
+## 1.0.27
+
+- perubahan istilah durasiTotal ke durasiTotalitas untuk konsistensi.
+
 ## 1.0.26
 
 - perubahan durasi gerhana matahari global dari satuan menit jadi satuan jam
