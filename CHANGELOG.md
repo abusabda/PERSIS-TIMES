@@ -1,3 +1,7 @@
+## 1.0.26
+
+- perubahan durasi gerhana matahari global dari satuan menit jadi satuan jam
+
 ## 1.0.25
 
 - perbaikan kode gerhana matahari lokal dan gerhana matahari lokal per range
