@@ -1,3 +1,7 @@
+## 1.0.31
+
+- perbaikan altitude matahari pada solar eclipse local per range
+
 ## 1.0.30
 
 - perbaikan solar eclipse global per range

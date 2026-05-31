@@ -2275,11 +2275,11 @@ void main() {
   print("DATA GERHANA MATAHARI LOKAL PER RENTANG TAHUN");
   print("=============================================");
 
-  final thnAwwalHijri = 1437;
-  final thnAkhirHijri = 1440;
-  final gLon6 = (108 + 17 / 60.0 + 50 / 3600.0);
-  final gLat6 = -(2 + 51 / 60.0 + 25 / 3600.0);
-  final elev6 = 2.0;
+  final thnAwwalHijri = 1449;
+  final thnAkhirHijri = 1449;
+  final gLon6 = (107 + 31 / 60.0 + 2.77 / 3600.0);
+  final gLat6 = -(6 + 58 / 60.0 + 15.91 / 3600.0);
+  final elev6 = 738.0;
   final pres6 = 1010.0;
   final temp6 = 10.0;
   double tmZn6 = 7.0;

@@ -876,7 +876,7 @@ class SolarEclipseService {
       elev,
       pres,
       temp,
-      "htoc",
+      "htc",
     );
 
     final double? altU2 = jdSolarU2 != null
@@ -888,7 +888,7 @@ class SolarEclipseService {
             elev,
             pres,
             temp,
-            "htoc",
+            "htc",
           )
         : null;
 
@@ -900,7 +900,7 @@ class SolarEclipseService {
       elev,
       pres,
       temp,
-      "htoc",
+      "htc",
     );
 
     final double? altU3 = jdSolarU3 != null
@@ -912,7 +912,7 @@ class SolarEclipseService {
             elev,
             pres,
             temp,
-            "htoc",
+            "htc",
           )
         : null;
 
@@ -924,7 +924,7 @@ class SolarEclipseService {
       elev,
       pres,
       temp,
-      "htoc",
+      "htc",
     );
 
     // ================== Data matahari saat maximum=====================
