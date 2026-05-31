@@ -1,3 +1,8 @@
+## 1.0.30
+
+- perbaikan solar eclipse global per range
+
+
 ## 1.0.29
 
 - perbaikan solar eclipse service

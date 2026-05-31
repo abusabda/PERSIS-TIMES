@@ -3515,194 +3515,95 @@ class SolarEclipseService {
 
         if (e == null || e.ada != true) continue;
 
-        // === WAKTU TD (sesuai TimeScale atau default) ===
-        double? p1, u1, c1, u2, p2, mx, p3, u3, c2, u4, p4;
-
-        if (timeScale == TimeScale.jdTD) {
-          p1 = e.p1TD;
-          u1 = e.u1TD;
-          c1 = e.c1TD;
-          u2 = e.u2TD;
-          p2 = e.p2TD;
-          mx = e.mxTD;
-          p3 = e.p3TD;
-          u3 = e.u3TD;
-          c2 = e.c2TD;
-          u4 = e.u4TD;
-          p4 = e.p4TD;
-        } else {
-          p1 = e.p1UT;
-          u1 = e.u1UT;
-          c1 = e.c1UT;
-          u2 = e.u2UT;
-          p2 = e.p2UT;
-          mx = e.mxUT;
-          p3 = e.p3UT;
-          u3 = e.u3UT;
-          c2 = e.c2UT;
-          u4 = e.u4UT;
-          p4 = e.p4UT;
-        }
-
-        // === WAKTU UT (selalu diisi, terlepas dari TimeScale) ===
-        double? p1UT = e.p1UT;
-        double? u1UT = e.u1UT;
-        double? c1UT = e.c1UT;
-        double? u2UT = e.u2UT;
-        double? p2UT = e.p2UT;
-        double? mxUT = e.mxUT;
-        double? p3UT = e.p3UT;
-        double? u3UT = e.u3UT;
-        double? c2UT = e.c2UT;
-        double? u4UT = e.u4UT;
-        double? p4UT = e.p4UT;
-
-        // === LONGITUDE & LATITUDE ===
-        double? lonP1 = e.lonP1;
-        double? lonU1 = e.lonU1;
-        double? lonC1 = e.lonC1;
-        double? lonU2 = e.lonU2;
-        double? lonP2 = e.lonP2;
-        double? lonMx = e.lonMx;
-        double? lonP3 = e.lonP3;
-        double? lonU3 = e.lonU3;
-        double? lonC2 = e.lonC2;
-        double? lonU4 = e.lonU4;
-        double? lonP4 = e.lonP4;
-
-        double? latP1 = e.latP1;
-        double? latU1 = e.latU1;
-        double? latC1 = e.latC1;
-        double? latU2 = e.latU2;
-        double? latP2 = e.latP2;
-        double? latMx = e.latMx;
-        double? latP3 = e.latP3;
-        double? latU3 = e.latU3;
-        double? latC2 = e.latC2;
-        double? latU4 = e.latU4;
-        double? latP4 = e.latP4;
-
-        // === AZIMUTH & ALTITUDE ===
-        double? azmP1 = e.azmP1;
-        double? azmU1 = e.azmU1;
-        double? azmC1 = e.azmC1;
-        double? azmU2 = e.azmU2;
-        double? azmP2 = e.azmP2;
-        double? azmMx = e.azmMx;
-        double? azmP3 = e.azmP3;
-        double? azmU3 = e.azmU3;
-        double? azmC2 = e.azmC2;
-        double? azmU4 = e.azmU4;
-        double? azmP4 = e.azmP4;
-
-        double? altP1 = e.altP1;
-        double? altU1 = e.altU1;
-        double? altC1 = e.altC1;
-        double? altU2 = e.altU2;
-        double? altP2 = e.altP2;
-        double? altMx = e.altMx;
-        double? altP3 = e.altP3;
-        double? altU3 = e.altU3;
-        double? altC2 = e.altC2;
-        double? altU4 = e.altU4;
-        double? altP4 = e.altP4;
-
-        // === PARAMETER & LAINNYA ===
-        final jenis = e.jenis ?? "";
-        final magnitude = e.magnitude;
-        final durasiTotalitas = e.durasiTotalitas;
-        final lebar = e.lebar;
-        final besselian = e.besselian;
-        final sunEphe = e.sunEphemeris;
-        final moonEphe = e.moonEphemeris;
-
         hasil.add(
           SolarEclipseGlobalSummary(
             tahunHijri: thn,
             bulanHijri: bln,
 
-            // Waktu TD (sesuai TimeScale)
-            p1: p1,
-            u1: u1,
-            c1: c1,
-            u2: u2,
-            p2: p2,
-            mx: mx,
-            p3: p3,
-            u3: u3,
-            c2: c2,
-            u4: u4,
-            p4: p4,
+            // === WAKTU TD (SELALU dari field TD) ===
+            p1TD: e.p1TD,
+            u1TD: e.u1TD,
+            c1TD: e.c1TD,
+            u2TD: e.u2TD,
+            p2TD: e.p2TD,
+            mxTD: e.mxTD,
+            p3TD: e.p3TD,
+            u3TD: e.u3TD,
+            c2TD: e.c2TD,
+            u4TD: e.u4TD,
+            p4TD: e.p4TD,
 
-            // Waktu UT (selalu diisi)
-            p1UT: p1UT,
-            u1UT: u1UT,
-            c1UT: c1UT,
-            u2UT: u2UT,
-            p2UT: p2UT,
-            mxUT: mxUT,
-            p3UT: p3UT,
-            u3UT: u3UT,
-            c2UT: c2UT,
-            u4UT: u4UT,
-            p4UT: p4UT,
+            // === WAKTU UT (SELALU dari field UT) ===
+            p1UT: e.p1UT,
+            u1UT: e.u1UT,
+            c1UT: e.c1UT,
+            u2UT: e.u2UT,
+            p2UT: e.p2UT,
+            mxUT: e.mxUT,
+            p3UT: e.p3UT,
+            u3UT: e.u3UT,
+            c2UT: e.c2UT,
+            u4UT: e.u4UT,
+            p4UT: e.p4UT,
 
-            // Longitude & Latitude
-            lonP1: lonP1,
-            lonU1: lonU1,
-            lonC1: lonC1,
-            lonU2: lonU2,
-            lonP2: lonP2,
-            lonMx: lonMx,
-            lonP3: lonP3,
-            lonU3: lonU3,
-            lonC2: lonC2,
-            lonU4: lonU4,
-            lonP4: lonP4,
-            latP1: latP1,
-            latU1: latU1,
-            latC1: latC1,
-            latU2: latU2,
-            latP2: latP2,
-            latMx: latMx,
-            latP3: latP3,
-            latU3: latU3,
-            latC2: latC2,
-            latU4: latU4,
-            latP4: latP4,
+            // === LONGITUDE & LATITUDE ===
+            lonP1: e.lonP1,
+            lonU1: e.lonU1,
+            lonC1: e.lonC1,
+            lonU2: e.lonU2,
+            lonP2: e.lonP2,
+            lonMx: e.lonMx,
+            lonP3: e.lonP3,
+            lonU3: e.lonU3,
+            lonC2: e.lonC2,
+            lonU4: e.lonU4,
+            lonP4: e.lonP4,
 
-            // Azimuth & Altitude
-            azmP1: azmP1,
-            azmU1: azmU1,
-            azmC1: azmC1,
-            azmU2: azmU2,
-            azmP2: azmP2,
-            azmMx: azmMx,
-            azmP3: azmP3,
-            azmU3: azmU3,
-            azmC2: azmC2,
-            azmU4: azmU4,
-            azmP4: azmP4,
-            altP1: altP1,
-            altU1: altU1,
-            altC1: altC1,
-            altU2: altU2,
-            altP2: altP2,
-            altMx: altMx,
-            altP3: altP3,
-            altU3: altU3,
-            altC2: altC2,
-            altU4: altU4,
-            altP4: altP4,
+            latP1: e.latP1,
+            latU1: e.latU1,
+            latC1: e.latC1,
+            latU2: e.latU2,
+            latP2: e.latP2,
+            latMx: e.latMx,
+            latP3: e.latP3,
+            latU3: e.latU3,
+            latC2: e.latC2,
+            latU4: e.latU4,
+            latP4: e.latP4,
 
-            // Parameter & Lainnya
-            magnitude: magnitude,
-            durasiTotalitas: durasiTotalitas,
-            lebar: lebar,
-            jenis: jenis,
-            besselian: besselian,
-            sunEphemeris: sunEphe,
-            moonEphemeris: moonEphe,
+            // === AZIMUTH & ALTITUDE ===
+            azmP1: e.azmP1,
+            azmU1: e.azmU1,
+            azmC1: e.azmC1,
+            azmU2: e.azmU2,
+            azmP2: e.azmP2,
+            azmMx: e.azmMx,
+            azmP3: e.azmP3,
+            azmU3: e.azmU3,
+            azmC2: e.azmC2,
+            azmU4: e.azmU4,
+            azmP4: e.azmP4,
+
+            altP1: e.altP1,
+            altU1: e.altU1,
+            altC1: e.altC1,
+            altU2: e.altU2,
+            altP2: e.altP2,
+            altMx: e.altMx,
+            altP3: e.altP3,
+            altU3: e.altU3,
+            altC2: e.altC2,
+            altU4: e.altU4,
+            altP4: e.altP4,
+
+            // === PARAMETER & LAINNYA ===
+            jenis: e.jenis ?? "",
+            magnitude: e.magnitude,
+            durasiTotalitas: e.durasiTotalitas,
+            lebar: e.lebar,
+            besselian: e.besselian,
+            sunEphemeris: e.sunEphemeris,
+            moonEphemeris: e.moonEphemeris,
           ),
         );
       }

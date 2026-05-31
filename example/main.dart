@@ -31,8 +31,8 @@ void main() {
     tmZn: 7.0,
     temp: 10.0,
     pres: 1010.0,
-    deltaTOverride:
-        0.0, //default kalau tanpa deltaToverride maka otomatis menggunakan rumus deltaT
+    // deltaTOverride:
+    //     0.0, //default kalau tanpa deltaToverride maka otomatis menggunakan rumus deltaT
   );
 
   print("JD                   : ${res2.jd}");
@@ -2437,8 +2437,8 @@ void main() {
   print("DATA GERHANA MATAHARI GLOBAL PER RENTANG TAHUN");
   print("==============================================");
 
-  final thnAwwalHijri4 = 1437;
-  final thnAkhirHijri4 = 1438;
+  final thnAwwalHijri4 = 1449;
+  final thnAkhirHijri4 = 1449;
 
   for (int thn = thnAwwalHijri4; thn <= thnAkhirHijri4; thn++) {
     for (int bln = 1; bln <= 12; bln++) {
