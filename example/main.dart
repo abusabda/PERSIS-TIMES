@@ -9,6 +9,7 @@ void main() {
   final cs = CalendarService();
   final le = LunarEclipseService();
   final se = SolarEclipseService();
+  final vh = PetaVisibilitasService();
   final jd = JulianDay();
   final mf = MathFunction();
   final moonService = MoonService();
@@ -1152,6 +1153,186 @@ void main() {
   print("Ummul Qura                      : $abqUQNow");
 
   print(" ");
+
+  // ==========================================
+  // CONTOH PENGGUNAAN SERVICE VISIBILITAS HILAL
+  // ==========================================
+  final peta = PetaVisibilitasService();
+
+  final result = peta.hitung(
+    blnH: 9, // Ramadhan (bulan ke-9)
+    thnH: 1447, // Tahun Hijriah
+    gLon: 106.8167, // Bujur Jakarta (BT)
+    gLat: -6.2, // Lintang Jakarta (LS)
+    tmZn: 7.0, // WIB (GMT+7)
+    tbhHari: 0, // Hari ijtimak (0 = hari yang sama)
+  );
+
+  // ==========================================
+  // CETAK HASIL LENGKAP
+  // ==========================================
+  print('╔════════════════════════════════════════════════════════════╗');
+  print('║       HASIL PERHITUNGAN VISIBILITAS HILAL                 ║');
+  print('╚════════════════════════════════════════════════════════════╝');
+
+  // Waktu-waktu penting
+  print('\n┌─ WAKTU PENTING ─────────────────────────────────────────┐');
+  print('│ JD Ijtimak (Geo)     : ${result.geojdIjtimak}');
+  print('│ JD Ghurub (Sunset)   : ${result.sunsetJD}');
+  print('└──────────────────────────────────────────────────────────┘');
+
+  // Parameter astronomi dasar
+  print('\n┌─ PARAMETER ASTRONOMI ───────────────────────────────────┐');
+  print(
+    '│ Elongasi Geosentris (ARCL Geo) : ${result.elongGeo.toStringAsFixed(4)}°',
+  );
+  print(
+    '│ Elongasi Toposentris (ARCL)    : ${result.elongasi.toStringAsFixed(4)}°',
+  );
+  print(
+    '│ Beda Tinggi (ARCV)             : ${result.arcv.toStringAsFixed(4)}°',
+  );
+  print('│ Beda Azimuth (DAZ)             : ${result.daz.toStringAsFixed(4)}°');
+  print(
+    '│ Lebar Sabit (W)                : ${result.crescentWidth.toStringAsFixed(4)}\'',
+  );
+  print(
+    '│ Tinggi Bulan (Topo, Airless)   : ${result.moonAltitude.toStringAsFixed(4)}°',
+  );
+  print(
+    '│ Tinggi Bulan (Topo, Observed)  : ${result.moonTopoAltitudeObsCenter.toStringAsFixed(4)}°',
+  );
+  print(
+    '│ Tinggi Bulan (Geosentris)      : ${result.moonGeoAltitude.toStringAsFixed(4)}°',
+  );
+  print(
+    '│ Tinggi Piringan Bawah Bulan    : ${result.moonLowerLimbAltitude.toStringAsFixed(4)}°',
+  );
+  print('└──────────────────────────────────────────────────────────┘');
+
+  // Kriteria Odeh
+  print('\n┌─ 1. KRITERIA ODEH (2006) ───────────────────────────────┐');
+  print('│ Nilai V (qOdeh)  : ${result.qOdeh.toStringAsFixed(4)}');
+  print('│ Zona Visibilitas : ${result.zonaOdeh}');
+  print('└──────────────────────────────────────────────────────────┘');
+
+  // Kriteria Yallop
+  print('\n┌─ 2. KRITERIA YALLOP (1997) ─────────────────────────────┐');
+  print('│ Nilai W\'         : ${result.wPrime.toStringAsFixed(4)}');
+  print('│ Nilai q (qYallop): ${result.qYallop.toStringAsFixed(4)}');
+  print('│ Zona Visibilitas : ${result.zonaYallop}');
+  print('└──────────────────────────────────────────────────────────┘');
+
+  // Kriteria SAAO
+  print('\n┌─ 3. KRITERIA SAAO (2001) ───────────────────────────────┐');
+  print('│ DALT1 (batas bawah) : ${result.dalt1.toStringAsFixed(4)}°');
+  print('│ DALT2 (batas atas)  : ${result.dalt2.toStringAsFixed(4)}°');
+  print('│ Status              : ${result.saaoStatus}');
+  print('└──────────────────────────────────────────────────────────┘');
+
+  // Kriteria Maunder
+  print('\n┌─ 4. KRITERIA MAUNDER (1911) ────────────────────────────┐');
+  print('│ Batas Minimum ARCV : ${result.maunderMinimum.toStringAsFixed(4)}°');
+  print('│ ARCV saat ini      : ${result.arcv.toStringAsFixed(4)}°');
+  print(
+    '│ Status             : ${result.maunderVisible ? "✅ TERLIHAT" : "❌ TIDAK TERLIHAT"}',
+  );
+  print('└──────────────────────────────────────────────────────────┘');
+
+  // Kriteria Bruin
+  print('\n┌─ 5. KRITERIA BRUIN (1977) ──────────────────────────────┐');
+  print('│ Batas Minimum ARCV : ${result.bruinMinimum.toStringAsFixed(4)}°');
+  print('│ ARCV saat ini      : ${result.arcv.toStringAsFixed(4)}°');
+  print(
+    '│ Status             : ${result.bruinVisible ? "✅ TERLIHAT" : "❌ TIDAK TERLIHAT"}',
+  );
+  print('└──────────────────────────────────────────────────────────┘');
+
+  // Kriteria MABIMS
+  print('\n┌─ 6. KRITERIA IR MABIMS (2021) ──────────────────────────┐');
+  print('│ Syarat 1: Elong Geo ≥ 6.4°');
+  print(
+    '│          → ${result.elongGeo.toStringAsFixed(3)}° ${result.elongGeo >= 6.4 ? "✅" : "❌"}',
+  );
+  print('│ Syarat 2: Tinggi Bulan (htoc) ≥ 3°');
+  print(
+    '│          → ${result.moonTopoAltitudeObsCenter.toStringAsFixed(3)}° ${result.moonTopoAltitudeObsCenter >= 3.0 ? "✅" : "❌"}',
+  );
+  print('│ Status   : ${result.mabimsStatus}');
+  print('└──────────────────────────────────────────────────────────┘');
+
+  // Kriteria Turki
+  print('\n┌─ 7. KRITERIA TURKI / KHGT ──────────────────────────────┐');
+  print('│ Syarat 1: Elong Geo ≥ 8°');
+  print(
+    '│          → ${result.elongGeo.toStringAsFixed(3)}° ${result.elongGeo >= 8.0 ? "✅" : "❌"}',
+  );
+  print('│ Syarat 2: Tinggi Bulan (Geo) ≥ 5°');
+  print(
+    '│          → ${result.moonGeoAltitude.toStringAsFixed(3)}° ${result.moonGeoAltitude >= 5.0 ? "✅" : "❌"}',
+  );
+  print('│ Status   : ${result.turkiStatus}');
+  print('└──────────────────────────────────────────────────────────┘');
+
+  // Kesimpulan
+  print('\n╔════════════════════════════════════════════════════════════╗');
+  print('║                    KESIMPULAN                              ║');
+  print('╠════════════════════════════════════════════════════════════╣');
+  print('║ Odeh   : ${result.zonaOdeh.padRight(46)}║');
+  print('║ Yallop : ${result.zonaYallop.padRight(46)}║');
+  print('║ SAAO   : ${result.saaoStatus.padRight(46)}║');
+  print(
+    '║ Maunder: ${(result.maunderVisible ? "Terlihat" : "Tidak Terlihat").padRight(46)}║',
+  );
+  print(
+    '║ Bruin  : ${(result.bruinVisible ? "Terlihat" : "Tidak Terlihat").padRight(46)}║',
+  );
+  print(
+    '║ MABIMS : ${(result.mabimsVisible ? "Terlihat" : "Tidak Terlihat").padRight(46)}║',
+  );
+  print(
+    '║ Turki  : ${(result.turkiVisible ? "Terlihat" : "Tidak Terlihat").padRight(46)}║',
+  );
+  print('╚════════════════════════════════════════════════════════════╝');
+
+  // ==========================================
+  // PERBANDINGAN LOKASI
+  // ==========================================
+  print('\n${'=' * 60}');
+  print('PERBANDINGAN LOKASI');
+  print('=' * 60);
+
+  final lokasi = [
+    {'nama': 'Jakarta', 'lon': 106.8167, 'lat': -6.2, 'tz': 7.0},
+    {'nama': 'Makassar', 'lon': 119.4327, 'lat': -5.1477, 'tz': 8.0},
+    {'nama': 'Jayapura', 'lon': 140.6689, 'lat': -2.5916, 'tz': 9.0},
+    {'nama': 'Makkah', 'lon': 39.8262, 'lat': 21.4225, 'tz': 3.0},
+    {'nama': 'Istanbul', 'lon': 28.9784, 'lat': 41.0082, 'tz': 3.0},
+  ];
+
+  for (final loc in lokasi) {
+    final r = peta.hitung(
+      blnH: 9,
+      thnH: 1447,
+      gLon: loc['lon'] as double,
+      gLat: loc['lat'] as double,
+      tmZn: loc['tz'] as double,
+      tbhHari: 0,
+    );
+
+    print('\n📍 ${loc['nama']}:');
+    print('   Elong Geo: ${r.elongGeo.toStringAsFixed(3)}°');
+    print(
+      '   Tinggi Bulan (Topo Obs): ${r.moonTopoAltitudeObsCenter.toStringAsFixed(3)}°',
+    );
+    print('   Tinggi Bulan (Geo): ${r.moonGeoAltitude.toStringAsFixed(3)}°');
+    print('   Q-Odeh: ${r.qOdeh.toStringAsFixed(3)} → ${r.zonaOdeh}');
+    print('   Q-Yallop: ${r.qYallop.toStringAsFixed(3)} → ${r.zonaYallop}');
+    print('   MABIMS: ${r.mabimsVisible ? "✅ Terlihat" : "❌ Tidak terlihat"}');
+    print('   Turki: ${r.turkiVisible ? "✅ Terlihat" : "❌ Tidak terlihat"}');
+  }
+
+  print("====================");
 
   // INPUT GERHANA BULAN
   final int blnH2 = 9;

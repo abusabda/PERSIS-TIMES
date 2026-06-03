@@ -1,3 +1,7 @@
+## 1.0.32
+
+- penambahan service peta visibilitas hilal
+
 ## 1.0.31
 
 - perbaikan altitude matahari pada solar eclipse local per range

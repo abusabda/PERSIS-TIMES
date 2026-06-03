@@ -24,6 +24,10 @@ export 'src/service/hisab_awal_bulan_service.dart';
 // Calendar
 export 'src/service/calendar_service.dart';
 
+// Visibilitas Hilal
+export 'src/model/awal_bulan/peta_visibilitas_hilal_result.dart';
+export 'src/service/peta_visibilitas_service.dart';
+
 // Eclipse
 export 'src/service/lunar_eclipse_service.dart';
 export 'src/service/solar_eclipse_service.dart';
