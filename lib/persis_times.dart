@@ -2,11 +2,13 @@
 
 // Astronomy
 export 'src/core/astronomy/julian_day.dart';
+export 'src/core/astronomy/dynamical_time.dart';
 export 'src/core/astronomy/time_scale.dart';
+export 'src/core/astronomy/sun_function.dart';
+export 'src/core/astronomy/moon_function.dart';
 
 // Math
 export 'src/core/math/math_utils.dart';
-export 'src/core/astronomy/dynamical_time.dart';
 
 // Salat
 export 'src/model/salat/salat_status.dart';
