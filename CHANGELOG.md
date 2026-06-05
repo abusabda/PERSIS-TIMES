@@ -1,3 +1,7 @@
+## 1.0.35
+
+- penambahan algoritma Jean Meeus- Astronomical Alghortithm 2nd
+
 ## 1.0.34
 
 - update export library Persis Times
