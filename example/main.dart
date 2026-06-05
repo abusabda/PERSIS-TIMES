@@ -9,11 +9,13 @@ void main() {
   final cs = CalendarService();
   final le = LunarEclipseService();
   final se = SolarEclipseService();
-  final vh = PetaVisibilitasService();
+  // final vh = PetaVisibilitasService();
   final jd = JulianDay();
   final mf = MathFunction();
-  final moonService = MoonService();
-  final sunService = SunService();
+  final moonService = MoonService(); //ELPMPP02
+  final sunService = SunService(); //VSOP87
+  // final sunMeeus = SunCalculator(); //sunMeeus
+  // final moonMeeus = MoonCalculator(); //moonMeuus
 
   print("======================");
   print("DATA MATAHARI");
@@ -754,7 +756,7 @@ void main() {
   print("        HISAB AWAL BULAN HIJRIAH");
   print("========================================");
   final String loc = "Banda Aceh";
-  final int blnH = 3;
+  final int blnH = 1;
   final int thnH = 1448;
   final double gLon = (95 + 19 / 60 + 1.92 / 3600);
   final double gLat = (5 + 33 / 60 + 12.96 / 3600);

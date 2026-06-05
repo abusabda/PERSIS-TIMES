@@ -6,6 +6,8 @@ export 'src/core/astronomy/dynamical_time.dart';
 export 'src/core/astronomy/time_scale.dart';
 export 'src/core/astronomy/sun_function.dart';
 export 'src/core/astronomy/moon_function.dart';
+export 'src/core/astronomy/sun_function_meeus.dart';
+export 'src/core/astronomy/moon_function_meeus.dart';
 
 // Math
 export 'src/core/math/math_utils.dart';

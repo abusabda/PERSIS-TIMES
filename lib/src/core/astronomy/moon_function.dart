@@ -987,14 +987,14 @@ class MoonFunction {
     double x3 = jdNM + 1 / 24;
 
     double y1 =
-        sn.sunGeocentricLongitude(x1, deltaT, "appa") -
-        ml.moonGeocentricLongitude(x1, deltaT, "appa");
+        sn.sunGeocentricLongitude(x1, deltaT, "Appa") -
+        ml.moonGeocentricLongitude(x1, deltaT, "Appa");
     double y2 =
-        sn.sunGeocentricLongitude(x2, deltaT, "appa") -
-        ml.moonGeocentricLongitude(x2, deltaT, "appa");
+        sn.sunGeocentricLongitude(x2, deltaT, "Appa") -
+        ml.moonGeocentricLongitude(x2, deltaT, "Appa");
     double y3 =
-        sn.sunGeocentricLongitude(x3, deltaT, "appa") -
-        ml.moonGeocentricLongitude(x3, deltaT, "appa");
+        sn.sunGeocentricLongitude(x3, deltaT, "Appa") -
+        ml.moonGeocentricLongitude(x3, deltaT, "Appa");
 
     double a = y2 - y1;
     double b = y3 - y2;
@@ -1007,7 +1007,7 @@ class MoonFunction {
       jdNMGeo = jdNM + n0 / 24;
     }
 
-    double lonG = sn.sunGeocentricLongitude(jdNMGeo, deltaT, "appa");
+    double lonG = sn.sunGeocentricLongitude(jdNMGeo, deltaT, "Appa");
 
     switch (optR) {
       case "Ijtima":
