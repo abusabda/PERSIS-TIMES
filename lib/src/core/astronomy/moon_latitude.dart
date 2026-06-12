@@ -30,8 +30,22 @@ class MoonLatitude {
   final mf = MathFunction();
   final jd = JulianDay();
 
+  // ═══════════════════════════════════════════════════════════════
+  // ── CACHE ─────────────────────────────────────────────────────
+  // Key cache: (jde, opt) — sama seperti MoonLongitude, karena
+  // "Appa" vs "True" mengubah hasil akhir (ada/tidaknya term abr).
+  // ═══════════════════════════════════════════════════════════════
+  double? _cacheJde;
+  String? _cacheOpt;
+  double? _cacheResult;
+
   double moonGeocentricLatitude(double jd, double deltaT, String opt) {
     final jde = jd + deltaT / 86400.0;
+
+    // ✅ Cek cache: jde DAN opt harus sama
+    if (_cacheJde == jde && _cacheOpt == opt && _cacheResult != null) {
+      return _cacheResult!;
+    }
 
     // waktu Julian Century
     final t = julianDay.jc(jde);
@@ -188,15 +202,22 @@ class MoonLatitude {
 
     final moonLat = b / 3600.0 + abr;
 
+    double result;
     switch (opt) {
       case "Appa":
-        return moonLat;
+        result = moonLat;
+        break;
       case "True":
-        return b / 3600.0;
+        result = b / 3600.0;
+        break;
       default:
-        return moonLat;
+        result = moonLat;
     }
 
-    //return moonLat;
+    // ✅ Simpan ke cache sebelum return
+    _cacheJde = jde;
+    _cacheOpt = opt;
+    _cacheResult = result;
+    return result;
   }
 }

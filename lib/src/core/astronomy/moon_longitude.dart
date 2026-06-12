@@ -43,8 +43,29 @@ class MoonLongitude {
   final nt = NutationAndObliquity();
   final julianDay = JulianDay();
 
+  // ═══════════════════════════════════════════════════════════════
+  // ── CACHE ─────────────────────────────────────────────────────
+  // Key cache HARUS menyertakan (jd, deltaT, opt) karena:
+  // - jde = jd + deltaT/86400 menentukan nilai L0..L3
+  // - opt ("True"/"Appa"/dst) menentukan POST-PROCESSING (nutasi,
+  //   aberasi) yang diterapkan ke L0..L3, sehingga hasil akhir
+  //   berbeda walau jde sama.
+  // Karena computeEphemeris memanggil dengan opt="Appa" berulang
+  // untuk jd yang sama, cache 1-slot berbasis (jde, opt) sudah
+  // cukup efektif.
+  // ═══════════════════════════════════════════════════════════════
+  double? _cacheJde;
+  String? _cacheOpt;
+  double? _cacheResult;
+
   double moonGeocentricLongitude(double jd, double deltaT, String opt) {
     final jde = jd + deltaT / 86400.0;
+
+    // ✅ Cek cache: jde DAN opt harus sama
+    if (_cacheJde == jde && _cacheOpt == opt && _cacheResult != null) {
+      return _cacheResult!;
+    }
+
     final t = julianDay.jc(jde);
     final t1 = math.pow(t, 1.0);
     final t2 = math.pow(t, 2.0);
@@ -303,23 +324,37 @@ class MoonLongitude {
     // ApparentGeocentricEclipticLongitude
     final moonAppaLon = moonTrueLon + nutation + abr;
 
+    double result;
     switch (opt) {
       case "L0":
-        return l0;
+        result = l0;
+        break;
       case "L1":
-        return l1;
+        result = l1;
+        break;
       case "L2":
-        return l2;
+        result = l2;
+        break;
       case "L3":
-        return l3;
+        result = l3;
+        break;
       case "L":
-        return l;
+        result = l;
+        break;
       case "True":
-        return moonTrueLon;
+        result = moonTrueLon;
+        break;
       case "Appa":
-        return moonAppaLon;
+        result = moonAppaLon;
+        break;
       default:
-        return moonAppaLon;
+        result = moonAppaLon;
     }
+
+    // ✅ Simpan ke cache sebelum return
+    _cacheJde = jde;
+    _cacheOpt = opt;
+    _cacheResult = result;
+    return result;
   }
 }

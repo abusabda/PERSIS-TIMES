@@ -42,8 +42,26 @@ class MoonDistance {
   final mf = MathFunction();
   final julianDay = JulianDay();
 
+  // ═══════════════════════════════════════════════════════════════
+  // ── CACHE ─────────────────────────────────────────────────────
+  // Key cache: (jde, opt) — opt menentukan satuan output (KM/AU/ER/
+  // R0/R1/dst), tapi seluruh series (r0,r1,r2,r3,abr) dihitung dari
+  // jde yang sama. Karena opt mengubah HASIL AKHIR (konversi satuan
+  // berbeda untuk KM vs AU vs R0 dst), key tetap menyertakan opt
+  // agar aman.
+  // ═══════════════════════════════════════════════════════════════
+  double? _cacheJde;
+  String? _cacheOpt;
+  double? _cacheResult;
+
   double moonGeocentricDistance(double jd, double deltaT, String opt) {
     final jde = jd + deltaT / 86400.0;
+
+    // ✅ Cek cache: jde DAN opt harus sama
+    if (_cacheJde == jde && _cacheOpt == opt && _cacheResult != null) {
+      return _cacheResult!;
+    }
+
     final t = julianDay.jc(jde);
     final t1 = math.pow(t, 1.0);
     final t2 = math.pow(t, 2.0);
@@ -286,27 +304,43 @@ class MoonDistance {
     final rAU = r / 149597870.7;
     final rER = r / 6371.0;
 
+    double result;
     switch (opt) {
       case "R0":
-        return r0;
+        result = r0;
+        break;
       case "R1":
-        return r1;
+        result = r1;
+        break;
       case "R2":
-        return r2;
+        result = r2;
+        break;
       case "R3":
-        return r3;
+        result = r3;
+        break;
       case "Rp":
-        return rp;
+        result = rp;
+        break;
       case "R":
-        return r;
+        result = r;
+        break;
       case "KM":
-        return rKM;
+        result = rKM;
+        break;
       case "AU":
-        return rAU;
+        result = rAU;
+        break;
       case "ER":
-        return rER;
+        result = rER;
+        break;
       default:
-        return rKM;
+        result = rKM;
     }
+
+    // ✅ Simpan ke cache sebelum return
+    _cacheJde = jde;
+    _cacheOpt = opt;
+    _cacheResult = result;
+    return result;
   }
 }

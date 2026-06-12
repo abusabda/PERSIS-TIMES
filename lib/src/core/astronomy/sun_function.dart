@@ -1,3 +1,33 @@
+// ═══════════════════════════════════════════════════════════════════
+// PATCH: SunFunction dengan MEMOIZATION CACHE
+// ═══════════════════════════════════════════════════════════════════
+//
+// IDE: earthHeliocentricLongitude, earthHeliocentricLatitude, dan
+// earthRadiusVector adalah method PALING MAHAL (1080, 348, dan 997
+// suku cosine). Method2 lain (sunGeocentricLongitude, Latitude,
+// RightAscension, Declination, GreenwichHourAngle, equationOfTime,
+// Distance, Semidiameter, Parallax) SEMUANYA memanggil 1 atau lebih
+// dari 3 method dasar ini -- dengan (jd, deltaT) yang SAMA dalam
+// satu iterasi.
+//
+// SOLUSI: cache hasil 3 method dasar ini berdasarkan key (jd, deltaT).
+// Cache di-reset otomatis ketika (jd, deltaT) baru muncul -> aman
+// untuk dipakai lintas instance / lintas pemanggilan (cache size
+// kecil, cukup simpan nilai TERAKHIR saja karena pemanggilan selalu
+// berurutan untuk (jd, deltaT) yang sama sebelum pindah ke jd lain).
+//
+// CARA PAKAI:
+// 1. Copy 3 method earthHeliocentricLongitude/Latitude/earthRadiusVector
+//    yang sudah dimodifikasi ini ke dalam class SunFunction Anda,
+//    MENGGANTIKAN versi lama.
+// 2. Tidak ada perubahan apapun di method lain (sunGeocentricLongitude,
+//    dst) -- mereka tetap memanggil method2 ini seperti biasa, tapi
+//    sekarang hasilnya di-cache.
+//
+// HASIL: Untuk 1 baris jam, 3 series (L,B,R) masing2 HANYA dihitung
+// SEKALI (bukan 5-6x), sehingga waktu per-jam turun drastis
+// (estimasi dari ~100ms menjadi ~15-20ms untuk Sun).
+
 import 'dart:math' as math;
 import '../math/math_utils.dart';
 import 'julian_day.dart';
@@ -25,6 +55,7 @@ import '../../data/sun_data_r04.dart';
 import '../../data/sun_data_r05.dart';
 
 class SunFunction {
+  // ── Data series VSOP87 (tetap field instance seperti semula) ────
   final l00 = SunDataL00.vsop87MtL0;
   final l01 = SunDataL01.vsop87MtL1;
   final l02 = SunDataL02.vsop87MtL2;
@@ -50,8 +81,31 @@ class SunFunction {
   final nt = NutationAndObliquity();
   final dt = DynamicalTime();
 
+  // ═══════════════════════════════════════════════════════════════
+  // ── CACHE STORAGE (BARU) ─────────────────────────────────────────
+  // Cache hanya menyimpan hasil TERAKHIR per method (L, B, R),
+  // di-key berdasarkan jde = jd + deltaT/86400.
+  // ═══════════════════════════════════════════════════════════════
+  double? _cacheJdeL;
+  double? _cacheL;
+
+  double? _cacheJdeB;
+  double? _cacheB;
+
+  double? _cacheJdeR;
+  double? _cacheR;
+
+  // ═══════════════════════════════════════════════════════════════
+  // earthHeliocentricLongitude — DENGAN CACHE
+  // ═══════════════════════════════════════════════════════════════
   double earthHeliocentricLongitude(double jd, double deltaT) {
     final jde = jd + deltaT / 86400.0; // waktu dalam Dynamical Time (TD)
+
+    // ✅ Cek cache dulu
+    if (_cacheJdeL == jde && _cacheL != null) {
+      return _cacheL!;
+    }
+
     final t = julianDay.jc(jde);
     final tau = julianDay.jm(t);
 
@@ -103,11 +157,23 @@ class SunFunction {
       360.0,
     );
 
+    // ✅ Simpan ke cache sebelum return
+    _cacheJdeL = jde;
+    _cacheL = l;
     return l;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // earthHeliocentricLatitude — DENGAN CACHE
+  // ═══════════════════════════════════════════════════════════════
   double earthHeliocentricLatitude(double jd, double deltaT) {
     final jde = jd + deltaT / 86400.0;
+
+    // ✅ Cek cache dulu
+    if (_cacheJdeB == jde && _cacheB != null) {
+      return _cacheB!;
+    }
+
     final t = julianDay.jc(jde);
     final tau = julianDay.jm(t);
 
@@ -149,11 +215,23 @@ class SunFunction {
           b04sum * math.pow(tau, 4),
     );
 
+    // ✅ Simpan ke cache sebelum return
+    _cacheJdeB = jde;
+    _cacheB = b;
     return b;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // earthRadiusVector — DENGAN CACHE
+  // ═══════════════════════════════════════════════════════════════
   double earthRadiusVector(double jd, double deltaT) {
     final jde = jd + deltaT / 86400;
+
+    // ✅ Cek cache dulu
+    if (_cacheJdeR == jde && _cacheR != null) {
+      return _cacheR!;
+    }
+
     final t = julianDay.jc(jde);
     final tau = julianDay.jm(t);
 
@@ -201,6 +279,9 @@ class SunFunction {
         r004sum * math.pow(tau, 4) +
         r005sum * math.pow(tau, 5);
 
+    // ✅ Simpan ke cache sebelum return
+    _cacheJdeR = jde;
+    _cacheR = r;
     return r;
   }
 
