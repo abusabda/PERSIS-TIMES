@@ -1,3 +1,7 @@
+## 1.0.37
+
+- penambahan cache pada LBR algoritma Jean Meeus
+
 ## 1.0.36
 
 - penambahan cache pada LBR algoritma VSOP87 dan ELPMPP02

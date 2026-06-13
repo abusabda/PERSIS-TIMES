@@ -12,10 +12,40 @@ class MoonCalculator {
   final jd = JulianDay();
   final dt = DynamicalTime();
 
+  // ═══════════════════════════════════════════════════════════════
+  // ── CACHE ─────────────────────────────────────────────────────
+  // moonGeocentricLongitude, moonGeocentricLatitude, dan
+  // moonGeocentricDistance masing-masing hanya bergantung pada `jd`
+  // (deltaT tidak dipakai dalam rumus, dan optResult/opt mengubah
+  // hasil akhir -> key cache menyertakan opt).
+  //
+  // Method2 lain (RightAscension, Declination, GreenwichHourAngle,
+  // Elongation, PhaseAngle, IlluminatedFraction, BrightLimbAngle,
+  // Topocentric*, dst) semuanya memanggil 1 atau lebih dari 3 method
+  // ini dengan `jd` yang sama dalam satu iterasi -> cache berbasis
+  // (jd, opt) sudah cukup efektif.
+  // ═══════════════════════════════════════════════════════════════
+  double? _cacheJdLon;
+  String? _cacheOptLon;
+  double? _cacheLon;
+
+  double? _cacheJdLat;
+  String? _cacheOptLat;
+  double? _cacheLat;
+
+  double? _cacheJdDist;
+  String? _cacheOptDist;
+  double? _cacheDist;
+
   // ==========================================================================
-  // MoonGeocentricLongitude (λ)
+  // MoonGeocentricLongitude (λ) — DENGAN CACHE
   // ==========================================================================
   double moonGeocentricLongitude(double jd, double deltaT, String opt) {
+    // ✅ Cek cache dulu
+    if (_cacheJdLon == jd && _cacheOptLon == opt && _cacheLon != null) {
+      return _cacheLon!;
+    }
+
     double t = (jd - 2451545.0) / 36525.0;
 
     // Fundamental arguments (dalam derajat)
@@ -138,21 +168,35 @@ class MoonCalculator {
     double lMAppa = lMTrue + nt.nutationInLongitude(jd);
     lMAppa = mf.mod(lMAppa, 360.0);
 
+    double result;
     switch (opt) {
       case "":
       case "True":
-        return lMTrue;
+        result = lMTrue;
+        break;
       case "Appa":
-        return lMAppa;
+        result = lMAppa;
+        break;
       default:
-        return lMAppa;
+        result = lMAppa;
     }
+
+    // ✅ Simpan ke cache sebelum return
+    _cacheJdLon = jd;
+    _cacheOptLon = opt;
+    _cacheLon = result;
+    return result;
   }
 
   // ==========================================================================
-  // MoonGeocentricLatitude (β)
+  // MoonGeocentricLatitude (β) — DENGAN CACHE
   // ==========================================================================
   double moonGeocentricLatitude(double jd, double deltaT, String opt) {
+    // ✅ Cek cache dulu
+    if (_cacheJdLat == jd && _cacheOptLat == opt && _cacheLat != null) {
+      return _cacheLat!;
+    }
+
     double t = (jd - 2451545.0) / 36525.0;
 
     // Fundamental arguments
@@ -274,21 +318,37 @@ class MoonCalculator {
 
     bM = bM / 1000000.0;
 
+    double result;
     switch (opt) {
       case "":
       case "True":
-        return bM;
+        result = bM;
+        break;
       case "Appa":
-        return bM;
+        result = bM;
+        break;
       default:
-        return bM;
+        result = bM;
     }
+
+    // ✅ Simpan ke cache sebelum return
+    _cacheJdLat = jd;
+    _cacheOptLat = opt;
+    _cacheLat = result;
+    return result;
   }
 
   // ==========================================================================
-  // MoonGeocentricDistance (r)
+  // MoonGeocentricDistance (r) — DENGAN CACHE
   // ==========================================================================
   double moonGeocentricDistance(double jd, {String optResult = ""}) {
+    final cleanOpt = optResult.replaceAll(' ', '').toUpperCase();
+
+    // ✅ Cek cache dulu
+    if (_cacheJdDist == jd && _cacheOptDist == cleanOpt && _cacheDist != null) {
+      return _cacheDist!;
+    }
+
     double t = (jd - 2451545.0) / 36525.0;
 
     // Fundamental arguments
@@ -403,7 +463,6 @@ class MoonCalculator {
     rM = 385000.56 + rM / 1000.0;
 
     // Pemilihan hasil
-    String cleanOpt = optResult.replaceAll(' ', '').toUpperCase();
     double result;
     switch (cleanOpt) {
       case "AU":
@@ -419,6 +478,10 @@ class MoonCalculator {
         result = rM;
     }
 
+    // ✅ Simpan ke cache sebelum return
+    _cacheJdDist = jd;
+    _cacheOptDist = cleanOpt;
+    _cacheDist = result;
     return result;
   }
 
@@ -914,17 +977,17 @@ class MoonCalculator {
 
   //Keterangan:
 
-  //htu  = Airles topocentric altitude of The Moon’s Upper Limb
-  //htc  = Airless topocentric altitude of The Moon’s Center Limb
-  //htl  = Airles topocentric altitude of The Moon’s Lower Limb
+  //htu  = Airles topocentric altitude of The Moon's Upper Limb
+  //htc  = Airless topocentric altitude of The Moon's Center Limb
+  //htl  = Airles topocentric altitude of The Moon's Lower Limb
 
-  //htal = Apparent topocentric altitude of The Moon’s Lower Limb
-  //htac = Apparent topocentric altitude of The Moon’s Center Limb
-  //htau = Apparent topocentric altitude of The Moon’s Upper Limb
+  //htal = Apparent topocentric altitude of The Moon's Lower Limb
+  //htac = Apparent topocentric altitude of The Moon's Center Limb
+  //htau = Apparent topocentric altitude of The Moon's Upper Limb
 
-  //htou = Observed altitude of The Moon’s Upper Limb
-  //htoc = Observed altitude of The Moon’s Center Limb
-  //htol = Observed altitude of The Moon’s Lower Limb
+  //htou = Observed altitude of The Moon's Upper Limb
+  //htoc = Observed altitude of The Moon's Center Limb
+  //htol = Observed altitude of The Moon's Lower Limb
 
   double moonSunTopocentricElongation(
     double jd,

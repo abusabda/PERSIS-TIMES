@@ -10,10 +10,35 @@ class SunCalculator {
   final dt = DynamicalTime();
   final julianDay = JulianDay();
 
+  // ═══════════════════════════════════════════════════════════════
+  // ── CACHE ─────────────────────────────────────────────────────
+  // earthHeliocentricLongitude, earthHeliocentricLatitude, dan
+  // earthRadiusVector hanya bergantung pada `jd` (TIDAK ada deltaT
+  // di versi Meeus ini — tau = (jd - 2451545)/365250 langsung dari
+  // jd). Method2 lain (sunGeocentricLongitude, Latitude,
+  // RightAscension, Declination, GreenwichHourAngle, equationOfTime,
+  // Distance, Semidiameter, Parallax, dst) semuanya memanggil 1 atau
+  // lebih dari 3 method ini dengan `jd` yang sama dalam satu iterasi
+  // -> cache berbasis `jd` sudah cukup.
+  // ═══════════════════════════════════════════════════════════════
+  double? _cacheJdL;
+  double? _cacheL;
+
+  double? _cacheJdB;
+  double? _cacheB;
+
+  double? _cacheJdR;
+  double? _cacheR;
+
   // ==========================================================================
-  // EarthHeliocentricLongitude
+  // EarthHeliocentricLongitude — DENGAN CACHE
   // ==========================================================================
   double earthHeliocentricLongitude(double jd) {
+    // ✅ Cek cache dulu
+    if (_cacheJdL == jd && _cacheL != null) {
+      return _cacheL!;
+    }
+
     double tau = (jd - 2451545.0) / 365250.0;
 
     // L0
@@ -174,13 +199,21 @@ class SunCalculator {
     l = mf.deg(l);
     l = mf.mod(l, 360.0);
 
+    // ✅ Simpan ke cache sebelum return
+    _cacheJdL = jd;
+    _cacheL = l;
     return l;
   }
 
   // ==========================================================================
-  // EarthHeliocentricLatitude
+  // EarthHeliocentricLatitude — DENGAN CACHE
   // ==========================================================================
   double earthHeliocentricLatitude(double jd) {
+    // ✅ Cek cache dulu
+    if (_cacheJdB == jd && _cacheB != null) {
+      return _cacheB!;
+    }
+
     double tau = (jd - 2451545.0) / 365250.0;
 
     // B0
@@ -199,13 +232,21 @@ class SunCalculator {
     double b = (b0 + b1 * tau) / 100000000.0;
     b = mf.deg(b);
 
+    // ✅ Simpan ke cache sebelum return
+    _cacheJdB = jd;
+    _cacheB = b;
     return b;
   }
 
   // ==========================================================================
-  // EarthRadiusVector
+  // EarthRadiusVector — DENGAN CACHE
   // ==========================================================================
   double earthRadiusVector(double jd) {
+    // ✅ Cek cache dulu
+    if (_cacheJdR == jd && _cacheR != null) {
+      return _cacheR!;
+    }
+
     double tau = (jd - 2451545.0) / 365250.0;
 
     // R0
@@ -290,6 +331,9 @@ class SunCalculator {
             r4 * pow(tau, 4)) /
         100000000.0;
 
+    // ✅ Simpan ke cache sebelum return
+    _cacheJdR = jd;
+    _cacheR = r;
     return r;
   }
 
