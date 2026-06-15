@@ -1132,7 +1132,7 @@ class MoonFunction {
 
       pi = moonEquatorialHorizontalParallax(jde00UT, 0);
 
-      h0 = -(34 / 60) + 0.7275 * pi; //- 0.0353 * math.sqrt(elev);
+      h0 = -(34 / 60) + 0.7275 * pi - 0.0353 * math.sqrt(elev);
       cosHA0 =
           (math.sin(mf.rad(h0)) -
               math.sin(mf.rad(gLat)) * math.sin(mf.rad(deltaM00d))) /

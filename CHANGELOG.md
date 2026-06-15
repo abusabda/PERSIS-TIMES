@@ -1,3 +1,8 @@
+## 1.0.38
+
+- Dalam ghurub bulan dimasukkan koreksi Dip pada rumus ketinggian bulan, seperti dalam Accurate Times 
+  h0 = -(34 / 60) + 0.7275 * pi - 0.0353 * math.sqrt(elev);
+
 ## 1.0.37
 
 - penambahan cache pada LBR algoritma Jean Meeus
