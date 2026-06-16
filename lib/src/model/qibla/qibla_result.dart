@@ -9,8 +9,8 @@ class QiblaResult {
   final double jarakEllipsoidKm;
   final double jarakVincentyKm;
 
-  final double bayangan1;
-  final double bayangan2;
+  final double? bayangan1;
+  final double? bayangan2;
 
   final QiblaEventResult rashdul1;
   final QiblaEventResult rashdul2;

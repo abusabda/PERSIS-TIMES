@@ -534,11 +534,11 @@ void main() {
   final qiblaService = QiblaService();
 
   final res3 = qiblaService.getQibla(
-    tglM: 23,
-    blnM: 2,
+    tglM: 17,
+    blnM: 6,
     thnM: 2026,
-    gLon: 107.6576575,
-    gLat: -6.9754746,
+    gLon: (107 + 31 / 60.0 + 2.72 / 3600.0),
+    gLat: -(6 + 58 / 60.0 + 15.80 / 3600.0),
     tmZn: 7.0,
     azQiblat: "spherical", // "spherical", "ellipsoid", atau "vincenty"
   );
@@ -558,10 +558,10 @@ void main() {
   print("Jarak Vincenty   : ${res3.jarakVincentyKm} KM");
 
   print(
-    "BQ1              : ${mf.dhhms(res3.bayangan1, optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0)}",
+    "BQ1              : ${res3.bayangan1 != null ? mf.dhhms(res3.bayangan1!, optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0) : '-'}",
   );
   print(
-    "BQ2              : ${mf.dhhms(res3.bayangan2, optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0)}",
+    "BQ2              : ${res3.bayangan2 != null ? mf.dhhms(res3.bayangan2!, optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0) : '-'}",
   );
 
   print("");
@@ -637,12 +637,15 @@ void main() {
   );
 
   for (var data in hasil) {
+    final double? bq1 = data["bayangan1"];
+    final double? bq2 = data["bayangan2"];
+
     print("TGL : ${jd.jdkm(data["jd"], 0, "")}");
     print(
-      "BQ1 : ${mf.dhhms(data["bayangan1"], optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0)}",
+      "BQ1 : ${bq1 != null ? mf.dhhms(bq1, optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0) : 'Tidak ada bayangan kiblat'}",
     );
     print(
-      "BQ2 : ${mf.dhhms(data["bayangan2"], optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0)}",
+      "BQ2 : ${bq2 != null ? mf.dhhms(bq2, optResult: "HH:MM:SS", posNegSign: "", secDecPlaces: 0) : 'Tidak ada bayangan kiblat'}",
     );
     print("------------------------");
   }

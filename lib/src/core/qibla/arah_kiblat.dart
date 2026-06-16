@@ -209,7 +209,7 @@ class ArahKiblat {
     return s;
   }
 
-  double bayanganQiblatHarian(
+  double? bayanganQiblatHarian(
     double gLon,
     double gLat,
     int tglM,
@@ -244,11 +244,14 @@ class ArahKiblat {
       b = 90 - gLat;
 
       p = mf.deg(math.atan(1 / (math.cos(mf.rad(b)) * math.tan(mf.rad(azQ)))));
-      ca = mf.deg(
-        math.acos(
-          math.tan(mf.rad(dm)) * math.tan(mf.rad(b)) * math.cos(mf.rad(p)),
-        ),
-      );
+
+      // Guard: argumen acos harus dalam range [-1, 1]
+      double cosArg =
+          math.tan(mf.rad(dm)) * math.tan(mf.rad(b)) * math.cos(mf.rad(p));
+
+      if (cosArg < -1.0 || cosArg > 1.0) return null;
+
+      ca = mf.deg(math.acos(cosArg));
 
       switch (opt) {
         case 1:
@@ -264,7 +267,7 @@ class ArahKiblat {
           );
           break;
         default:
-          bq = 0.0;
+          return null;
       }
     }
 
