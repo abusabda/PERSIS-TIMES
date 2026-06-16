@@ -3395,7 +3395,7 @@ class SolarEclipseService {
 
     //KESIMPULAN
 
-    //KESIMPULAN
+    final bool isPartial = jse.toLowerCase().contains('sebagian');
 
     return SolarEclipseGlobalResult(
       ada: true,
@@ -3483,8 +3483,8 @@ class SolarEclipseService {
       // === PARAMETER GERHANA ===
       magnitude: mag,
       jenis: jse,
-      durasiTotalitas: dur,
-      lebar: wd,
+      durasiTotalitas: isPartial ? null : dur,
+      lebar: isPartial ? null : wd,
 
       // === EPHEMERIS (DIPISAH) ===
       sunEphemeris: EclipseEphemerisBodyGlobal(

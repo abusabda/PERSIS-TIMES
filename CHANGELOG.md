@@ -1,3 +1,7 @@
+## 1.0.39
+
+- mengkondisikan untuk gerhana global jenis partial tidak menghitung durasi totalitas dan lebar lintasan.
+
 ## 1.0.38
 
 - Dalam ghurub bulan dimasukkan koreksi Dip pada rumus ketinggian bulan, seperti dalam Accurate Times 
