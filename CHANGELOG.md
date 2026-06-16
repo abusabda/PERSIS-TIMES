@@ -1,3 +1,7 @@
+## 1.0.40
+
+- perbaikan kode bayangan kiblat harian
+
 ## 1.0.39
 
 - mengkondisikan untuk gerhana global jenis partial tidak menghitung durasi totalitas dan lebar lintasan.
