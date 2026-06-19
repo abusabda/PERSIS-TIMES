@@ -89,9 +89,17 @@ class CalendarService {
     final jdNM2 = mo.geocentricConjunction(blnH, thnH, delT, "Ijtimak");
 
     int irMabims = 2; // Default, akan diganti jika syarat terpenuhi
+    double jdGSBase = sn.jdGhurubSyams(
+      jdNM2,
+      lokasi[0].gLat,
+      lokasi[0].gLon,
+      10.0,
+      lokasi[0].tmZn,
+    );
+    double tmZnBase = lokasi[0].tmZn;
 
     for (final loc in lokasi) {
-      final jdGS = sn.jdGhurubSyams(jdNM, loc.gLat, loc.gLon, 10.0, loc.tmZn);
+      final jdGS = sn.jdGhurubSyams(jdNM2, loc.gLat, loc.gLon, 10.0, loc.tmZn);
       final tHlal00 = mo.moonTopocentricAltitude(
         jdGS,
         delT,
@@ -106,12 +114,19 @@ class CalendarService {
 
       if (elong00 >= 6.4 && tHlal00 >= 3) {
         irMabims = 1;
+        jdGSBase = jdGS; // ✅ pakai sunset lokasi yang memenuhi syarat
+        tmZnBase = loc.tmZn;
         break;
       }
     }
 
+    //final jdAbqMabims =((mf.floor(jdNM2 + 0.5 + 7 / 24.0)) - 0.0 / 24.0) + irMabims;
+
     final jdAbqMabims =
-        ((mf.floor(jdNM2 + 0.5 + 7 / 24.0)) - 0.0 / 24.0) + irMabims;
+        (mf.floor(jdGSBase + 0.5 + tmZnBase / 24.0)) -
+        0.5 +
+        tmZnBase / 24.0 +
+        irMabims;
 
     return jdAbqMabims.ceilToDouble();
   }
@@ -145,7 +160,10 @@ class CalendarService {
       wh = 1;
     }
 
-    final jdAbqWH = ((mf.floor(jdNM2 + 0.5 + 7 / 24.0)) - 0.0 / 24.0) + wh;
+    //final jdAbqWH = ((mf.floor(jdNM2 + 0.5 + 7 / 24.0)) - 0.0 / 24.0) + wh;
+
+    final jdAbqWH =
+        (mf.floor(jdGS + 0.5 + tmZn / 24.0)) - 0.5 + tmZn / 24.0 + wh;
 
     return jdAbqWH.ceilToDouble();
   }
@@ -182,7 +200,10 @@ class CalendarService {
 
     final int uQ = (moonSet > sunSet && jdNM2 < jdGS) ? 1 : 2;
 
-    final jdAbqUQ = ((mf.floor(jdNM2 + 0.5 + 0.0 / 24.0)) - 0.0 / 24.0) + uQ;
+    //final jdAbqUQ = ((mf.floor(jdNM2 + 0.5 + 0.0 / 24.0)) - 0.0 / 24.0) + uQ;
+
+    final jdAbqUQ =
+        (mf.floor(jdGS + 0.5 + tmZn / 24.0)) - 0.5 + tmZn / 24.0 + uQ;
 
     return jdAbqUQ.ceilToDouble();
   }

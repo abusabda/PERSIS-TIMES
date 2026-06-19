@@ -1,3 +1,7 @@
+## 1.0.41
+
+- perbaikan kode konversi masehi hijri ummul qura dan MABISM untuk kasus ijtimak mepet mendekati jam 24.
+
 ## 1.0.40
 
 - perbaikan kode bayangan kiblat harian
