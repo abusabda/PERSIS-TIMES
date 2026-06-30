@@ -569,7 +569,7 @@ void main() {
   print("Rashdul Qiblat Pertama");
   print("Tgl        : ${jd.jdkm(res3.rashdul1.jd, 0, "")}");
   print(
-    "Jam        : ${mf.dhhm(res3.rashdul1.jamDes, optResult: "HH:MM:SS", posNegSign: "", minDecPlaces: 0)}",
+    "Jam        : ${mf.dhhm(res3.rashdul1.jamDes, optResult: "HH:MM", posNegSign: "", minDecPlaces: 0)}",
   );
   print(
     "Tinggi     : ${mf.dddms(res3.rashdul1.tinggi, optResult: "DDDMMSS", sdp: 0, posNegSign: "+-")}",

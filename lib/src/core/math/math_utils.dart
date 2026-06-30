@@ -120,22 +120,31 @@ class MathFunction {
   String dhhm(
     double dHrs, {
     String optResult = "HH:MM",
-    int minDecPlaces = 2, // tidak dipakai lagi untuk HH:MM
+    int minDecPlaces = 0,
     String posNegSign = "",
   }) {
     final isNeg = dHrs < 0;
     final uDHrs = dHrs.abs();
 
-    // 🔥 kunci: pakai total menit (floor)
-    int totalMinutes = (uDHrs * 60).floor();
+    int hrs = uDHrs.floor();
+    final decMin = (uDHrs - hrs) * 60.0;
 
-    int hrs = totalMinutes ~/ 60;
-    int mins = totalMinutes % 60;
+    final double minsRounded = minDecPlaces == 0
+        ? decMin.round().toDouble()
+        : double.parse(decMin.toStringAsFixed(minDecPlaces));
 
-    final sHrs = hrs.toString().padLeft(2, '0');
-    final sMin = mins.toString().padLeft(2, '0');
+    int hrs2 = hrs;
+    double mins = minsRounded;
+    if (mins >= 60) {
+      mins -= 60;
+      hrs2 += 1;
+    }
 
-    // tanda positif/negatif
+    final sHrs = hrs2.toString().padLeft(2, '0');
+    final sMin = minDecPlaces == 0
+        ? mins.toInt().toString().padLeft(2, '0')
+        : mins.toStringAsFixed(minDecPlaces).padLeft(2 + 1 + minDecPlaces, '0');
+
     String pns = "";
     if (posNegSign == "+-") {
       if (dHrs > 0) pns = "+";
